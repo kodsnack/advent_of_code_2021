@@ -1,0 +1,3 @@
+[submodule "squid-box-csharp"]
+	path = squid-box-csharp
+	url = https://github.com/squid-box/adventofcode2021.git
