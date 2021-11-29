@@ -3,4 +3,4 @@
 	url = https://github.com/squid-box/adventofcode2021.git
 [submodule "tradfursten-elixir"]
 	path = tradfursten-elixir
-    url = https://github.com/tradfursten/advent_of_code_2021.git
+	url = https://github.com/tradfursten/advent_of_code_2021
