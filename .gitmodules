@@ -11,3 +11,7 @@
 	path = cheif-swift
 	url = git@github.com:cheif/advent-of-code.git
 	branch = 2021
+[submodule "nilskj-javascript"]
+	path = nilskj-javascript
+	url = git@github.com:nilskj/AdventOfCode-2021.git
+	
