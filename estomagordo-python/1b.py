@@ -8,9 +8,13 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 def solve(lines):
     pass
+
+
 if __name__ == '__main__':
     lines = []
+
     with open('1.txt') as f:
         for line in f.readlines():
             lines.append(line)
+
     print(solve(lines))
