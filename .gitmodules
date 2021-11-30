@@ -7,3 +7,7 @@
 [submodule "johangrahn-rust"]
 	path = johangrahn-rust
 	url = https://github.com/johangrahn/advent_of_code_2021
+[submodule "cheif-swift"]
+	path = cheif-swift
+	url = git@github.com:cheif/advent-of-code.git
+	branch = 2021
