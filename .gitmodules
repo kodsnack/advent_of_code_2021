@@ -4,3 +4,6 @@
 [submodule "tradfursten-elixir"]
 	path = tradfursten-elixir
 	url = https://github.com/tradfursten/advent_of_code_2021
+[submodule "johangrahn-rust"]
+	path = johangrahn-rust
+	url = https://github.com/johangrahn/advent_of_code_2021
