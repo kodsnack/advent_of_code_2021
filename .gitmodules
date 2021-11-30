@@ -15,3 +15,6 @@
 	path = nilskj-javascript
 	url = git@github.com:nilskj/AdventOfCode-2021.git
 	
+[submodule "ygge-java"]
+	path = ygge-java
+	url = git@github.com:ygge/adventofcode2021.git
