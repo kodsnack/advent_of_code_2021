@@ -13,7 +13,7 @@ def solve(lines):
 if __name__ == '__main__':
     lines = []
 
-    with open('1.txt') as f:
+    with open('2.txt') as f:
         for line in f.readlines():
             lines.append(line)
             
