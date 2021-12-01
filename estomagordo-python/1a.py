@@ -7,16 +7,7 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 
 def solve(lines):
-    prev = 10**10
-    times = 0
-
-    for l in lines:
-        if l > prev:
-            times += 1
-        prev = l
-
-    return times
-
+    return sum(lines[x] > lines[x-1] for x in range(1, len(lines)))
 
 if __name__ == '__main__':
     lines = []
