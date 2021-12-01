@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using AdventOfCode;
 //using Position = AdventOfCode.GenericPosition2D<int>;
 
-namespace day01
+namespace dayXX
 {
     public class DayXX
     {
@@ -35,7 +35,7 @@ namespace day01
 
         static void Main(string[] args)
         {
-            Console.WriteLine("AoC 2020 - " + nsname + ":");
+            Console.WriteLine("AoC 2021 - " + nsname + ":");
             var w = System.Diagnostics.Stopwatch.StartNew();
             PartA();
             PartB();
