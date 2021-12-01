@@ -24,3 +24,6 @@
 [submodule "johangrahn-rust"]
 	path = johangrahn-rust
 	url = https://github.com/johangrahn/advent_of_code_2021
+[submodule "yxhuvud-crystal"]
+        path = yxhuvud-crystal
+        url = https://github.com/yxhuvud/aoc21
