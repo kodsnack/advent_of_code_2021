@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 using AdventOfCode;
 //using Position = AdventOfCode.GenericPosition2D<int>;
 
-namespace dayXX
+namespace day02
 {
-    public class DayXX
+    public class Day02
     {
-        readonly static string nsname = typeof(DayXX).Namespace;
+        readonly static string nsname = typeof(Day02).Namespace;
         readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
 
-        // Day XX: 
+        // Day 02: 
 
         static Object PartA()
         {
