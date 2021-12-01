@@ -33,3 +33,6 @@
 [submodule "johan-oelrich-fsharp"]
 	path = johan-oelrich-fsharp
 	url = git@github.com:oelrich/advent-of-code-2021.git
+[submodule "heinerud-python"]
+	path = heinerud-python
+	url = https://github.com/heinerud/aoc21
