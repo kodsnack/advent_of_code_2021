@@ -2,6 +2,7 @@
 
 from functools import wraps
 from time import time
+from typing import Generator
 
 def timing(f):
     @wraps(f)
@@ -14,7 +15,7 @@ def timing(f):
         return result
     return wrap
 
-def readFile(filename):
+def readFile(filename) -> Generator[str, None, None]:
     with open(filename) as file:
         while True:
             data = file.readline()
@@ -22,10 +23,10 @@ def readFile(filename):
                 break
             yield data.strip()
 
-def parseInts(data):
+def parseInts(data: Generator[str, None, None]) -> Generator[int, None, None]:
     return map(lambda line: int(line), data)
 
-def getIntsFromFile(filename):
+def getIntsFromFile(filename: str) -> Generator[int, None, None]:
     return parseInts(readFile(filename))
 
 def parseTuples(data):
