@@ -1,0 +1,51 @@
+//klistra filens innehåll i en qlik-scripteditor
+
+NoConcatenate
+depth:
+LOAD
+    @1 as depth,
+    RecNo() as radnummer
+FROM 
+[lib://Advent of code 2021:DataFiles/aoc_dec01_puzzle1.txt] //ändra så att det matchar lokal sökväg
+(txt, utf8, no labels, delimiter is '\t', msq);
+
+NoConcatenate
+depthPart1:
+Load
+	sum(increase) as answerPart1
+;
+load 
+//     depth,
+    if(diff > 0, 1, 0) as increase
+ ;
+load 
+	depth,
+    depth -Previous(depth) as diff   
+Resident depth
+;
+
+let answerPart1 = peek('answerPart1', 0, 'depthPart1');
+trace Svaret på första delen: $(answerPart1);
+
+NoConcatenate
+depthPart2:
+load
+	depth,
+    depth3,
+    depth3 - previous(depth3) as diff3,
+    if(depth3 - previous(depth3)>0, 1, 0) as increase3
+;
+load
+	depth,
+    peek('depth',-1) as lastDepth,
+    peek('depth',-2) as lastLastDepth,
+    depth + peek('depth',-1) + peek('depth',-2) as depth3
+Resident depth;
+
+
+NoConcatenate
+inc3:
+load sum(increase3) as answerPart2 Resident depthPart2;
+
+let answerPart2 = peek('answerPart2', 0, 'inc3');
+trace Svaret på andra delen: $(answerPart2);
