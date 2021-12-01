@@ -28,7 +28,8 @@ int main(int argc, char **argv) {
             bool done = false;
             while(!done) {
                 char buffer[1024];
-                auto cnt = input.readsome(buffer, 1024);
+                input.read(buffer, 1024);
+                auto cnt = input.gcount();
                 str.append(buffer, cnt);
                 done = !(input.good() && cnt > 0);
             }
