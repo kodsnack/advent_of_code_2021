@@ -45,3 +45,6 @@
 [submodule "idrougge-oorexx"]
 	path = idrougge-oorexx
 	url = https://github.com/idrougge/advent-of-code-2021-oorexx.git
+[submodule "mlogic1-cpp"]
+	path = mlogic1-cpp
+	url = https://github.com/mlogic1/advent-of-code-2021.git
