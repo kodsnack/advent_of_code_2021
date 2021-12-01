@@ -39,3 +39,9 @@
 [submodule "meck-haskell"]
 	path = meck-haskell
 	url = https://github.com/meck/AoC2021.git
+[submodule "idrougge-swift"]
+	path = idrougge-swift
+	url = https://github.com/idrougge/advent-of-code-2021-swift.git
+[submodule "idrougge-oorexx"]
+	path = idrougge-oorexx
+	url = https://github.com/idrougge/advent-of-code-2021-oorexx.git
