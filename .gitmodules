@@ -36,3 +36,6 @@
 [submodule "heinerud-python"]
 	path = heinerud-python
 	url = https://github.com/heinerud/aoc21
+[submodule "meck-haskell"]
+	path = meck-haskell
+	url = https://github.com/meck/AoC2021.git
