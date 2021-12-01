@@ -18,3 +18,6 @@
 [submodule "ygge-java"]
 	path = ygge-java
 	url = git@github.com:ygge/adventofcode2021.git
+[submodule "albert-arvidsson-elixir"]
+	path = albert-arvidsson-elixir
+	url = git@github.com:scmx/advent-of-code-2021-elixir.git
