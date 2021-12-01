@@ -7,22 +7,14 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 
 def solve(lines):
-    prev = 10**10
-    times = 0
-
-    for l in lines:
-        if l > prev:
-            times += 1
-        prev = l
-
-    return times
+    pass
 
 
 if __name__ == '__main__':
     lines = []
 
-    with open('1.txt') as f:
+    with open('2.txt') as f:
         for line in f.readlines():
-            lines.append(int(line))
-
+            lines.append(line)
+            
     print(solve(lines))
