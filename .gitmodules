@@ -21,3 +21,6 @@
 [submodule "albert-arvidsson-elixir"]
 	path = albert-arvidsson-elixir
 	url = git@github.com:scmx/advent-of-code-2021-elixir.git
+[submodule "prositen-python"]
+	path = prositen-python
+	url = git@github.com:prositen/advent-of-code.git
