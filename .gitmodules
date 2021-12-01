@@ -48,3 +48,6 @@
 [submodule "mlogic1-cpp"]
 	path = mlogic1-cpp
 	url = https://github.com/mlogic1/advent-of-code-2021.git
+[submodule "LinAGKar-rust"]
+	path = LinAGKar-rust
+	url = https://github.com/LinAGKar/advent-of-code-2021-rust.git
