@@ -30,3 +30,6 @@
 [submodule "p1xelher0-ocaml"]
 	path = p1xelher0-ocaml
 	url = https://github.com/p1xelHer0/advent-of-code-2021-ocaml.git
+[submodule "johan-oelrich-fsharp"]
+	path = johan-oelrich-fsharp
+	url = git@github.com:oelrich/advent-of-code-2021.git
