@@ -7,7 +7,15 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 
 def solve(lines):
-    pass
+    prev = 10**10
+    times = 0
+
+    for l in lines:
+        if l > prev:
+            times += 1
+        prev = l
+
+    return times
 
 
 if __name__ == '__main__':
@@ -15,6 +23,6 @@ if __name__ == '__main__':
 
     with open('1.txt') as f:
         for line in f.readlines():
-            lines.append(line)
-            
+            lines.append(int(line))
+
     print(solve(lines))
