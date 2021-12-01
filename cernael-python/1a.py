@@ -1,18 +1,12 @@
-from  functools import *
-
-def countinc(a, b):
-    return 1 if a < b else 0
-
 def solve(lines):
     lines = map(int, lines)
-    count, old, new = 0, None, None
+    count, win = 0, []
     for i in lines:
-        old = new
-        new = i
-        if old != None:
-            count += countinc(old, new)
+        win.append(i)
+        if len(win) == 2:
+            count += 1 if win[0] < win[-1] else 0
+            win.pop(0)
 
-#reduce(countinc, lines, 0)
     return count
 
 if __name__ == '__main__':
