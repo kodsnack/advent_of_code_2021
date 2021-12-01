@@ -2,7 +2,6 @@
 
 from functools import wraps
 from time import time
-import unittest
 
 def timing(f):
     @wraps(f)
@@ -71,48 +70,47 @@ def getDictsFromFile(filename):
 
 ## Unit tests ########################################################
 
-class TestHelpFunctions(unittest.TestCase):
-    def testParseInts(self):
-        fileData = ["1535", "1908", "1783"]
-        expectedRes = [1535, 1908, 1783]
-        self.assertEqual(list(parseInts(line for line in fileData)), expectedRes)
+def testParseInts():
+    fileData = ["1535", "1908", "1783"]
+    expectedRes = [1535, 1908, 1783]
+    assert list(parseInts(line for line in fileData)) == expectedRes
 
-    def testParseTuples(self):
-        fileData = ["9-12 q: qqqxhnhdmqqqqjz", "12-16 z: zzzzzznwlzzjzdzf", "4-7 s: sssgssw"]
-        expectedRes = [["9-12 q", "qqqxhnhdmqqqqjz"], ["12-16 z", "zzzzzznwlzzjzdzf"], ["4-7 s", "sssgssw"]]
-        self.assertEqual(list(parseTuples(line for line in fileData)), expectedRes)
+def testParseTuples():
+    fileData = ["9-12 q: qqqxhnhdmqqqqjz", "12-16 z: zzzzzznwlzzjzdzf", "4-7 s: sssgssw"]
+    expectedRes = [["9-12 q", "qqqxhnhdmqqqqjz"], ["12-16 z", "zzzzzznwlzzjzdzf"], ["4-7 s", "sssgssw"]]
+    assert list(parseTuples(line for line in fileData)) == expectedRes
 
-    def testParseLineGroups(self):
-        fileData = """ a b c
-                       1 2 3
-                       
-                       d e f
-                       
-                       4 5 6
-                       g h i
-                       j k l """
-        fileLines = [line.strip() for line in fileData.splitlines()]
+def testParseLineGroups():
+    fileData = """ a b c
+                    1 2 3
 
-        expectedRes = ["a b c,1 2 3", "d e f", "4 5 6,g h i,j k l"]
-        self.assertEqual(parseLineGroups(fileLines, separator=','), expectedRes)
+                    d e f
 
-        expectedRes = ["a b c 1 2 3", "d e f", "4 5 6 g h i j k l"]
-        self.assertEqual(parseLineGroups(fileLines, separator=' '), expectedRes)
+                    4 5 6
+                    g h i
+                    j k l """
+    fileLines = [line.strip() for line in fileData.splitlines()]
 
-    def testTryParseInt_int(self):
-        self.assertEqual(tryParseInt('5'), 5)
+    expectedRes = ["a b c,1 2 3", "d e f", "4 5 6,g h i,j k l"]
+    assert parseLineGroups(fileLines, separator=',') == expectedRes
 
-    def testTryParseInt_str(self):
-        self.assertEqual(tryParseInt('a'), 'a')
+    expectedRes = ["a b c 1 2 3", "d e f", "4 5 6 g h i j k l"]
+    assert parseLineGroups(fileLines, separator=' ') == expectedRes
 
-    def testTryParseInt_leadingZero(self):
-        self.assertEqual(tryParseInt('02'), '02')
+def testTryParseInt_int():
+    assert tryParseInt('5') == 5
 
-    def testParseDict(self):
-        fileData = ["a:1 b:z c:3",
-                    "a:4 d:01 e:h5"]
+def testTryParseInt_str():
+    assert tryParseInt('a') == 'a'
 
-        expectedRes = [{'a':1, 'b':'z', 'c':3},
-                       {'a':4, 'd':'01', 'e':'h5'}]
+def testTryParseInt_leadingZero():
+    assert tryParseInt('02') == '02'
 
-        self.assertEqual(parseDict(fileData), expectedRes)
+def testParseDict():
+    fileData = ["a:1 b:z c:3",
+                "a:4 d:01 e:h5"]
+
+    expectedRes = [{'a':1, 'b':'z', 'c':3},
+                    {'a':4, 'd':'01', 'e':'h5'}]
+
+    assert parseDict(fileData) == expectedRes
