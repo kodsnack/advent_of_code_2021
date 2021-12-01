@@ -27,3 +27,6 @@
 [submodule "yxhuvud-crystal"]
         path = yxhuvud-crystal
         url = https://github.com/yxhuvud/aoc21
+[submodule "p1xelher0-ocaml"]
+	path = p1xelher0-ocaml
+	url = https://github.com/p1xelHer0/advent-of-code-2021-ocaml.git
