@@ -8,6 +8,6 @@ then
 else
   sed "s/£/$day/g" template.py > $f
   source cookie.txt
-  curl "https://adventofcode.com/2020/day/${day}/input" -H "$cookie" --compressed > $day.txt
-  firefox "https://adventofcode.com/2020/day/$day"
+  curl "https://adventofcode.com/2021/day/${day}/input" -H "$cookie" --compressed > $day.txt
+  firefox "https://adventofcode.com/2021/day/$day"
 fi
