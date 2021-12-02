@@ -25,7 +25,7 @@ add_compile_options(-Wall -Wextra -march=native)
 
 add_library(aoc21_problems OBJECT
         src/p01.cpp
-#        src/p02.cpp
+        src/p02.cpp
 #        src/p03.cpp
 #        src/p04.cpp
 #        src/p05.cpp
