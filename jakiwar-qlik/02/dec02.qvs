@@ -1,4 +1,4 @@
-data:
+﻿data:
 LOAD
     @1 as direction,
     @2 as value
