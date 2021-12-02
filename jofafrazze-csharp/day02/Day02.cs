@@ -2,12 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
-using AdventOfCode;
-//using Position = AdventOfCode.GenericPosition2D<int>;
 
 namespace day02
 {
@@ -16,68 +10,59 @@ namespace day02
         readonly static string nsname = typeof(Day02).Namespace;
         readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
 
-        // Day 02: 
+        // Day 02: Steer submarine up, down and forward
 
-        static int ReadInputA()
+        static List<(char c, int i)> ReadInput()
         {
             StreamReader reader = File.OpenText(inputPath);
-            int d = 0;
-            int f = 0;
+            var list = new List<(char, int)>();
             string line;
             while ((line = reader.ReadLine()) != null)
             {
                 string[] s = line.Split(' ').ToArray();
-                var i = int.Parse(s[1]);
-                if (s[0][0] == 'd')
-                    d += i;
-                else if (s[0][0] == 'u')
-                    d -= i;
-                else
-                    f += i;
+                list.Add((s[0][0], int.Parse(s[1])));
             }
-            return d * f;
-        }
-
-        static int ReadInputB()
-        {
-            StreamReader reader = File.OpenText(inputPath);
-            int d = 0;
-            int f = 0;
-            int aim = 0;
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] s = line.Split(' ').ToArray();
-                var i = int.Parse(s[1]);
-                if (s[0][0] == 'd')
-                {
-                    aim += i;
-                }
-                else if (s[0][0] == 'u')
-                {
-                    aim -= i;
-                }
-                else
-                {
-                    d += aim * i;
-                    f += i;
-                }
-            }
-            return d * f;
+            return list;
         }
 
         static Object PartA()
         {
-            var input = ReadInputA();
-            int ans = input;
+            var input = ReadInput();
+            int d = 0;
+            int f = 0;
+            foreach ((char c, int i) in input)
+            {
+                if (c == 'd')
+                    d += i;
+                else if (c == 'u')
+                    d -= i;
+                else
+                    f += i;
+            }
+            int ans = d * f;
             Console.WriteLine("Part A: Result is {0}", ans);
             return ans;
         }
 
         static Object PartB()
         {
-            var input = ReadInputB();
-            int ans = input;
+            var input = ReadInput();
+            int d = 0;
+            int f = 0;
+            int aim = 0;
+            foreach ((char c, int i) in input)
+            {
+                if (c == 'd')
+                    aim += i;
+                else if (c == 'u')
+                    aim -= i;
+                else
+                {
+                    d += aim * i;
+                    f += i;
+                }
+            }
+            int ans = d * f;
             Console.WriteLine("Part B: Result is {0}", ans);
             return ans;
         }
