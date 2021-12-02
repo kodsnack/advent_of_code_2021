@@ -2,12 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
-using AdventOfCode;
-//using Position = AdventOfCode.GenericPosition2D<int>;
 
 namespace day02
 {
@@ -16,19 +10,59 @@ namespace day02
         readonly static string nsname = typeof(Day02).Namespace;
         readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
 
-        // Day 02: 
+        // Day 02: Steer submarine up, down and forward
+
+        static List<(char c, int i)> ReadInput()
+        {
+            StreamReader reader = File.OpenText(inputPath);
+            var list = new List<(char, int)>();
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] s = line.Split(' ').ToArray();
+                list.Add((s[0][0], int.Parse(s[1])));
+            }
+            return list;
+        }
 
         static Object PartA()
         {
-            var input = ReadIndata.Ints(inputPath);
-            int ans = 0;
+            var input = ReadInput();
+            int d = 0;
+            int f = 0;
+            foreach ((char c, int i) in input)
+            {
+                if (c == 'd')
+                    d += i;
+                else if (c == 'u')
+                    d -= i;
+                else
+                    f += i;
+            }
+            int ans = d * f;
             Console.WriteLine("Part A: Result is {0}", ans);
             return ans;
         }
 
         static Object PartB()
         {
-            int ans = 0;
+            var input = ReadInput();
+            int d = 0;
+            int f = 0;
+            int aim = 0;
+            foreach ((char c, int i) in input)
+            {
+                if (c == 'd')
+                    aim += i;
+                else if (c == 'u')
+                    aim -= i;
+                else
+                {
+                    d += aim * i;
+                    f += i;
+                }
+            }
+            int ans = d * f;
             Console.WriteLine("Part B: Result is {0}", ans);
             return ans;
         }
@@ -45,8 +79,8 @@ namespace day02
 
         public static bool MainTest()
         {
-            int a = 42;
-            int b = 4711;
+            int a = 1727835;
+            int b = 1544000595;
             return (PartA().Equals(a)) && (PartB().Equals(b));
         }
     }

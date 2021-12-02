@@ -11,12 +11,12 @@ using AdventOfCode;
 
 namespace day03
 {
-    public class DayXX
+    public class Day03
     {
-        readonly static string nsname = typeof(DayXX).Namespace;
+        readonly static string nsname = typeof(Day03).Namespace;
         readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
 
-        // Day XX: 
+        // Day 03: 
 
         static Object PartA()
         {
