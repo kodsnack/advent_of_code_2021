@@ -7,7 +7,20 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 
 def solve(lines):
-    pass
+    z = 0
+    x = 0
+
+    for move, d in lines:
+        val = int(d)
+
+        if move == 'forward':
+            x += val
+        elif move == 'up':
+            z -= val
+        else:
+            z += val
+
+    return z*x
 
 
 if __name__ == '__main__':
@@ -15,6 +28,6 @@ if __name__ == '__main__':
 
     with open('2.txt') as f:
         for line in f.readlines():
-            lines.append(line)
-            
+            lines.append(line.split())
+
     print(solve(lines))

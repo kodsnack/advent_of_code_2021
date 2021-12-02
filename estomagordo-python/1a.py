@@ -6,17 +6,8 @@ from itertools import combinations, permutations, product
 from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def solve(lines):
-    prev = 10**10
-    times = 0
-
-    for l in lines:
-        if l > prev:
-            times += 1
-        prev = l
-
-    return times
-
+def solve(lines, distance=1):
+    return sum(lines[x] > lines[x-distance] for x in range(distance, len(lines)))
 
 if __name__ == '__main__':
     lines = []

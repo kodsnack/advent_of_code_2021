@@ -4,9 +4,6 @@
 [submodule "tradfursten-elixir"]
 	path = tradfursten-elixir
 	url = https://github.com/tradfursten/advent_of_code_2021
-[submodule "johangrahn-rust"]
-	path = johangrahn-rust
-	url = https://github.com/johangrahn/advent_of_code_2021
 [submodule "cheif-swift"]
 	path = cheif-swift
 	url = git@github.com:cheif/advent-of-code.git
@@ -21,3 +18,36 @@
 [submodule "albert-arvidsson-elixir"]
 	path = albert-arvidsson-elixir
 	url = git@github.com:scmx/advent-of-code-2021-elixir.git
+[submodule "prositen-python"]
+	path = prositen-python
+	url = git@github.com:prositen/advent-of-code.git
+[submodule "johangrahn-rust"]
+	path = johangrahn-rust
+	url = https://github.com/johangrahn/advent_of_code_2021
+[submodule "yxhuvud-crystal"]
+        path = yxhuvud-crystal
+        url = https://github.com/yxhuvud/aoc21
+[submodule "p1xelher0-ocaml"]
+	path = p1xelher0-ocaml
+	url = https://github.com/p1xelHer0/advent-of-code-2021-ocaml.git
+[submodule "johan-oelrich-fsharp"]
+	path = johan-oelrich-fsharp
+	url = git@github.com:oelrich/advent-of-code-2021.git
+[submodule "heinerud-python"]
+	path = heinerud-python
+	url = https://github.com/heinerud/aoc21
+[submodule "meck-haskell"]
+	path = meck-haskell
+	url = https://github.com/meck/AoC2021.git
+[submodule "idrougge-swift"]
+	path = idrougge-swift
+	url = https://github.com/idrougge/advent-of-code-2021-swift.git
+[submodule "idrougge-oorexx"]
+	path = idrougge-oorexx
+	url = https://github.com/idrougge/advent-of-code-2021-oorexx.git
+[submodule "mlogic1-cpp"]
+	path = mlogic1-cpp
+	url = https://github.com/mlogic1/advent-of-code-2021.git
+[submodule "LinAGKar-rust"]
+	path = LinAGKar-rust
+	url = https://github.com/LinAGKar/advent-of-code-2021-rust.git

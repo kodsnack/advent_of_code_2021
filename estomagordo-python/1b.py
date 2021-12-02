@@ -6,15 +6,8 @@ from itertools import combinations, permutations, product
 from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def solve(lines):    
-    times = 0
-
-    for x in range(3, len(lines)):
-        if lines[x] > lines[x-3]:
-            times += 1
-
-    return times
-
+def solve(lines, distance=1):
+    return sum(lines[x] > lines[x-distance] for x in range(distance, len(lines)))
 
 if __name__ == '__main__':
     lines = []
@@ -23,4 +16,4 @@ if __name__ == '__main__':
         for line in f.readlines():
             lines.append(int(line))
 
-    print(solve(lines))
+    print(solve(lines, 3))
