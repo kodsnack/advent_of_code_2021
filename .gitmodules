@@ -51,3 +51,6 @@
 [submodule "LinAGKar-rust"]
 	path = LinAGKar-rust
 	url = https://github.com/LinAGKar/advent-of-code-2021-rust.git
+[submodule "edenvin-rust"]
+	path = edenvin-rust
+	url = git@github.com:edenvin/advent-of-code-2021.git
