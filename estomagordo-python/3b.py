@@ -7,18 +7,13 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 
 def find_generic(lines, n, inverted=False):
-    for x in range(n):
-        newlines = []
+    for x in range(n):        
         mostlyzeroes = sum(line[x] == '0' for line in lines) * 2 > len(lines)
-        xored = inverted^mostlyzeroes        
-
-        for line in lines:
-            if len(lines) == 1 or (line[x] == '1')^xored:
-                newlines.append(line)
-
-        lines = newlines
+        xored = inverted^mostlyzeroes
+        lines = lines if len(lines) == 1 else [line for line in lines if (line[x] == '1')^xored]
 
     return int(lines[0], 2)
+
 
 def find_oxygen(lines, n):    
     return find_generic(lines, n)
@@ -30,7 +25,6 @@ def find_co2(lines, n):
 
 def solve(lines):
     n = len(lines[0])
-
     oxygen = find_oxygen(lines, n)
     co2 = find_co2(lines, n)
 
