@@ -18,133 +18,77 @@ namespace day03
 
         // Day 03: Bit calculations will get you dizzy
 
-        static string GetMostCommonBits(List<string> input, char prefered='X')
+        static string GetMajorityBits(List<string> input)
         {
             var ones = new int[input[0].Length];
-            int n = 0;
             foreach (var s in input)
-            {
                 for (int i = 0; i < s.Length; i++)
                     ones[i] += (s[i] == '1') ? 1 : 0;
-                n += 1;
-            }
             string res = "";
-            double mean = n / 2.0;
+            double mean = input.Count / 2.0;
             foreach (int i in ones)
-            {
-                if (i > mean)
-                    res += '1';
-                else if (i < mean)
-                    res += '0';
-                else
-                    res += prefered;
-            }
+                res += (i >= mean) ? '1' : '0';
             return res;
         }
 
-        static Object PartA()
+        static string InvertBinString(string s)
         {
-            var input = ReadIndata.Strings(inputPath);
-            var s = GetMostCommonBits(input);
+            string w = "";
+            foreach (char c in s)
+                w += (c == '1') ? '0' : '1';
+            return w;
+        }
+
+        static int BinStringToInt(string s)
+        {
             int a = 0;
             for (int i = 0; i < s.Length; i++)
             {
                 a <<= 1;
                 a += (s[i] == '1') ? 1 : 0;
             }
-            int ones = (1 << s.Length) - 1;
+            return a;
+        }
+
+        static Object PartA()
+        {
+            var input = ReadIndata.Strings(inputPath);
+            var cs = GetMajorityBits(input);
+            int a = BinStringToInt(cs);
+            int ones = (1 << cs.Length) - 1;
             int b = a ^ ones;
             int ans = a * b;
             Console.WriteLine("Part A: Result is {0}", ans);
             return ans;
         }
 
-        static List<string> KeepMostCommon(List<string> input, int bitPos)
+        static List<string> KeepMostCommon(List<string> input, int bitPos, bool invert)
         {
-            List<int> tot = new List<int>(new int[input[0].Length]);
-            int n = 0;
-            foreach (var s in input)
-            {
-                for (int i = 0; i < s.Length; i++)
-                {
-                    if (s[s.Length - 1 - i] == '1')
-                        tot[i] += 1;
-                }
-                n += 1;
-            }
+            var cs = GetMajorityBits(input);
+            if (invert)
+                cs = InvertBinString(cs);
             var res = new List<string>();
-            bool keep1 = tot[bitPos] >= n / 2.0;
             foreach (var s in input)
-            {
-                if (keep1 && s[tot.Count - 1 - bitPos] == '1')
+                if (s[bitPos] == cs[bitPos])
                     res.Add(s);
-                else if (!keep1 && s[tot.Count - 1 - bitPos] == '0')
-                    res.Add(s);
-            }
-            return res;
-        }
-
-        static List<string> KeepLeastCommon(List<string> input, int bitPos)
-        {
-            List<int> tot = new List<int>(new int[input[0].Length]);
-            int n = 0;
-            foreach (var s in input)
-            {
-                for (int i = 0; i < s.Length; i++)
-                {
-                    if (s[s.Length - 1 - i] == '1')
-                        tot[i] += 1;
-                }
-                n += 1;
-            }
-            var res = new List<string>();
-            bool keep1 = tot[bitPos] < n / 2.0;
-            foreach (var s in input)
-            {
-                if (keep1 && s[tot.Count - 1 - bitPos] == '1')
-                    res.Add(s);
-                else if (!keep1 && s[tot.Count - 1 - bitPos] == '0')
-                    res.Add(s);
-            }
             return res;
         }
 
         static Object PartB()
         {
             var input = ReadIndata.Strings(inputPath);
-            List<int> tot = new List<int>(new int[input[0].Length]);
-            int n = 0;
-            foreach (var s in input)
+            var aList = input;
+            var bList = input;
+            for (int i = 0; i < input[0].Length; i++)
             {
-                for (int i = 0; i < s.Length; i++)
-                {
-                    if (s[s.Length - 1 - i] == '1')
-                        tot[i] += 1;
-                }
-                n += 1;
+                if (aList.Count > 1)
+                    aList = KeepMostCommon(aList, i, false);
+                if (bList.Count > 1)
+                    bList = KeepMostCommon(bList, i, true);
             }
-
-            var list1 = input;
-            var list2 = input;
-            for (int i = 0; i < tot.Count; i++)
-            {
-                if (list1.Count > 1)
-                    list1 = KeepMostCommon(list1, tot.Count - 1 - i);
-                if (list2.Count > 1)
-                    list2 = KeepLeastCommon(list2, tot.Count - 1 - i);
-            }
-
-            int num1 = 0;
-            int num2 = 0;
-            for (int i = 0; i < tot.Count; i++)
-            {
-                if (list1[0][tot.Count - 1 - i] == '1')
-                    num1 += (int)Math.Pow(2, i);
-                if (list2[0][tot.Count - 1 - i] == '1')
-                    num2 += (int)Math.Pow(2, i);
-            }
-
-            int ans = num1 * num2;
+            int a = BinStringToInt(aList[0]);
+            int b = BinStringToInt(bList[0]);
+            int ans = a * b;
             Console.WriteLine("Part B: Result is {0}", ans);
             return ans;
         }
