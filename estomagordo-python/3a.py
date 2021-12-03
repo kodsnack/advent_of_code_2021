@@ -8,9 +8,7 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 def solve(lines):
     n = len(lines[0])
-
     gammadigs = [Counter(line[x] for line in lines).most_common(1)[0][0] for x in range(n)]
-
     gamma = int(''.join(gammadigs), 2)
     epsilon = 2**n - 1 - gamma
 
