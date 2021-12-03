@@ -31,23 +31,9 @@ namespace day03
             return res;
         }
 
-        static string InvertBinString(string s)
-        {
-            string w = "";
-            foreach (char c in s)
-                w += (c == '1') ? '0' : '1';
-            return w;
-        }
-
         static int BinStringToInt(string s)
         {
-            int a = 0;
-            for (int i = 0; i < s.Length; i++)
-            {
-                a <<= 1;
-                a += (s[i] == '1') ? 1 : 0;
-            }
-            return a;
+            return s.Select((c, i) => (c == '1' ? 1 : 0) << (s.Length - 1 - i)).Sum();
         }
 
         static Object PartA()
@@ -66,7 +52,7 @@ namespace day03
         {
             var cs = GetMajorityBits(input);
             if (invert)
-                cs = InvertBinString(cs);
+                cs = new string(cs.Select(c => (c == '1' ? '0' : '1')).ToArray());
             var res = new List<string>();
             foreach (var s in input)
                 if (s[bitPos] == cs[bitPos])
@@ -77,17 +63,17 @@ namespace day03
         static Object PartB()
         {
             var input = ReadIndata.Strings(inputPath);
-            var aList = input;
-            var bList = input;
+            var al = input;
+            var bl = input;
             for (int i = 0; i < input[0].Length; i++)
             {
-                if (aList.Count > 1)
-                    aList = KeepMostCommon(aList, i, false);
-                if (bList.Count > 1)
-                    bList = KeepMostCommon(bList, i, true);
+                if (al.Count > 1)
+                    al = KeepMostCommon(al, i, false);
+                if (bl.Count > 1)
+                    bl = KeepMostCommon(bl, i, true);
             }
-            int a = BinStringToInt(aList[0]);
-            int b = BinStringToInt(bList[0]);
+            int a = BinStringToInt(al[0]);
+            int b = BinStringToInt(bl[0]);
             int ans = a * b;
             Console.WriteLine("Part B: Result is {0}", ans);
             return ans;
