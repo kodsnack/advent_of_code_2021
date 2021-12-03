@@ -22,11 +22,11 @@ def find_generic(lines, n, inverted=False):
             else:
                 ones += 1
 
+        mostlyzeroes = zeroes > ones
+        xored = inverted^mostlyzeroes        
+
         for line in lines:
-            if line[x] == '0':
-                if (inverted and zeroes > ones) or (not inverted and zeroes <= ones):
-                    newlines.append(line)
-            elif (inverted and zeroes <= ones) or (not inverted and zeroes > ones):
+            if (line[x] == '1')^xored:
                 newlines.append(line)
 
         lines = newlines
