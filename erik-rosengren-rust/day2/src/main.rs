@@ -13,15 +13,36 @@ fn read_string_to_tuples(filename: &str) -> Vec<(String, i32)> {
 }
 
 fn main() {
-    let (mut x, mut y) = (0, 0);
+    part1();
+    part2();
+}
+
+fn part1() {
+    let (mut x, mut depth) = (0, 0);
     for (dir, units) in read_string_to_tuples("input.txt").iter() {
         match dir.as_str() {
-            "down" => y += units,
-            "up" => y -= units,
+            "down" => depth += units,
+            "up" => depth -= units,
             "forward" => x += units,
-            "back" => x -= units,
             _ => panic!("Unknown direction: {}", dir),
         }
     }
-    println!("1: {}", x * y);
+    println!("1: {}", x * depth);
+}
+
+fn part2() {
+    let (mut x, mut depth) = (0, 0);
+    let mut aim = 0;
+    for (dir, units) in read_string_to_tuples("input.txt").iter() {
+        match dir.as_str() {
+            "down" => aim += units,
+            "up" => aim -= units,
+            "forward" => {
+                x += units;
+                depth += aim * units;
+            }
+            _ => panic!("Unknown direction: {}", dir),
+        }
+    }
+    println!("2: {}", x * depth);
 }
