@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AdventOfCode;
 
 namespace day02
 {
@@ -12,6 +13,7 @@ namespace day02
 
         // Day 02: Steer submarine up, down and forward
 
+        /*
         static List<(char c, int i)> ReadInput()
         {
             StreamReader reader = File.OpenText(inputPath);
@@ -24,14 +26,17 @@ namespace day02
             }
             return list;
         }
+        */
 
         static Object PartA()
         {
-            var input = ReadInput();
+            var input = ReadIndata.StringLists(inputPath, ' ');
             int d = 0;
             int f = 0;
-            foreach ((char c, int i) in input)
+            foreach (var v in input)
             {
+                char c = v[0][0];
+                int i = int.Parse(v[1]);
                 if (c == 'd')
                     d += i;
                 else if (c == 'u')
@@ -46,12 +51,14 @@ namespace day02
 
         static Object PartB()
         {
-            var input = ReadInput();
+            var input = ReadIndata.StringLists(inputPath);
             int d = 0;
             int f = 0;
             int aim = 0;
-            foreach ((char c, int i) in input)
+            foreach (var v in input)
             {
+                char c = v[0][0];
+                int i = int.Parse(v[1]);
                 if (c == 'd')
                     aim += i;
                 else if (c == 'u')
