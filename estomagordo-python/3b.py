@@ -8,15 +8,12 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 def find_generic(lines, n, inverted=False):
     for x in range(n):
-        if len(lines) == 1:
-            break
-
         newlines = []
-        mostlyzeroes = sum(line[x] == '0' for line in lines) > sum(line[x] == '1' for line in lines)
+        mostlyzeroes = sum(line[x] == '0' for line in lines) * 2 > len(lines)
         xored = inverted^mostlyzeroes        
 
         for line in lines:
-            if (line[x] == '1')^xored:
+            if len(lines) == 1 or (line[x] == '1')^xored:
                 newlines.append(line)
 
         lines = newlines
