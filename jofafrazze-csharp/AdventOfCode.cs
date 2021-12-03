@@ -714,26 +714,26 @@ namespace AdventOfCode
 
     public static class ReadIndata
     {
-        public static List<int> Ints(string path)
+        public static List<int> Ints(string path, char delimiter = ',')
         {
             StreamReader reader = File.OpenText(path);
             List<int> list = new List<int>();
             string line;
             while ((line = reader.ReadLine()) != null)
             {
-                list.AddRange(line.Split(',').Select(int.Parse).ToList());
+                list.AddRange(line.Split(delimiter).Select(int.Parse).ToList());
             }
             return list;
         }
 
-        public static List<long> Longs(string path)
+        public static List<long> Longs(string path, char delimiter = ',')
         {
             StreamReader reader = File.OpenText(path);
             List<long> list = new List<long>();
             string line;
             while ((line = reader.ReadLine()) != null)
             {
-                list.AddRange(line.Split(',').Select(long.Parse).ToList());
+                list.AddRange(line.Split(delimiter).Select(long.Parse).ToList());
             }
             return list;
         }
@@ -746,6 +746,18 @@ namespace AdventOfCode
             while ((line = reader.ReadLine()) != null)
             {
                 list.Add(line);
+            }
+            return list;
+        }
+
+        public static List<List<string>> StringLists(string path, char delimiter = ' ')
+        {
+            StreamReader reader = File.OpenText(path);
+            var list = new List<List<string>>();
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                list.Add(line.Split(delimiter).ToList());
             }
             return list;
         }
