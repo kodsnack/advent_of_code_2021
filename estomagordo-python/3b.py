@@ -12,17 +12,7 @@ def find_generic(lines, n, inverted=False):
             break
 
         newlines = []
-
-        zeroes = 0
-        ones = 0
-
-        for line in lines:
-            if line[x] == '0':
-                zeroes += 1
-            else:
-                ones += 1
-
-        mostlyzeroes = zeroes > ones
+        mostlyzeroes = sum(line[x] == '0' for line in lines) > sum(line[x] == '1' for line in lines)
         xored = inverted^mostlyzeroes        
 
         for line in lines:
