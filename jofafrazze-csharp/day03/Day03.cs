@@ -16,33 +16,45 @@ namespace day03
         readonly static string nsname = typeof(Day03).Namespace;
         readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
 
-        // Day 03: 
+        // Day 03: Bit calculations will get you dizzy
 
-        static Object PartA()
+        static string GetMostCommonBits(List<string> input, char prefered='X')
         {
-            var input = ReadIndata.Strings(inputPath);
-            List<int> tot = new List<int>(new int[input[0].Length]);
+            var ones = new int[input[0].Length];
             int n = 0;
             foreach (var s in input)
             {
                 for (int i = 0; i < s.Length; i++)
-                {
-                    if (s[s.Length - 1 - i] == '1')
-                        tot[i] += 1;
-                }
+                    ones[i] += (s[i] == '1') ? 1 : 0;
                 n += 1;
             }
-            int num1 = 0;
-            int num2 = 0;
-            for (int i = 0; i < tot.Count; i++)
+            string res = "";
+            double mean = n / 2.0;
+            foreach (int i in ones)
             {
-                if (tot[i] > n / 2)
-                    num1 += (int)Math.Pow(2, i);
+                if (i > mean)
+                    res += '1';
+                else if (i < mean)
+                    res += '0';
                 else
-                    num2 += (int)Math.Pow(2, i);
+                    res += prefered;
             }
+            return res;
+        }
 
-            int ans = num1*num2;
+        static Object PartA()
+        {
+            var input = ReadIndata.Strings(inputPath);
+            var s = GetMostCommonBits(input);
+            int a = 0;
+            for (int i = 0; i < s.Length; i++)
+            {
+                a <<= 1;
+                a += (s[i] == '1') ? 1 : 0;
+            }
+            int ones = (1 << s.Length) - 1;
+            int b = a ^ ones;
+            int ans = a * b;
             Console.WriteLine("Part A: Result is {0}", ans);
             return ans;
         }
