@@ -23,18 +23,11 @@ def find_generic(lines, n, inverted=False):
                 ones += 1
 
         for line in lines:
-            if inverted:                
-                if zeroes > ones:
-                    if line[x] == '0':
-                        newlines.append(line)
-                elif line[x] == '1':
+            if line[x] == '0':
+                if (inverted and zeroes > ones) or (not inverted and zeroes <= ones):
                     newlines.append(line)
-            else:
-                if zeroes > ones:
-                    if line[x] == '1':
-                        newlines.append(line)
-                elif line[x] == '0':
-                    newlines.append(line)
+            elif (inverted and zeroes <= ones) or (not inverted and zeroes > ones):
+                newlines.append(line)
 
         lines = newlines
 
@@ -53,7 +46,7 @@ def solve(lines):
 
     oxygen = find_oxygen(lines, n)
     co2 = find_co2(lines, n)
-    
+
     return oxygen*co2
 
 
