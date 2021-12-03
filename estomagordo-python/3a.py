@@ -9,8 +9,7 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 def solve(lines):
     n = len(lines[0])
 
-    gamma = ''
-    epsilon = ''
+    gammadigs = ''
 
     for x in range(n):
         ones = 0
@@ -23,13 +22,14 @@ def solve(lines):
                 ones += 1
 
         if ones > zeroes:
-            gamma += '1'
-            epsilon += '0'
+            gammadigs += '1'
         else:
-            gamma += '0'
-            epsilon += '1'
+            gammadigs += '0'
 
-    print(int(gamma, 2) * int(epsilon, 2))
+    gamma = int(gammadigs, 2)
+    epsilon = 2**n - 1 - gamma
+
+    return gamma*epsilon
 
 
 if __name__ == '__main__':
