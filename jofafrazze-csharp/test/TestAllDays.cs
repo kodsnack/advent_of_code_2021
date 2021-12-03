@@ -20,4 +20,13 @@ namespace test
             Assert.True(day02.Day02.MainTest());
         }
     }
+
+    public class TestDay03
+    {
+        [Fact]
+        public void Test()
+        {
+            Assert.True(day03.Day03.MainTest());
+        }
+    }
 }
