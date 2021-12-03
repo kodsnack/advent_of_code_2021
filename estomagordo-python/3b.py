@@ -6,7 +6,7 @@ from itertools import combinations, permutations, product
 from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def find_oxygen(lines, n):
+def find_generic(lines, n, inverted=False):
     for x in range(n):
         if len(lines) == 1:
             break
@@ -23,43 +23,29 @@ def find_oxygen(lines, n):
                 ones += 1
 
         for line in lines:
-            if zeroes > ones:
-                if line[x] == '0':
+            if inverted:                
+                if zeroes > ones:
+                    if line[x] == '0':
+                        newlines.append(line)
+                elif line[x] == '1':
                     newlines.append(line)
-            elif line[x] == '1':
-                newlines.append(line)
+            else:
+                if zeroes > ones:
+                    if line[x] == '1':
+                        newlines.append(line)
+                elif line[x] == '0':
+                    newlines.append(line)
 
         lines = newlines
 
     return int(lines[0], 2)
+
+def find_oxygen(lines, n):    
+    return find_generic(lines, n)
 
 
 def find_co2(lines, n):
-    for x in range(n):
-        if len(lines) == 1:
-            break
-
-        newlines = []
-
-        zeroes = 0
-        ones = 0
-
-        for line in lines:
-            if line[x] == '0':
-                zeroes += 1
-            else:
-                ones += 1
-
-        for line in lines:
-            if zeroes > ones:
-                if line[x] == '1':
-                    newlines.append(line)
-            elif line[x] == '0':
-                newlines.append(line)
-
-        lines = newlines
-
-    return int(lines[0], 2)
+    return find_generic(lines, n, True)
 
 
 def solve(lines):
@@ -67,7 +53,7 @@ def solve(lines):
 
     oxygen = find_oxygen(lines, n)
     co2 = find_co2(lines, n)
-
+    
     return oxygen*co2
 
 
