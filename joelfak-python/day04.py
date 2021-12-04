@@ -25,7 +25,7 @@ class Board():
         pos = self.get_number_position(number)
         if pos:
             before = self.board[pos.row][pos.col]
-            self.board[pos.row][pos.col] -= 1000
+            self.board[pos.row][pos.col] = None
             # print(f'Board: {self.board}, number: {number}, changing pos[{pos.row}][{pos.col}] from {before} to {self.board[pos.row][pos.col]}')
         
         if self._is_winning_board():
@@ -35,12 +35,12 @@ class Board():
             return False
     
     def _is_winning_board(self) -> bool:
-        has_winning_row = any( all(num < 0 for num in row ) for row in self.board)
-        has_winning_col = any( all(num < 0 for num in col ) for col in zip(*self.board))
+        has_winning_row = any( all(num is None for num in row) for row in self.board)
+        has_winning_col = any( all(num is None for num in col) for col in zip(*self.board))
         return has_winning_row or has_winning_col
     
     def calculate_score(self) -> int:
-        sum_ = sum(sum(num for num in row if num >= 0) for row in self.board)
+        sum_ = sum(sum(num for num in row if num is not None) for row in self.board)
         print(f'sum: {sum_}, winning number: {self.winning_number}, score: {sum_*self.winning_number}')
         return sum_ * self.winning_number if self.winning_number is not None else 0
 
