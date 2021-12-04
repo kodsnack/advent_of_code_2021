@@ -1,0 +1,359 @@
+﻿SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$ ###0.00;-$ ###0.00';
+SET TimeFormat='h:mm:ss TT';
+SET DateFormat='M/D/YYYY';
+SET TimestampFormat='M/D/YYYY h:mm:ss[.fff] TT';
+SET FirstWeekDay=6;
+SET BrokenWeeks=1;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='en-US';
+SET CreateSearchIndexOnReload=1;
+SET MonthNames='Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec';
+SET LongMonthNames='January;February;March;April;May;June;July;August;September;October;November;December';
+SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
+SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
+SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
+
+sekvens:
+load
+	subfield(sekvens, ',') as sekvens,
+    sekvens as sekvensKomplett
+;
+first 1 LOAD
+    @1 as sekvens
+FROM [lib://Advent of code 2021:DataFiles/aoc_dec04.txt]
+(txt, utf8, no labels, delimiter is spaces, msq);
+// load * inline [
+// sekvens
+// '7,4,9,5,11,17,23,2,0,14,21,24'
+// ];
+
+NoConcatenate
+tmp:
+// first 15 
+LOAD
+    @1 as a,
+    @2 as b,
+    @3 as c,
+    @4 as d,
+    @5 as e,
+    RowNo()-1 as Radnummer
+    
+FROM [lib://Advent of code 2021:DataFiles/aoc_dec04.txt]
+(txt, utf8, no labels, delimiter is spaces, msq, header is 2 lines);
+
+NoConcatenate
+tmp:
+load *, RowNo()-1 as Radnummer;
+load * inline [
+a,b,c,d,e
+14,21,17,24,4
+10,16,15,9,19
+18,8,23,26,20
+22,11,13,6,5
+2,0,12,3,7
+22,13,17,11,0
+8,2,23,4,24
+21,9,14,16,7
+6,10,3,18,5
+1,12,20,15,19
+3,15,0,2,22
+9,18,13,17,5
+19,8,7,25,23
+20,11,10,24,4
+14,21,16,12,6
+];
+
+
+
+let noOfRows = NoOfRows('tmp');
+
+NoConcatenate
+tmp2:
+load 
+	a,b,c,d,e ,
+    a &','& b &','& c &',' & d & ',' & e as horisontell,
+    Radnummer,
+	(Radnummer-mod((Radnummer),5))/5 as Bingobricka
+Resident tmp;
+
+drop table tmp;
+
+
+NoConcatenate
+tmp3:
+load '' as dropme AutoGenerate 0;
+
+
+for each i in 'a','b','c','d','e'
+ 	trace $(i);
+    Concatenate(tmp3)
+    load 
+        concat([$(i)],',') as rad,
+        'vertikal' as typ,
+        Bingobricka
+    Resident tmp2
+    group by Bingobricka
+    ;
+next i;
+
+drop field dropme from tmp3;
+
+
+concatenate(tmp3)
+load distinct
+	horisontell as rad,
+    'horisontell' as typ,
+    Bingobricka
+ Resident tmp2;
+ 
+ join
+ first 1 load sekvensKomplett Resident sekvens;
+	
+    
+drop table tmp2;
+
+NoConcatenate
+BingoScore:
+load 
+	*, 
+    rad as ejMatchade
+;
+Load 
+	',' & rad & ',' as rad, // för att kunna söka på komma+nummer+komma
+    
+    '' as matchade,
+    '' as samtliga,
+    typ,
+    Bingobricka,
+    0 as matchScore
+Resident tmp3;
+
+drop table tmp3;
+
+
+
+let sekvens = peek('sekvens', 0, 'sekvens');
+trace matcha mot $(sekvens);
+
+LET sekvensAntalRader=NoOfRows('sekvens');
+
+NoConcatenate
+tmpVinstrundor:
+load '' as Bingobricka AutoGenerate 0;
+
+FOR i=0 to 91 //$(sekvensAntalRader)-1
+	let värde = ',' & peek('sekvens', $(i), 'sekvens') & ',';
+    trace Kollar om $(värde) på rad $(i) i sekvenstabellen matchar;
+    
+    NoConcatenate
+    tmpScore:
+    Load 
+      rad,
+      typ,
+      Bingobricka,
+      samtliga & '$(värde)' as samtliga,
+      matchScore + if(WildMatch(rad, '*$(värde)*')>0, 1,0) as matchScore,
+      if(WildMatch(rad, '*' & '$(värde)' & '*')>0, matchade &','& '$(värde)',matchade) as matchade,
+      
+      if(WildMatch(rad, '*' & '$(värde)' & '*')>0, 
+      		replace(ejMatchade, '$(värde)', ',') , 
+            ejMatchade) 
+            	as ejMatchade
+    Resident BingoScore
+    ;
+    
+    drop table BingoScore;
+    rename table tmpScore to BingoScore;
+    
+    NoConcatenate
+    MaxScore:
+    load 
+    	max(matchScore) as maxScore,
+        only(Bingobricka) as BingobrickaVinst
+//         min(matchScore) as minScore 
+    Resident BingoScore;
+    
+    NoConcatenate
+    tmpVannDennaRunda:
+        load distinct
+    	Bingobricka,
+        $(i) as Runda,
+        '$(värde)' as BingoVärde
+    Resident BingoScore
+    where matchScore=5
+    ;
+    
+//     left join(tmpVannDennaRunda)
+//     load 
+//     	Bingobricka,
+//         Concat(ejMatchade) as ejMatchadeVidVinstrunda
+//     Resident BingoScore
+//     group by Bingobricka;
+    
+    
+    Concatenate(tmpVinstrundor)
+    load * Resident tmpVannDennaRunda;
+    
+    drop table tmpVannDennaRunda;
+
+//     left join load
+//     	Bingobricka,
+//        	ejMatchade
+//     resident BingoScore
+//     where typ='horisontell'
+// //     group by Bingobricka
+    
+//     ;
+    
+    
+        
+    
+
+//     let minScore = peek('minScore');
+    
+//     if $(maxScore)=5 then //uppgift 1
+//     	trace maxScore =5 upnått, hoppar ur loopen;
+//         let maxScore = peek('maxScore');
+//         let bingoVinst = peek('BingobrickaVinst');
+//         trace bingoVinst $(bingoVinst) maxScore $(maxScore);
+//      	exit for;
+//     End If;
+    
+//     if $(minScore)=5 then
+//     	trace maxScore =5 upnått, hoppar ur loopen;
+//      	exit for;
+//     End If;
+    
+    
+    
+    drop table MaxScore;
+NEXT;
+
+
+
+NoConcatenate
+Vinstrundor:
+load 
+	Bingobricka,
+    min(Runda) as Runda
+//     only(ejMatchadeVidVinstrunda) as ejMatchadeVidVinstrunda
+// //     concat(ejMatchade,',') as ejMatchade,
+//     BingoVärde
+ resident tmpVinstrundor
+ group by Bingobricka;
+ 
+ drop table tmpVinstrundor;
+ 
+ 
+NoConcatenate
+Vinnare:
+load 
+    min(Runda) as VinnarRunda
+Resident Vinstrundor;
+left join load 
+	Runda as VinnarRunda,
+    Bingobricka
+//     ejMatchadeVidVinstrunda
+ Resident Vinstrundor;
+
+NoConcatenate
+Förlorare:
+load 
+    max(Runda) as FörlorarRunda
+Resident Vinstrundor;
+left join load 
+	Runda as FörlorarRunda,
+    Bingobricka
+//     ejMatchadeVidVinstrunda
+ Resident Vinstrundor;
+
+
+
+
+//TODO sista stegen (poängsummeringen gjordes för hand för deluppgift 2
+exit script;
+
+
+
+
+
+
+NoConcatenate
+VinnareScore:
+load sum(ejMatchadeSum) as endScore
+where len(ejMatchadeSum)>0
+;
+load 
+	SubField(ejMatchade,',') as ejMatchadeSum 
+Resident Vinnare
+where typ='horisontell'
+;
+ 
+ drop table tmpVinstrundor;
+ 
+let endScore = peek('endScore', 0, 'endScore');
+let answerPart1 = PurgeChar('$(värde)',',')*$(endScore);
+trace $(värde)*$(endScore) = VINNARE answerPart1 $(answerPart1);
+
+drop table VinnareScore;
+
+
+NoConcatenate
+FörlorareScore:
+load sum(ejMatchadeSum) as endScore
+where len(ejMatchadeSum)>0
+;
+load 
+	SubField(ejMatchade,',') as ejMatchadeSum 
+Resident Förlorare
+where typ='horisontell'
+;
+ 
+
+ 
+let endScore = peek('endScore', 0, 'endScore');
+let answerPart2 = PurgeChar('$(värde)',',')*$(endScore);
+trace $(värde)*$(endScore) = FÖRLORARE answerPart2 $(answerPart2);
+
+
+
+
+
+
+
+exit script;
+
+
+
+
+NoConcatenate
+Vinnare:
+load Bingobricka Resident BingoScore where matchScore=5;
+
+
+NoConcatenate
+endScore:
+load sum(ejMatchadeSum) as endScore
+where len(ejMatchadeSum)>0
+;
+load 
+	SubField(ejMatchade,',') as ejMatchadeSum 
+Resident Vinnare
+where typ='horisontell'
+;
+
+drop table BingoScore;
+
+
+let endScore = peek('endScore', 0, 'endScore');
+let answerPart1 = PurgeChar('$(värde)',',')*$(endScore);
+trace $(värde)*$(endScore) = answerPart1 $(answerPart1);
+
+
+
+
