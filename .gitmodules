@@ -54,3 +54,6 @@
 [submodule "edenvin-rust"]
 	path = edenvin-rust
 	url = git@github.com:edenvin/advent-of-code-2021.git
+[submodule "pin2t-java-go"]
+	path = pin2t-java-go
+	url = https://github.com/pin2t/aoc2021.git
