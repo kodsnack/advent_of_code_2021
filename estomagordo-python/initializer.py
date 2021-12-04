@@ -1,8 +1,7 @@
 from os import path
 from sys import argv
 
-dayfile = lambda day: f"""
-from collections import Counter, defaultdict, deque
+dayfile = lambda day: f"""from collections import Counter, defaultdict, deque
 from functools import reduce
 from heapq import heappop, heappush
 from itertools import combinations, permutations, product
