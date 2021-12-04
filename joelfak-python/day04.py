@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import helpfunctions as hf
-import sys
+import sys, pytest
 from collections import namedtuple
 
 Pos = namedtuple('Pos', ['row', 'col'])
@@ -44,6 +44,9 @@ class Board():
         print(f'sum: {sum_}, winning number: {self.winning_number}, score: {sum_*self.winning_number}')
         return sum_ * self.winning_number if self.winning_number is not None else 0
 
+    def has_won(self) -> bool:
+        return self.winning_number is not None
+
     def __repr__(self):
         return repr(self.board)
 
@@ -55,29 +58,42 @@ def part1(input_numbers: list[int], boards: list[Board]):
                 return board.calculate_score()
 
 @hf.timing
-def part2(data):
-    return 0
+def part2(input_numbers: list[int], boards: list[Board]):
+    for number in input_numbers:
+        for board in boards:
+            if not board.has_won():
+                if board.mark_number(number):
+                    if sum(1 for board in boards if not board.has_won()) == 0:
+                        return board.calculate_score()
 
 ## Unit tests ########################################################
 
-def test_part1():
-    inputs = [7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1]
-    boards = [Board([[22, 13, 17, 11,  0],
-                     [ 8,  2, 23,  4, 24],
-                     [21,  9, 14, 16,  7],
-                     [ 6, 10,  3, 18,  5],
-                     [ 1, 12, 20, 15, 19]]),
-              Board([[ 3, 15,  0,  2, 22],
-                     [ 9, 18, 13, 17,  5],
-                     [19,  8,  7, 25, 23],
-                     [20, 11, 10, 24,  4],
-                     [14, 21, 16, 12,  6]]),
-              Board([[14, 21, 17, 24,  4],
-                     [10, 16, 15,  9, 19],
-                     [18,  8, 23, 26, 20],
-                     [22, 11, 13,  6,  5],
-                     [ 2,  0, 12,  3,  7]])]
+@pytest.fixture
+def inputs():
+   return [7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1]
+
+@pytest.fixture
+def boards():
+    return  [Board([[22, 13, 17, 11,  0],
+                    [ 8,  2, 23,  4, 24],
+                    [21,  9, 14, 16,  7],
+                    [ 6, 10,  3, 18,  5],
+                    [ 1, 12, 20, 15, 19]]),
+             Board([[ 3, 15,  0,  2, 22],
+                    [ 9, 18, 13, 17,  5],
+                    [19,  8,  7, 25, 23],
+                    [20, 11, 10, 24,  4],
+                    [14, 21, 16, 12,  6]]),
+             Board([[14, 21, 17, 24,  4],
+                    [10, 16, 15,  9, 19],
+                    [18,  8, 23, 26, 20],
+                    [22, 11, 13,  6,  5],
+                    [ 2,  0, 12,  3,  7]])]
+def test_part1(inputs, boards):
     assert part1(inputs, boards) == 4512
+
+def test_part2(inputs, boards):
+    assert part2(inputs, boards) == 1924
 
 ## Main ########################################################
 
@@ -100,4 +116,4 @@ if __name__ == '__main__':
 
     print("Advent of code day X")
     print("Part1 result: {}".format(part1(*parse_data(sys.argv[1]))))
-    # print("Part2 result: {}".format(part2(hf.getIntsFromFile(sys.argv[1]))))
+    print("Part2 result: {}".format(part2(*parse_data(sys.argv[1]))))
