@@ -25,6 +25,7 @@ std::tuple<std::string, std::string> p04(const std::string & input) {
                     } else {
                         if(cnt == 0) {
                             boards.emplace_back();
+                            boards.back().reserve(25);
                         }
                         boards.back().push_back(num);
                         cnt++;
@@ -84,9 +85,8 @@ std::tuple<std::string, std::string> p04(const std::string & input) {
 
     for(auto curr : v) {
         for(auto && board : boards) {
-            for(auto & x : board) {
-                if(x == curr) x = -1;
-            }
+            auto it = std::find(board.begin(), board.end(), curr);
+            if(it != board.end()) *it = -1;
         }
 
         for(auto && board : boards) {
