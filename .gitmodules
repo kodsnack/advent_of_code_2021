@@ -60,3 +60,6 @@
 [submodule "Br1ght0ne-elixir-go-rust-zig"]
 	path = Br1ght0ne-elixir-go-rust-zig
 	url = https://github.com/Br1ght0ne/aoc-2021.git
+[submodule "rcarlsson-rust"]
+	path = rcarlsson-rust
+	url = git@github.com:rcarlsson/adventofcode2021.git
