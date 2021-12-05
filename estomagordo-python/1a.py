@@ -16,7 +16,7 @@ def main():
         for line in f.readlines():
             lines.append(int(line))
 
-    return solve(lines, 3)
+    return solve(lines)
 
 
 if __name__ == '__main__':
