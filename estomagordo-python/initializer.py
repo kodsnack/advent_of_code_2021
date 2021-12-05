@@ -29,8 +29,8 @@ if __name__ == '__main__':
 if __name__ == '__main__':
     day = argv[1]
     
-    daya = f'{day}a.py'
-    dayb = f'{day}b.py'
+    daya = f'{day}daya.py'
+    dayb = f'{day}dayb.py'
     inp = f'{day}.txt'
 
     if not path.isfile(daya):
