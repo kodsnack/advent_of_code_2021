@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using AdventOfCode;
 //using Position = AdventOfCode.GenericPosition2D<int>;
 
-namespace day03
+namespace dayXX
 {
     public class DayXX
     {
