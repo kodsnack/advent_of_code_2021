@@ -7,12 +7,14 @@ solve1 = unlines
 solve2 = unlines
 
 parser = do
-    lines <- many $ manyTill get (char '\n')
+    lines <- many $ manyTill get newline
     eof
     return lines
 
 run :: ReadP a -> String -> a
 run parser s = fst . head $ readP_to_S parser s
+
+newline = char '\n'
 
 integer :: ReadP Int
 integer =
