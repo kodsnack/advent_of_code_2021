@@ -8,11 +8,16 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 def solve(lines, distance=1):
     return sum(lines[x] > lines[x-distance] for x in range(distance, len(lines)))
 
-if __name__ == '__main__':
+
+def main():
     lines = []
 
     with open('1.txt') as f:
         for line in f.readlines():
             lines.append(int(line))
 
-    print(solve(lines))
+    return solve(lines, 3)
+
+
+if __name__ == '__main__':
+    print(main())

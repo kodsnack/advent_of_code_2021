@@ -33,7 +33,7 @@ def solve(calls, boards):
                 return nonwon * int(calls[i-1])
 
 
-if __name__ == '__main__':
+def main():
     calls = []
     boards = []
     board = []
@@ -51,4 +51,8 @@ if __name__ == '__main__':
                 board.append(line.split())
         boards.append(board)
             
-    print(solve(calls, boards))
+    return solve(calls, boards)
+
+
+if __name__ == '__main__':
+    print(main())

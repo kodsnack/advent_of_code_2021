@@ -24,11 +24,15 @@ def solve(lines):
     return z*x
 
 
-if __name__ == '__main__':
+def main():
     lines = []
 
     with open('2.txt') as f:
         for line in f.readlines():
             lines.append(line.split())
 
-    print(solve(lines))
+    return solve(lines)
+
+
+if __name__ == '__main__':
+    print(main())

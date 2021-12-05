@@ -12,14 +12,18 @@ def solve(lines):
     pass
 
 
-if __name__ == '__main__':
+def main():
     lines = []
 
     with open('{day}.txt') as f:
         for line in f.readlines():
             lines.append(line)
             
-    print(solve(lines))
+    return solve(lines)
+
+
+if __name__ == '__main__':
+    print(main())
 """
 
 if __name__ == '__main__':
