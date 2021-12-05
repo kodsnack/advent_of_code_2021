@@ -1,0 +1,13 @@
+#!/bin/bash
+set -x
+day=$1
+f=$day"a.py"
+if [ -f $f ]
+then
+  echo 'file already exists'
+else
+  sed "s/£/$day/g" template.py > $f
+  #  cookie.txt SHALL contain the secret string of the session cookie. Get it by inspecting in web tools.
+  curl "https://adventofcode.com/2021/day/${day}/input" -H "Cookie:session=$(cat cookie.txt)" --compressed > $day.txt
+  firefox "https://adventofcode.com/2021/day/$day"
+fi
