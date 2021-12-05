@@ -1,0 +1,32 @@
+from collections import Counter, defaultdict, deque
+from functools import reduce
+from heapq import heappop, heappush
+from itertools import combinations, permutations, product
+from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, columns
+
+
+def solve(lines):
+    points = defaultdict(int)
+
+    for x1, y1, x2, y2 in lines:
+        if x1 == x2:
+            for y in range(min(y1, y2), max(y1, y2)+1):
+                points[(x1, y)] += 1
+        elif y1 == y2:
+            for x in range(min(x1, x2), max(x1, x2)+1):
+                points[(x, y1)] += 1
+
+    return len([v for v in points.values() if v > 1])
+
+
+if __name__ == '__main__':
+    lines = []
+
+    with open('5.txt') as f:
+        for line in f.readlines():
+            a, _, b = line.split()
+            x1,y1 = map(int, a.split(','))
+            x2,y2 = map(int, b.split(','))
+            lines.append((x1, y1, x2, y2))
+            
+    print(solve(lines))
