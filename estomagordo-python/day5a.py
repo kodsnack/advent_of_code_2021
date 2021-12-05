@@ -19,7 +19,7 @@ def solve(lines):
     return len([v for v in points.values() if v > 1])
 
 
-if __name__ == '__main__':
+def main():
     lines = []
 
     with open('5.txt') as f:
@@ -29,4 +29,8 @@ if __name__ == '__main__':
             x2,y2 = map(int, b.split(','))
             lines.append((x1, y1, x2, y2))
             
-    print(solve(lines))
+    return solve(lines)
+
+
+if __name__ == '__main__':
+    print(main())
