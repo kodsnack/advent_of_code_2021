@@ -750,7 +750,7 @@ namespace AdventOfCode
             return list;
         }
 
-        public static List<List<string>> StringLists(string path, char delimiter = ' ')
+        public static List<List<string>> StringLists(string path, string delimiter = " ")
         {
             StreamReader reader = File.OpenText(path);
             var list = new List<List<string>>();

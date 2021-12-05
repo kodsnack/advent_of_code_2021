@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using AdventOfCode;
 
 namespace day02
@@ -30,7 +28,7 @@ namespace day02
 
         static Object PartA()
         {
-            var input = ReadIndata.StringLists(inputPath, ' ');
+            var input = ReadIndata.StringLists(inputPath, " ");
             int d = 0;
             int f = 0;
             foreach (var v in input)
