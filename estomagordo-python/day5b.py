@@ -34,10 +34,7 @@ def main():
 
     with open('5.txt') as f:
         for line in f.readlines():
-            a, _, b = line.split()
-            x1,y1 = map(int, a.split(','))
-            x2,y2 = map(int, b.split(','))
-            lines.append((x1, y1, x2, y2))
+            lines.append(ints(line))
             
     return solve(lines)
 
