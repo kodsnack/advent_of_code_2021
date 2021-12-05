@@ -33,46 +33,48 @@ std::tuple<std::string, std::string> p05(const std::string & input) {
             }
         }
     }
-    for(auto p : {1,2}) {
-        std::vector<std::vector<int>> grid;
-        grid.resize(maxy + 1);
-        for (auto &&g: grid) {
-            g.resize(maxx + 1);
-        }
 
-        for (auto[x1, y1, x2, y2]: v) {
+    std::vector<std::vector<char>> grid;
+    grid.resize(maxy + 1);
+    for (auto &&g: grid) {
+        g.resize(maxx + 1);
+    }
+
+
+    for (auto[x1, y1, x2, y2]: v) {
+        if (x1 == x2) {
+            for (int y = std::min(y1,y2); y <= std::max(y1,y2); y++) {
+                if(grid[y][x1] == 1) ans1++;
+                grid[y][x1]++;
+            }
+        } else if (y1 == y2) {
+            for (int x = std::min(x1,x2); x <= std::max(x1,x2); x++) {
+                if(grid[y1][x] == 1) ans1++;
+                grid[y1][x]++;
+            }
+        }
+    }
+
+    ans2 = ans1;
+
+    for (auto[x1, y1, x2, y2]: v) {
+        if(x1 != x2 && y1 != y2) {
             int dx = (x1 < x2 ? 1 : -1);
             int dy = (y1 < y2 ? 1 : -1);
-            if (x1 == x2) {
-                for (int y = y1+dy; y != y2; y+=dy) grid[y][x1]++;
-                grid[y1][x1]++;
-                grid[y2][x2]++;
-            } else if (y1 == y2) {
-                for (int x = x1+dx; x != x2; x+=dx) grid[y1][x]++;
-                grid[y1][x1]++;
-                grid[y2][x2]++;
-            } else {
-                if(p == 2) {
-                    grid[y1][x1]++;
-                    grid[y2][x2]++;
-                    x1 += dx;
-                    for (int y = y1+dy; y != y2; y+=dy) {
-                        grid[y][x1]++;
-                        x1 += dx;
-                    }
-                }
+            if(grid[y1][x1] == 1) ans2++;
+            grid[y1][x1]++;
+            if(grid[y2][x2] == 1) ans2++;
+            grid[y2][x2]++;
+            x1 += dx;
+            for (int y = y1+dy; y != y2; y+=dy) {
+                if(grid[y][x1] == 1) ans2++;
+                grid[y][x1]++;
+                x1 += dx;
             }
+
         }
-
-        int cnt = 0;
-        for (auto &&g: grid) {
-            for (auto i: g) {
-                if (i > 1) cnt++;
-
-            }
-        }
-
-        (p == 1 ? ans1 : ans2) = cnt;
     }
+
+
     return {std::to_string(ans1), std::to_string(ans2)};
 }
