@@ -6,17 +6,10 @@ from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, g
 
 
 def solve(calls, boards):
-    haswon = set()
-    lastwon = -1
-
     for i in range(5, len(calls)+1):
         drawn = set(calls[:i])
 
-        for j in range(len(boards)):
-            if j in haswon:
-                continue
-
-            board = boards[j]
+        for board in boards:
             won = False
             
             for row in board:
@@ -30,21 +23,17 @@ def solve(calls, boards):
                     break
 
             if won:
-                haswon.add(j)
-                lastwon = j
+                nonwon = 0
+                
+                for line in board:
+                    for num in line:
+                        if num not in drawn:
+                            nonwon += int(num)
 
-        if len(haswon) == len(boards):
-            board = boards[lastwon]
-            nonwon = 0
-            
-            for line in board:
-                for num in line:
-                    if num not in drawn:
-                        nonwon += int(num)
+                return nonwon * int(calls[i-1])
 
-            return nonwon * int(calls[i-1])
 
-if __name__ == '__main__':
+def main():
     calls = []
     boards = []
     board = []
@@ -62,4 +51,8 @@ if __name__ == '__main__':
                 board.append(line.split())
         boards.append(board)
             
-    print(solve(calls, boards))
+    return solve(calls, boards)
+
+
+if __name__ == '__main__':
+    print(main())
