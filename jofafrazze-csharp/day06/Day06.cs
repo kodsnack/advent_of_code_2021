@@ -21,14 +21,55 @@ namespace day06
         static Object PartA()
         {
             var input = ReadIndata.Ints(inputPath);
-            int ans = 0;
+            for (int x =0; x < 80; x++)
+            {
+                var l = new List<int>();
+                foreach(int i in input)
+                {
+                    int a = i - 1;
+                    if (a < 0)
+                    {
+                        l.Add(6);
+                        l.Add(8);
+                    }
+                    else
+                        l.Add(a);
+                }
+                input = l;
+            }
+            int ans = input.Count;
             Console.WriteLine("Part A: Result is {0}", ans);
             return ans;
         }
 
         static Object PartB()
         {
-            int ans = 0;
+            var input = ReadIndata.Ints(inputPath);
+            var ages = new long[9];
+            ages[0] = input.Where(x => x == 0).Count();
+            ages[1] = input.Where(x => x == 1).Count();
+            ages[2] = input.Where(x => x == 2).Count();
+            ages[3] = input.Where(x => x == 3).Count();
+            ages[4] = input.Where(x => x == 4).Count();
+            ages[5] = input.Where(x => x == 5).Count();
+            ages[6] = input.Where(x => x == 6).Count();
+            for (int x = 0; x < 256; x++)
+            {
+                var l = new long[9];
+                for (int i = 0; i < 9; i++)
+                {
+                    long n = ages[i];
+                    if (i == 0)
+                    {
+                        l[6] += n;
+                        l[8] += n;
+                    }
+                    else
+                        l[i - 1] += n;
+                }
+                ages = l;
+            }
+            long ans = ages.Sum();
             Console.WriteLine("Part B: Result is {0}", ans);
             return ans;
         }
