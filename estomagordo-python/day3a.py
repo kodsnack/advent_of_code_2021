@@ -14,11 +14,16 @@ def solve(lines):
     return gamma*epsilon
 
 
-if __name__ == '__main__':
+def main():
     lines = []
 
     with open('3.txt') as f:
         for line in f.readlines():
             lines.append(line.rstrip())
             
-    print(solve(lines))
+    return solve(lines)
+
+
+
+if __name__ == '__main__':
+    print(main())

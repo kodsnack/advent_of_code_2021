@@ -63,3 +63,9 @@
 [submodule "rcarlsson-rust"]
 	path = rcarlsson-rust
 	url = git@github.com:rcarlsson/adventofcode2021.git
+[submodule "zhangjunyan2580-cpp"]
+        path = zhangjunyan2580-cpp
+	url = https://github.com/zhangjunyan2580/Advent-of-Code-2021.git
+[submodule "johan1a-python"]
+	path = johan1a-python
+	url = https://github.com/johan1a/adventofcode2021.git
