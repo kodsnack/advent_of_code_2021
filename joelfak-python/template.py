@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import helpfunctions as hf
-import sys
+import sys, pytest
 
 @hf.timing
 def part1(data):
@@ -13,8 +13,12 @@ def part2(data):
 
 ## Unit tests ########################################################
 
-def test_part1():
-    assert part1(1) == 0
+@pytest.fixture
+def input():
+    return 0
+
+def test_part1_a(input):
+    assert part1(input) == 0
 
 ## Main ########################################################
 
