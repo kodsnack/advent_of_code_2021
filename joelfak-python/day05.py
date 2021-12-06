@@ -8,23 +8,28 @@ Coord = namedtuple('Coord', ['x', 'y'])
 
 
 class VentMap():
-    def __init__(self, input: list[tuple[Coord, Coord]]):
+    def __init__(self, input: list[tuple[Coord, Coord]], allow_diagonals=False):
         size = max(max(max(input))) + 1
         self.map = [[0] * size for i in range(size)]
-        # import pdb; pdb.set_trace()
+        
         for (start, end) in input:
             x_range = None
-            y_range = None
+            y_range = ModuleNotFoundError
             if start.x == end.x:
-                y_range = range(min(start.y, end.y), max(start.y,end.y)+1)
+                y_range = range(min(start.y,end.y), max(start.y,end.y)+1)
                 x_range = [start.x] * len(y_range)
-            if start.y == end.y:
-                x_range = range(min(start.x, end.x), max(start.x,end.x)+1)
+            elif start.y == end.y:
+                x_range = range(min(start.x,end.x), max(start.x,end.x)+1)
                 y_range = [start.y] * len(x_range)
+            elif allow_diagonals and (abs(start.x-end.x) == abs(start.y-end.y)):
+                step_x = 1 if end.x > start.x else -1
+                step_y = 1 if end.y > start.y else -1
+                x_range = range(start.x, end.x+step_x, step_x)
+                y_range = range(start.y, end.y+step_y, step_y)
+
             if x_range:
                 for x, y in zip(x_range, y_range):
                     self.map[y][x] += 1
-                    # print(self)
 
     def get_map(self):
         return [''.join(map(str, row)).replace('0','.') for row in self.map]
@@ -39,19 +44,14 @@ class VentMap():
         return '\n'.join(self.get_map())
 
 @hf.timing
-def part1(data):
-    input = []
-    for row in data:
-        row = row.split(' -> ')
-        start = Coord(*map(int, row[0].split(',')))
-        end = Coord(*map(int, row[1].split(',')))
-        input.append([start, end])
+def part1(input):
     vm = VentMap(input)
     return vm.get_intersections()
 
 @hf.timing
-def part2(data):
-    return 0
+def part2(input):
+    vm = VentMap(input, True)
+    return vm.get_intersections()
 
 ## Unit tests ########################################################
 
@@ -68,7 +68,7 @@ def input():
             (Coord(0,0),Coord(8,8)),
             (Coord(5,5),Coord(8,2))]
 
-def test_VentMap(input):
+def test_VentMap_a(input):
     vm = VentMap(input)
     assert vm.get_map() == ['.......1..',
                             '..1....1..',
@@ -80,6 +80,18 @@ def test_VentMap(input):
                             '..........',
                             '..........',
                             '222111....']
+def test_VentMap_b(input):
+    vm = VentMap(input, True)
+    assert vm.get_map() == ['1.1....11.',
+                            '.111...2..',
+                            '..2.1.111.',
+                            '...1.2.2..',
+                            '.112313211',
+                            '...1.2....',
+                            '..1...1...',
+                            '.1.....1..',
+                            '1.......1.',
+                            '222111....']
 
 def test_VentMap_intersections(input):
     vm = VentMap(input)
@@ -88,7 +100,14 @@ def test_VentMap_intersections(input):
 ## Main ########################################################
 
 if __name__ == '__main__':
+    input = []
+    for row in hf.readFile(sys.argv[1]):
+        row = row.split(' -> ')
+        start = Coord(*map(int, row[0].split(',')))
+        end = Coord(*map(int, row[1].split(',')))
+        input.append([start, end])
 
-    print("Advent of code day X")
-    print("Part1 result: {}".format(part1(hf.readFile(sys.argv[1]))))
-    print("Part2 result: {}".format(part2(hf.getIntsFromFile(sys.argv[1]))))
+    print("Advent of code day 5")
+    print("Part1 result: {}".format(part1(input.copy())))
+    print("Part1 result: {}".format(part1(input.copy())))
+    print("Part2 result: {}".format(part2(input.copy())))
