@@ -1,0 +1,58 @@
+﻿data:
+LOAD
+    @1 as direction,
+    @2 as value
+FROM [lib://Advent of code 2021:DataFiles/aocDec02.txt]
+(txt, codepage is 28591, no labels, delimiter is spaces, msq);
+
+
+NoConcatenate
+forward:
+load sum(value) as forward Resident data where direction='forward';
+
+NoConcatenate
+down:
+load 
+	 sum(value) as down
+Resident data where direction='down';
+
+NoConcatenate
+up:
+load 
+	 sum(value) as up
+Resident data where direction='up';
+
+//svar: (down-up)*forward 2039912
+let forward = peek('forward',0, 'forward');
+let down = peek('down',0, 'down');
+let up = peek('up',0, 'up');
+let answerPart1 = ($(down)-$(up))*$(forward);
+trace Svar första delen $(answerPart1);
+
+//forward 1996
+
+NoConcatenate
+data2:
+load *,
+	if(direction='forward', aim*value, 0) as depth
+;
+load*,
+	rangesum(if(direction='forward',0,value), peek('aim')) as aim
+;
+load
+	direction,
+    if(direction='up', -value, value) as value
+    
+Resident data;
+
+drop table data;
+
+NoConcatenate
+data3:
+load sum(depth) as depthTotal Resident data2;
+
+
+//återanvänd forward-värdet från deluppgift1
+let depthTot = peek('depthTotal', 0, 'data3');
+let answerPart2 = $(depthTot)*$(forward);
+trace Svar andra delen $(answerPart2);

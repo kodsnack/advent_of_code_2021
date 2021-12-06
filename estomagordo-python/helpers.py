@@ -114,3 +114,7 @@ def hexneighs(r, c):
         neighs |= { (r+1, c), (r+1, c+1), (r-1, c+1), (r-1, c) }
 
     return neighs
+
+
+def columns(matrix):
+    return [[line[x] for line in matrix] for x in range(len(matrix[0]))]
