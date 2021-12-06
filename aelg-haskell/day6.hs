@@ -2,20 +2,9 @@ import Text.ParserCombinators.ReadP
 import Data.Char
 import Data.List
 
-solve1 xs = show $ sum . map snd $ run 80 nextDay ys
-    where 
+solve days xs = sum . map snd . (!! days) $ iterate nextDay ys
+    where
         ys = map (\x -> (head x, length x)) . group . sort $ xs
-        run 0 f x = x
-        run n f x = run (n-1) f (f x)
-        nextDay = concatMap iter
-        iter (0, n) = [(8, n), (6, n)]
-        iter (x, n) = [(x-1, n)]
-
-solve2 xs = show $ sum . map snd $ run 256 nextDay ys
-    where 
-        ys = map (\x -> (head x, length x)) . group . sort $ xs
-        run 0 f x = x
-        run n f x = run (n-1) f (f x)
         nextDay = merge . sort . concatMap iter
         merge [x] = [x]
         merge ((x, nx):(y, ny):xs) | x == y = merge ((x, nx+ny):xs)
@@ -23,11 +12,11 @@ solve2 xs = show $ sum . map snd $ run 256 nextDay ys
         iter (0, n) = [(8, n), (6, n)]
         iter (x, n) = [(x-1, n)]
 
-parser = do
-    xs <- sepBy1 integer (string ",")
-    newline
-    eof
-    return xs
+solve1 = show . solve 80
+
+solve2 = show . solve 256
+
+parser = sepBy1 integer (string ",") <* newline <* eof
 
 run :: ReadP a -> String -> a
 run parser s = fst . head $ readP_to_S parser s

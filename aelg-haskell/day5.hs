@@ -20,17 +20,8 @@ solve2 xs = show . numOverlap $ (xyPoints xs ++ diagPoints xs)
 data Coord = Coord Int Int deriving (Show, Eq, Ord)
 data Line = Line Coord Coord deriving (Show)
 
-parseCoord = do
-    x <- integer
-    string ","
-    y <- integer
-    return $ Coord x y
-
-parseLine = do
-    a <- parseCoord 
-    string " -> "
-    b <- parseCoord
-    return $ Line a b
+parseCoord = Coord <$> integer <* string "," <*> integer
+parseLine = Line <$> parseCoord <* string " -> " <*> parseCoord
 
 parser = do
     lines <- endBy1 parseLine newline
