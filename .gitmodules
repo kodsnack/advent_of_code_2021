@@ -51,3 +51,21 @@
 [submodule "LinAGKar-rust"]
 	path = LinAGKar-rust
 	url = https://github.com/LinAGKar/advent-of-code-2021-rust.git
+[submodule "edenvin-rust"]
+	path = edenvin-rust
+	url = git@github.com:edenvin/advent-of-code-2021.git
+[submodule "pin2t-java-go"]
+	path = pin2t-java-go
+	url = https://github.com/pin2t/aoc2021.git
+[submodule "Br1ght0ne-elixir-go-rust-zig"]
+	path = Br1ght0ne-elixir-go-rust-zig
+	url = https://github.com/Br1ght0ne/aoc-2021.git
+[submodule "rcarlsson-rust"]
+	path = rcarlsson-rust
+	url = git@github.com:rcarlsson/adventofcode2021.git
+[submodule "zhangjunyan2580-cpp"]
+        path = zhangjunyan2580-cpp
+	url = https://github.com/zhangjunyan2580/Advent-of-Code-2021.git
+[submodule "johan1a-python"]
+	path = johan1a-python
+	url = https://github.com/johan1a/adventofcode2021.git
