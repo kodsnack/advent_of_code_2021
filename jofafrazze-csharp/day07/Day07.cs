@@ -20,48 +20,22 @@ namespace day07
 
         static Object PartA()
         {
-            var input = ReadIndata.Ints(inputPath);
-            int n = input.Count();
-            int q = input.Min();
-            int r = input.Max();
-            long ans = long.MaxValue;
-            //Console.WriteLine("Part A: From {0} to {1}", q, r);
-            for (int i = q; i < r; i++)
-            {
-                long sum = 0;
-                foreach (int a in input)
-                    sum += Math.Abs(a - i);
-                if (sum < ans)
-                {
-                    //Console.WriteLine("Part A: New min {0}", sum);
-                    ans = sum;
-                }
-            }
+            var z = ReadIndata.Ints(inputPath);
+            static int f(int a, int mean) => Math.Abs(a - mean);
+            long ans = Enumerable.Range(z.Min(), z.Max()).Select(i => z.Select(x => f(x, i)).Sum()).Min();
             Console.WriteLine("Part A: Result is {0}", ans);
             return ans;
         }
 
         static Object PartB()
         {
-            var input = ReadIndata.Ints(inputPath);
-            int q = input.Min();
-            int r = input.Max();
-            long ans = long.MaxValue;
-            //Console.WriteLine("Part A: From {0} to {1}", q, r);
-            for (int i = q; i < r; i++)
+            var z = ReadIndata.Ints(inputPath);
+            static int f(int a, int mean)
             {
-                long sum = 0;
-                foreach (int a in input)
-                {
-                    int d = Math.Abs(a - i);
-                    sum += d * (d + 1) / 2;
-                }
-                if (sum < ans)
-                {
-                    //Console.WriteLine("Part A: New min {0}", sum);
-                    ans = sum;
-                }
+                int d = Math.Abs(a - mean);
+                return d * (d + 1) / 2;
             }
+            long ans = Enumerable.Range(z.Min(), z.Max()).Select(i => z.Select(x => f(x, i)).Sum()).Min();
             Console.WriteLine("Part B: Result is {0}", ans);
             return ans;
         }
