@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using AdventOfCode;
 
-namespace day04
+namespace aoc
 {
     public class Day04
     {

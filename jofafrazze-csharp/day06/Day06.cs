@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode;
 
-namespace day06
+namespace aoc
 {
     public class Day06
     {

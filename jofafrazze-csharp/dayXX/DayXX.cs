@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using AdventOfCode;
 //using Position = AdventOfCode.GenericPosition2D<int>;
 
-namespace dayXX
+namespace aoc
 {
     public class DayXX
     {
         static readonly string day = "dayXX";
 
-        // Day 08: 
+        // Day XX: 
 
         public static Object PartA(string file)
         {
