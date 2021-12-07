@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-
 using AdventOfCode;
 using Position = AdventOfCode.GenericPosition2D<int>;
 
@@ -13,14 +9,13 @@ namespace day05
 {
     public class Day05
     {
-        readonly static string nsname = typeof(Day05).Namespace;
-        readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+        static readonly string day = "day05";
 
         // Day 05: Count positions with more than one line
 
         static List<(Position p1, Position p2)> ReadPositions()
         {
-            StreamReader reader = File.OpenText(inputPath);
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day));
             var list = new List<(Position p1, Position p2)>();
             string line;
             static Position ReadPos(string s)
@@ -76,9 +71,7 @@ namespace day05
             var input = ReadPositions();
             var dict = new Dictionary<Position, int>();
             DrawLines(input, dict, false);
-            int ans = dict.Where(a => a.Value > 1).Count(); 
-            Console.WriteLine("Part A: Result is {0}", ans);
-            return ans;
+            return dict.Where(a => a.Value > 1).Count();
         }
 
         static Object PartB()
@@ -86,26 +79,12 @@ namespace day05
             var input = ReadPositions();
             var dict = new Dictionary<Position, int>();
             DrawLines(input, dict, true);
-            int ans = dict.Where(a => a.Value > 1).Count();
-            Console.WriteLine("Part B: Result is {0}", ans);
-            return ans;
+            return dict.Where(a => a.Value > 1).Count();
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("AoC 2021 - " + nsname + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
-            PartA();
-            PartB();
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
-        }
-
-        public static bool MainTest()
-        {
-            int a = 6113;
-            int b = 20373;
-            return (PartA().Equals(a)) && (PartB().Equals(b));
-        }
+        static void Main() => Aoc.Execute(day, PartA, PartB);
+        static readonly int qa = 6113;
+        static readonly int qb = 20373;
+        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

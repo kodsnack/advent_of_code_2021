@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using AdventOfCode;
 //using Position = AdventOfCode.GenericPosition2D<int>;
 
-namespace dayXX
+namespace day08
 {
-    public class DayXX
+    public class Day08
     {
-        static readonly string day = "dayXX";
+        static readonly string day = "day08";
 
         // Day 08: 
 

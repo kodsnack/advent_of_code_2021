@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AdventOfCode;
 
@@ -8,8 +7,7 @@ namespace day06
 {
     public class Day06
     {
-        readonly static string nsname = typeof(Day06).Namespace;
-        readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+        static readonly string day = "day06";
 
         // Day 06: Count individuals in a school of fish growing exponentially
 
@@ -39,35 +37,19 @@ namespace day06
 
         static Object PartA()
         {
-            var input = ReadIndata.Ints(inputPath);
-            long ans = CountFish(input, 80);
-            Console.WriteLine("Part A: Result is {0}", ans);
-            return ans;
+            var input = ReadInput.Ints(day);
+            return CountFish(input, 80);
         }
 
         static Object PartB()
         {
-            var input = ReadIndata.Ints(inputPath);
-            long ans = CountFish(input, 256);
-            Console.WriteLine("Part B: Result is {0}", ans);
-            return ans;
+            var input = ReadInput.Ints(day);
+            return CountFish(input, 256);
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("AoC 2021 - " + nsname + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
-            PartA();
-            PartB();
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
-        }
-
-        public static bool MainTest()
-        {
-            long a = 393019;
-            long b = 1757714216975;
-            return (PartA().Equals(a)) && (PartB().Equals(b));
-        }
+        static void Main() => Aoc.Execute(day, PartA, PartB);
+        static readonly long qa = 393019;
+        static readonly long qb = 1757714216975;
+        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }
