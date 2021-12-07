@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AdventOfCode;
 
 namespace day04
 {
     public class Day04
     {
-        readonly static string nsname = typeof(Day04).Namespace;
-        readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+        static readonly string day = "day04";
 
         // Day 04: Play bingo with giant squid (no diagonals, RTFM!)
 
         static List<List<int>> ReadBoards()
         {
-            StreamReader reader = File.OpenText(inputPath);
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day));
             var list = new List<List<int>>();
             var bingo = new List<int>();
             string line;
@@ -35,7 +35,7 @@ namespace day04
 
         static List<int> ReadInts()
         {
-            StreamReader reader = File.OpenText(inputPath);
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day));
             List<int> list = new List<int>();
             string line = reader.ReadLine();
             list.AddRange(line.Split(',').Select(int.Parse).ToList());
@@ -66,22 +66,16 @@ namespace day04
             var boards = ReadBoards();
             var nums = ReadInts();
             var drawn = new List<int>();
-            int ans = 0;
             foreach (int i in nums)
             {
                 drawn.Add(i);
                 foreach (var b in boards)
                 {
                     if (CheckBingo(b, drawn))
-                    {
-                        ans = b.Except(drawn).Sum() * i;
-                        goto Found;
-                    }
+                        return b.Except(drawn).Sum() * i;
                 }
             }
-            Found:
-            Console.WriteLine("Part A: Result is {0}", ans);
-            return ans;
+            return -1;
         }
 
         static Object PartB()
@@ -103,27 +97,14 @@ namespace day04
                 }
                 boards = nextBoards;
                 if (boards.Count == 0)
-                    break;
+                    return ans;
             }
-            Console.WriteLine("Part B: Result is {0}", ans);
-            return ans;
+            return -1;
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("AoC 2021 - " + nsname + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
-            PartA();
-            PartB();
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
-        }
-
-        public static bool MainTest()
-        {
-            int a = 29440;
-            int b = 13884;
-            return (PartA().Equals(a)) && (PartB().Equals(b));
-        }
+        static void Main() => Aoc.Execute(day, PartA, PartB);
+        static readonly int qa = 29440;
+        static readonly int qb = 13884;
+        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

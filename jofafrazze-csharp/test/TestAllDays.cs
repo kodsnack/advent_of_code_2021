@@ -8,7 +8,7 @@ namespace test
         [Fact]
         public void Test()
         {
-            Assert.True(day01.Day01.MainTest());
+            Assert.True(day01.Day01.Test());
         }
     }
 
@@ -17,7 +17,7 @@ namespace test
         [Fact]
         public void Test()
         {
-            Assert.True(day02.Day02.MainTest());
+            Assert.True(day02.Day02.Test());
         }
     }
 
@@ -26,7 +26,7 @@ namespace test
         [Fact]
         public void Test()
         {
-            Assert.True(day03.Day03.MainTest());
+            Assert.True(day03.Day03.Test());
         }
     }
 
@@ -35,7 +35,7 @@ namespace test
         [Fact]
         public void Test()
         {
-            Assert.True(day04.Day04.MainTest());
+            Assert.True(day04.Day04.Test());
         }
     }
 
@@ -44,7 +44,7 @@ namespace test
         [Fact]
         public void Test()
         {
-            Assert.True(day05.Day05.MainTest());
+            Assert.True(day05.Day05.Test());
         }
     }
 
@@ -53,7 +53,16 @@ namespace test
         [Fact]
         public void Test()
         {
-            Assert.True(day06.Day06.MainTest());
+            Assert.True(day06.Day06.Test());
+        }
+    }
+
+    public class TestDay07
+    {
+        [Fact]
+        public void Test()
+        {
+            Assert.True(day07.Day07.Test());
         }
     }
 }
