@@ -50,27 +50,15 @@ namespace day04
             return true;
         }
 
+        static Func<T1, TRes> ApplyPartial<T1, T2, T3, T4, TRes>(Func<T1, T2, T3, T4, TRes> func, T2 t2, T3 t3, T4 t4)
+        {
+            return (t1) => func(t1, t2, t3, t4);
+        }
         static bool CheckBingo(List<int> board, List<int> drawn)
         {
-            return CheckStride(0, 5, board, drawn) 
-                || CheckStride(1, 5, board, drawn) 
-                || CheckStride(2, 5, board, drawn) 
-                || CheckStride(3, 5, board, drawn) 
-                || CheckStride(4, 5, board, drawn) 
-                || CheckStride(0, 1, board, drawn) 
-                || CheckStride(5, 1, board, drawn) 
-                || CheckStride(10, 1, board, drawn) 
-                || CheckStride(15, 1, board, drawn) 
-                || CheckStride(20, 1, board, drawn);
-        }
-
-        static int Calc(List<int> board, List<int> drawn, int last)
-        {
-            int a = 0;
-            foreach (int i in board)
-                if (!drawn.Contains(i))
-                    a += i;
-            return a * last;
+            Func<int, bool> fh = ApplyPartial<int, int, List<int>, List<int>, bool>(CheckStride, 1, board, drawn);
+            Func<int, bool> fv = ApplyPartial<int, int, List<int>, List<int>, bool>(CheckStride, 5, board, drawn);
+            return fv(0) || fv(1) || fv(2) || fv(3) || fv(4) || fh(0) || fh(5) || fh(10) || fh(15) || fh(20);
         }
 
         static Object PartA()
@@ -86,7 +74,7 @@ namespace day04
                 {
                     if (CheckBingo(b, drawn))
                     {
-                        ans = Calc(b, drawn, i);
+                        ans = b.Except(drawn).Sum() * i;
                         goto Found;
                     }
                 }
@@ -109,7 +97,7 @@ namespace day04
                 foreach (var b in boards)
                 {
                     if (CheckBingo(b, drawn))
-                        ans = Calc(b, drawn, i);
+                        ans = b.Except(drawn).Sum() * i;
                     else
                         nextBoards.Add(b);
                 }
