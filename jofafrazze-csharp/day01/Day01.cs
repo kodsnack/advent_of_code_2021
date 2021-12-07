@@ -9,9 +9,9 @@ namespace day01
 
         // Day 01: Count increments
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var input = ReadInput.Ints(day);
+            var input = ReadInput.Ints(day, file);
             int ans = 0;
             for (int i = 1; i < input.Count; i++)
                 if (input[i] > input[i-1])
@@ -19,9 +19,9 @@ namespace day01
             return ans;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var v = ReadInput.Ints(day);
+            var v = ReadInput.Ints(day, file);
             int ans = 0;
             for (int i = 1; i < v.Count-2; i++)
                 if (v[i] + v[i+1] + v[i+2] > v[i-1] + v[i] + v[i+1])
@@ -30,8 +30,5 @@ namespace day01
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly int qa = 1301;
-        static readonly int qb = 1346;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

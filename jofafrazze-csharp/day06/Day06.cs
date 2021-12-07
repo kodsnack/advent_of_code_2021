@@ -35,21 +35,18 @@ namespace day06
             return ages.Sum();
         }
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var input = ReadInput.Ints(day);
+            var input = ReadInput.Ints(day, file);
             return CountFish(input, 80);
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var input = ReadInput.Ints(day);
+            var input = ReadInput.Ints(day, file);
             return CountFish(input, 256);
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly long qa = 393019;
-        static readonly long qb = 1757714216975;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

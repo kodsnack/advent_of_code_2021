@@ -29,9 +29,9 @@ namespace day03
             return s.Select((c, i) => (c == '1' ? 1 : 0) << (s.Length - 1 - i)).Sum();
         }
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var input = ReadInput.Strings(day);
+            var input = ReadInput.Strings(day, file);
             var cs = GetMajorityBits(input);
             int a = BinStringToInt(cs);
             int ones = (1 << cs.Length) - 1;
@@ -51,9 +51,9 @@ namespace day03
             return res;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var input = ReadInput.Strings(day);
+            var input = ReadInput.Strings(day, file);
             var al = input;
             var bl = input;
             for (int i = 0; i < input[0].Length; i++)
@@ -69,8 +69,5 @@ namespace day03
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly int qa = 2261546;
-        static readonly int qb = 6775520;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

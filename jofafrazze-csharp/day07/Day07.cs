@@ -10,17 +10,17 @@ namespace day07
 
         // Day 07: Minimize sum of integers
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var z = ReadInput.Ints(day);
+            var z = ReadInput.Ints(day, file);
             static int f(int a, int mean) => Math.Abs(a - mean);
             var r = Enumerable.Range(z.Min(), z.Max());
             return r.Select(i => z.Select(x => f(x, i)).Sum()).Min();
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var z = ReadInput.Ints(day);
+            var z = ReadInput.Ints(day, file);
             static int f(int a, int mean)
             {
                 int d = Math.Abs(a - mean);
@@ -31,8 +31,5 @@ namespace day07
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly int qa = 348664;
-        static readonly int qb = 100220525;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }
