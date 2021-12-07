@@ -38,10 +38,7 @@ namespace day05
 
         static void IncPos(Dictionary<Position, int> dict, Position p)
         {
-            if (dict.ContainsKey(p))
-                dict[p] = dict[p] + 1;
-            else
-                dict[p] = 1;
+            dict[p] = dict.GetValueOrDefault(p, 0) + 1;
         }
 
         static void DrawLines(List<(Position, Position)> lines, Dictionary<Position, int> dict, bool diagonals)
