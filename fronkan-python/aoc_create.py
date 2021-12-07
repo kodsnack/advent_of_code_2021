@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import date
 from argparse import ArgumentParser
+from textwrap import dedent
 
 # --------------------------------------- PARSER ---------------------------------------
 parser = ArgumentParser()
@@ -18,59 +19,62 @@ DAY_TO_GENERATE = args.day
 
 # --------------------------------------- TEMPLATES ---------------------------------------
 
-TEST_FILE_CONTENT = """
-import importlib
-import pytest
-from pathlib import Path
-
-DIRECTORY = Path(__file__).parent
-
-solution = importlib.import_module(f"{DIRECTORY.name}.solution")
-
-
-@pytest.mark.parametrize(
-    "puzzle, result",
-    [
-        # (1, None),
-        # (2, None)
-    ],
-)
-def test_puzzle_example_input(puzzle, result):
-    input_file = Path(__file__).parent / "example_input.txt"
-    puzzle_solver = getattr(solution, f"puzzle{puzzle}")
-    assert puzzle_solver(input_file) == result
-
-
-@pytest.mark.parametrize(
-    "puzzle, result",
-    [
-        # (1, None),
-        # (2, None)
-    ],
-)
-def test_puzzle_real_input(puzzle, result):
-    input_file = Path(__file__).parent / "input.txt"
-    puzzle_solver = getattr(solution, f"puzzle{puzzle}")
-    assert puzzle_solver(input_file) == result
+TEST_FILE_CONTENT = dedent(
 """
-SOLUTION_FILE_CONTENT = f"""
-from pathlib import Path
+    import importlib
+    import pytest
+    from pathlib import Path
 
-def puzzle1(input_file: Path):
-    raise NotImplementedError()
+    DIRECTORY = Path(__file__).parent
 
-
-
-def puzzle2(input_file: Path):
-    raise NotImplementedError()
+    solution = importlib.import_module(f"{DIRECTORY.name}.solution")
 
 
-if __name__ == "__main__":
-    print("Day {DAY_TO_GENERATE}")
-    input_file = Path(__file__).parent / "input.txt"
-    print("Puzzle 1:", puzzle1(input_file))
-    print("Puzzle 2:", puzzle2(input_file))
-"""
+    @pytest.mark.parametrize(
+        "puzzle, result",
+        [
+            # (1, None),
+            # (2, None)
+        ],
+    )
+    def test_puzzle_example_input(puzzle, result):
+        input_file = Path(__file__).parent / "example_input.txt"
+        puzzle_solver = getattr(solution, f"puzzle{puzzle}")
+        assert puzzle_solver(input_file) == result
+
+
+    @pytest.mark.parametrize(
+        "puzzle, result",
+        [
+            # (1, None),
+            # (2, None)
+        ],
+    )
+    def test_puzzle_real_input(puzzle, result):
+        input_file = Path(__file__).parent / "input.txt"
+        puzzle_solver = getattr(solution, f"puzzle{puzzle}")
+        assert puzzle_solver(input_file) == result
+""")
+SOLUTION_FILE_CONTENT = dedent(
+f"""
+    from pathlib import Path
+
+    def puzzle1(input_file: Path):
+        raise NotImplementedError()
+
+
+
+    def puzzle2(input_file: Path):
+        raise NotImplementedError()
+
+
+    if __name__ == "__main__":
+        print("Day {DAY_TO_GENERATE}")
+        input_file = Path(__file__).parent / "input.txt"
+        # input_file = Path(__file__).parent / "example_input.txt"
+        print("Puzzle 1:", puzzle1(input_file))
+        print("Puzzle 2:", puzzle2(input_file))
+""")
 
 # --------------------------------------- GENERATE FILES ---------------------------------------
 file_name = (

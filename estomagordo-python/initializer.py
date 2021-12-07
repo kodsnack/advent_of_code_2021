@@ -1,33 +1,36 @@
 from os import path
 from sys import argv
 
-dayfile = lambda day: f"""
-from collections import Counter, defaultdict, deque
+dayfile = lambda day: f"""from collections import Counter, defaultdict, deque
 from functools import reduce
 from heapq import heappop, heappush
 from itertools import combinations, permutations, product
-from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
+from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, columns
 
 
 def solve(lines):
     pass
 
 
-if __name__ == '__main__':
+def main():
     lines = []
 
     with open('{day}.txt') as f:
         for line in f.readlines():
             lines.append(line)
             
-    print(solve(lines))
+    return solve(lines)
+
+
+if __name__ == '__main__':
+    print(main())
 """
 
 if __name__ == '__main__':
     day = argv[1]
     
-    daya = f'{day}a.py'
-    dayb = f'{day}b.py'
+    daya = f'day{day}a.py'
+    dayb = f'day{day}b.py'
     inp = f'{day}.txt'
 
     if not path.isfile(daya):
