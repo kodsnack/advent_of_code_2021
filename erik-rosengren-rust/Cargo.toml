@@ -1,0 +1,10 @@
+[workspace]
+
+members = [
+    "day6",
+    "day7",
+]
+
+exclude = [
+    "runner"
+]
