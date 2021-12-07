@@ -24,6 +24,9 @@ def test_part1_a(input):
 
 if __name__ == '__main__':
 
+    with open(sys.argv[1]) as f:
+        input = [line.strip() for line in f.readlines()]
+
     print("Advent of code day X")
-    print("Part1 result: {}".format(part1(hf.getIntsFromFile(sys.argv[1]))))
-    print("Part2 result: {}".format(part2(hf.getIntsFromFile(sys.argv[1]))))
+    print(f"Part1 result: {part1(input.copy())}")
+    print(f"Part2 result: {part2(input.copy())}")
