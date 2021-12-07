@@ -5,14 +5,9 @@ from itertools import combinations, permutations, product
 from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, columns
 
 
-def solve(lines):
-    best = (10**10,-1)
-
-    for val in range(min(lines), max(lines)):
-        cost = sum(abs(val-l) for l in lines)
-        best = min(best, (cost,val))
-
-    return best[0]
+def solve(crabs):
+    lookat = range(min(crabs), max(crabs))
+    return min(sum(abs(crab-pos) for crab in crabs) for pos in lookat)
 
 
 def main():
