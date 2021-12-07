@@ -1,5 +1,4 @@
 pub fn main() {
-    let input = "16,1,2,0,4,2,7,1,2,14";
     let input = include_str!("../input.txt").lines().next().unwrap();
     let pos = input
         .split(",")
@@ -29,9 +28,7 @@ fn get_fuel_cost2(target: u16, pos: &Vec<u16>) -> u32 {
     let mut total = 0u32;
     for i in pos {
         let dist = (*i as i32 - target as i32).abs() as u32;
-        for d in 1..=dist {
-            total += d;
-        }
+        total += (1..=dist).sum::<u32>();
     }
     total
 }
