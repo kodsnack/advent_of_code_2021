@@ -714,14 +714,15 @@ namespace AdventOfCode
 
     public static class ReadInput
     {
-        public static string GetPath(string nsname)
+        public static string GetPath(string nsname, string file)
         {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+            string s = (file == "") ? "input.txt" : file;
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\" + s);
         }
 
-        public static List<int> Ints(string nsname, char delimiter = ',')
+        public static List<int> Ints(string nsname, string file, char delimiter = ',')
         {
-            StreamReader reader = File.OpenText(GetPath(nsname));
+            StreamReader reader = File.OpenText(GetPath(nsname, file));
             List<int> list = new List<int>();
             string line;
             while ((line = reader.ReadLine()) != null)
@@ -731,9 +732,9 @@ namespace AdventOfCode
             return list;
         }
 
-        public static List<long> Longs(string nsname, char delimiter = ',')
+        public static List<long> Longs(string nsname, string file, char delimiter = ',')
         {
-            StreamReader reader = File.OpenText(GetPath(nsname));
+            StreamReader reader = File.OpenText(GetPath(nsname, file));
             List<long> list = new List<long>();
             string line;
             while ((line = reader.ReadLine()) != null)
@@ -743,9 +744,9 @@ namespace AdventOfCode
             return list;
         }
 
-        public static List<string> Strings(string nsname)
+        public static List<string> Strings(string nsname, string file)
         {
-            StreamReader reader = File.OpenText(GetPath(nsname));
+            StreamReader reader = File.OpenText(GetPath(nsname, file));
             List<string> list = new List<string>();
             string line;
             while ((line = reader.ReadLine()) != null)
@@ -755,9 +756,9 @@ namespace AdventOfCode
             return list;
         }
 
-        public static List<List<string>> StringLists(string nsname, string delimiter = " ")
+        public static List<List<string>> StringLists(string nsname, string file, string delimiter = " ")
         {
-            StreamReader reader = File.OpenText(GetPath(nsname));
+            StreamReader reader = File.OpenText(GetPath(nsname, file));
             var list = new List<List<string>>();
             string line;
             while ((line = reader.ReadLine()) != null)
@@ -770,13 +771,14 @@ namespace AdventOfCode
 
     public static class Aoc
     {
-        public static void Execute(string day, Func<Object> PartA, Func<Object> PartB)
+        public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
         {
             Console.WriteLine("AoC 2021 - " + day + ":");
             var w = System.Diagnostics.Stopwatch.StartNew();
-            Object a = PartA();
+            string file = example ? "example.txt" : "input.txt";
+            Object a = PartA(file);
             Console.WriteLine("Part A: Result is {0}", a);
-            Object b = PartB();
+            Object b = PartB(file);
             Console.WriteLine("Part B: Result is {0}", b);
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);

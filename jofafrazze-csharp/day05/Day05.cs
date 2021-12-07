@@ -13,9 +13,9 @@ namespace day05
 
         // Day 05: Count positions with more than one line
 
-        static List<(Position p1, Position p2)> ReadPositions()
+        static List<(Position p1, Position p2)> ReadPositions(string file)
         {
-            StreamReader reader = File.OpenText(ReadInput.GetPath(day));
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             var list = new List<(Position p1, Position p2)>();
             string line;
             static Position ReadPos(string s)
@@ -66,25 +66,22 @@ namespace day05
             }
         }
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var input = ReadPositions();
+            var input = ReadPositions(file);
             var dict = new Dictionary<Position, int>();
             DrawLines(input, dict, false);
             return dict.Where(a => a.Value > 1).Count();
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var input = ReadPositions();
+            var input = ReadPositions(file);
             var dict = new Dictionary<Position, int>();
             DrawLines(input, dict, true);
             return dict.Where(a => a.Value > 1).Count();
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly int qa = 6113;
-        static readonly int qb = 20373;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

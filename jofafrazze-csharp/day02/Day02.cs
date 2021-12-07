@@ -9,9 +9,9 @@ namespace day02
 
         // Day 02: Steer submarine up, down and forward
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var input = ReadInput.StringLists(day, " ");
+            var input = ReadInput.StringLists(day, file);
             int d = 0;
             int f = 0;
             foreach (var v in input)
@@ -28,9 +28,9 @@ namespace day02
             return d * f;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var input = ReadInput.StringLists(day);
+            var input = ReadInput.StringLists(day, file);
             int d = 0;
             int f = 0;
             int aim = 0;
@@ -52,8 +52,5 @@ namespace day02
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly int qa = 1727835;
-        static readonly int qb = 1544000595;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

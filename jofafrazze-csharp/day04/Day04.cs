@@ -12,9 +12,9 @@ namespace day04
 
         // Day 04: Play bingo with giant squid (no diagonals, RTFM!)
 
-        static List<List<int>> ReadBoards()
+        static List<List<int>> ReadBoards(string file)
         {
-            StreamReader reader = File.OpenText(ReadInput.GetPath(day));
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             var list = new List<List<int>>();
             var bingo = new List<int>();
             string line;
@@ -24,7 +24,7 @@ namespace day04
             {
                 var ls = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
                 bingo.AddRange(ls);
-                if (ls.Count == 0)
+                if (bingo.Count == 25)
                 {
                     list.Add(bingo);
                     bingo = new List<int>();
@@ -33,9 +33,9 @@ namespace day04
             return list;
         }
 
-        static List<int> ReadInts()
+        static List<int> ReadInts(string file)
         {
-            StreamReader reader = File.OpenText(ReadInput.GetPath(day));
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             List<int> list = new List<int>();
             string line = reader.ReadLine();
             list.AddRange(line.Split(',').Select(int.Parse).ToList());
@@ -61,10 +61,10 @@ namespace day04
             return fv(0) || fv(1) || fv(2) || fv(3) || fv(4) || fh(0) || fh(5) || fh(10) || fh(15) || fh(20);
         }
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var boards = ReadBoards();
-            var nums = ReadInts();
+            var boards = ReadBoards(file);
+            var nums = ReadInts(file);
             var drawn = new List<int>();
             foreach (int i in nums)
             {
@@ -78,10 +78,10 @@ namespace day04
             return -1;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var boards = ReadBoards();
-            var nums = ReadInts();
+            var boards = ReadBoards(file);
+            var nums = ReadInts(file);
             var drawn = new List<int>();
             int ans = 0;
             foreach (int i in nums)
@@ -103,8 +103,5 @@ namespace day04
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly int qa = 29440;
-        static readonly int qb = 13884;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }

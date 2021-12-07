@@ -16,21 +16,18 @@ namespace day08
 
         // Day 08: 
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var z = ReadInput.Ints(day);
+            var z = ReadInput.Ints(day, file);
             //Console.WriteLine("A is {0}", a);
             return 0;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
             return 0;
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
-        static readonly int qa = 42;
-        static readonly int qb = 4711;
-        public static bool Test() => (PartA().Equals(qa)) && (PartB().Equals(qb));
     }
 }
