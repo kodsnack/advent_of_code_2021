@@ -1,7 +1,7 @@
 ﻿using System;
 using AdventOfCode;
 
-namespace day01
+namespace aoc
 {
     public class Day01
     {

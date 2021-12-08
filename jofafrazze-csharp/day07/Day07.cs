@@ -2,7 +2,7 @@
 using System.Linq;
 using AdventOfCode;
 
-namespace day07
+namespace aoc
 {
     public class Day07
     {

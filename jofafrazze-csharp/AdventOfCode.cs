@@ -716,8 +716,7 @@ namespace AdventOfCode
     {
         public static string GetPath(string nsname, string file)
         {
-            string s = (file == "") ? "input.txt" : file;
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\" + s);
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\" + file);
         }
 
         public static List<int> Ints(string nsname, string file, char delimiter = ',')

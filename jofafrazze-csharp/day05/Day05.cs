@@ -5,7 +5,7 @@ using System.Linq;
 using AdventOfCode;
 using Position = AdventOfCode.GenericPosition2D<int>;
 
-namespace day05
+namespace aoc
 {
     public class Day05
     {
