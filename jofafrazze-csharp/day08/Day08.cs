@@ -47,10 +47,10 @@ namespace aoc
         //   -G-             0-23-56-89          -7-
 
 
-        static readonly Dictionary<string, int> lookup = new Dictionary<string, int>
+        static readonly Dictionary<string, char> seg2num = new Dictionary<string, char>
         {
-            ["abcefg"] = 0, ["cf"] = 1, ["acdeg"] = 2, ["acdfg"] = 3, ["bcdf"] = 4,
-            ["abdfg"] = 5, ["abdefg"] = 6, ["acf"] = 7, ["abcdefg"] = 8, ["abcdfg"] = 9
+            ["abcefg"] = '0', ["cf"] = '1', ["acdeg"] = '2', ["acdfg"] = '3', ["bcdf"] = '4',
+            ["abdfg"] = '5', ["abdefg"] = '6', ["acf"] = '7', ["abcdefg"] = '8', ["abcdfg"] = '9'
         };
 
         public static Object PartB(string file)
@@ -75,13 +75,8 @@ namespace aoc
                 var seg7 = freq.Where(x => x.Value == 7).Select(x => x.Key);
                 seg[seg7.Where(x => !p4.Contains(x)).First()] = 'g';
                 seg["abcdefg".Except(seg.Keys).First()] = 'd';
-                int rowSum = 0;
-                for (int n = 0; n < 4; n++)
-                {
-                    string decoded = new string(outputs[n].Select(x => seg[x]).OrderBy(y => y).ToArray());
-                    rowSum += lookup[decoded] * (int)Math.Pow(10, 3 - n);
-                }
-                sum += rowSum;
+                string decode(string s) => new string(s.Select(x => seg[x]).OrderBy(y => y).ToArray());
+                sum += int.Parse(outputs.Select(w => seg2num[decode(w)]).ToArray());
             }
             return sum;
         }
