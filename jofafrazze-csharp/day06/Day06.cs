@@ -13,24 +13,17 @@ namespace aoc
 
         static long CountFish(List<int> input, int days)
         {
-            var ages = new long[9];
-            for (int i = 0; i < 6; i++)
-                ages[i] = input.Where(x => x == i).Count();
+            var z = Enumerable.Range(0, 9);
+            var ages = z.Select(i => (long)input.Where(x => x == i).Count()).ToArray();
             for (int x = 0; x < days; x++)
             {
-                var l = new long[9];
-                for (int i = 0; i < 9; i++)
-                {
-                    long n = ages[i];
-                    if (i == 0)
-                    {
-                        l[6] += n;
-                        l[8] += n;
-                    }
-                    else
-                        l[i - 1] += n;
-                }
-                ages = l;
+                var next = new long[9];
+                long b = ages[0];
+                for (int i = 1; i < 9; i++)
+                    next[i - 1] = ages[i];
+                next[6] += b;
+                next[8] += b;
+                ages = next;
             }
             return ages.Sum();
         }
