@@ -11,140 +11,125 @@ std::tuple<std::string, std::string> p08(const std::string & input) {
     std::vector<std::vector<std::string>> v1;
     std::vector<std::vector<std::string>> v2;
 
+    std::vector<std::array<uint8_t, 14>> vb;
+    vb.reserve(500);
+
     {
-        bool pipe = false;
-        std::string tmp;
-        bool first = true;
+        uint8_t pt = 0;
+        int cnt = 0;
         for(const auto c : input) {
             if(c >= 'a' && c <= 'z') {
-                tmp.push_back(c);
+                pt |= (1<<(c-'a'));
             } else {
-                if(!tmp.empty()) {
-                    if(first) {
-                        v1.emplace_back();
-                        v2.emplace_back();
-                        first = false;
-                    }
-                    if(pipe) v2.back().push_back(tmp);
-                    else v1.back().push_back(tmp);
+                if(pt) {
+                    if(!cnt) vb.emplace_back();
+                    vb.back()[cnt++] = pt;
+                    if(cnt == 14) cnt = 0;
+                    pt = 0;
                 }
-                tmp.clear();
-                if(c == '|') pipe = true;
-                else if(c == '\n') {
-                    pipe = false;
-                    first = true;
-                }
-
             }
 
         }
     }
-/*
-    for(int i = 0; i < v1.size(); i++) {
-        for (auto && s : v1[i]) std::cout << ' ' << s;
-        std::cout << '|';
-        for (auto && s : v2[i]) std::cout << ' ' << s;
-        std::cout << std::endl;
-    }
-    std::cout << v1.size() << ' ' << v2.size() << std::endl;
-*/
-    for(auto && v : v2) for(auto && s : v) {
-        switch(s.size()) {
-            case 2:
-            case 3:
-            case 4:
-            case 7:
-                ans1++;
-                break;
-            default:
-                break;
-        }
-    }
 
-    auto pattern = [](const std::string & s) {
-        uint16_t ret = 0;
-        for(auto c : s) {
-            ret |= (1 << (c-'a'));
+    constexpr auto popcnt = [](uint8_t c) {
+        //return __builtin_popcount(c);
+        int ret = 0;
+        while(c) {
+            if(c & 1) ret++;
+            c >>= 1;
         }
         return ret;
     };
 
-    for(size_t i = 0; i < v1.size(); i++) {
-        std::map<std::string, int> m;
-        std::vector<std::string> v(10);
-        std::vector<std::string> fives, sixes;
-        for(auto && s : v1[i]) {
-            std::sort(s.begin(), s.end());
-            if(s.size() == 2) { m[s] = 1; v[1] = s; }
-            else if(s.size() == 3) { m[s] = 7; v[7] = s; }
-            else if(s.size() == 4) { m[s] = 4; v[4] = s; }
-            else if(s.size() == 7) { m[s] = 8; v[8] = s; }
-            else if(s.size() == 5) fives.push_back(s);
-            else if(s.size() == 6) sixes.push_back(s);
-            else std::cout << "ERROR" << std::endl;
-        }
+    std::array<int, 256> tab{};
+    std::array<uint8_t, 10> fwd{};
+    std::array<uint8_t,3> fives{}, sixes{};
 
-        auto one_p = pattern(v[1]);
+    for(auto && a : vb) {
+        int fc = 0, sc = 0;
+
+        for(size_t i = 0; i < 10; i++) {
+            switch(popcnt(a[i])) {
+                case 2: fwd[1] = a[i]; tab[a[i]] = 1; break;
+                case 3: fwd[7] = a[i]; tab[a[i]] = 7; break;
+                case 4: fwd[4] = a[i]; tab[a[i]] = 4; break;
+                case 5: fives[fc++] = a[i]; break;
+                case 6: sixes[sc++] = a[i]; break;
+                case 7: fwd[8] = a[i]; tab[a[i]] = 8; break;
+                default:
+                    break;
+            }
+        }
 
         // figure out 3
-        auto c11 = v[1][0];
-        auto c12 = v[1][1];
-        for(auto it = fives.begin(); it != fives.end(); it++) {
-            if(it->find(c11) != std::string::npos && it->find(c12) != std::string::npos) {
-                m[*it] = 3;
-                v[3] = *it;
-                fives.erase(it);
+        for(int i = 0; i < fc; i++) {
+            if((fives[i] & fwd[1]) == fwd[1]) {
+                fwd[3] = fives[i];
+                tab[fives[i]] = 3;
+                fc--;
+                std::swap(fives[i], fives[fc]);
                 break;
             }
         }
-        auto three_p = pattern(v[3]);
 
         // figure out 6
-        for(auto it = sixes.begin(); it != sixes.end(); it++) {
-            if((pattern(*it) & one_p) != one_p) {
-                m[*it] = 6;
-                v[6] = *it;
-                sixes.erase(it);
+        for(int i = 0; i < sc; i++) {
+            if ((sixes[i] & fwd[1]) != fwd[1]) {
+                fwd[6] = sixes[i];
+                tab[sixes[i]] = 6;
+                sc--;
+                std::swap(sixes[i], sixes[sc]);
                 break;
             }
         }
-        auto six_p = pattern(v[6]);
 
         // figure out 9
-        for(auto it = sixes.begin(); it != sixes.end(); it++) {
-            if((pattern(*it) & three_p) == three_p) {
-                m[*it] = 9;
-                v[9] = *it;
-                sixes.erase(it);
+        for(int i = 0; i < sc; i++) {
+            if((sixes[i] & fwd[3]) == fwd[3]) {
+                fwd[9] = sixes[i];
+                tab[sixes[i]] = 9;
+                sc--;
+                std::swap(sixes[i], sixes[sc]);
                 break;
             }
         }
-        // 0 is left
-        m[sixes.front()] = 0;
-        v[0] = sixes.front();
+
+        // 0 left
+        fwd[0] = sixes[0];
+        tab[sixes[0]] = 0;
 
         // figure out 5
-        for(auto it = fives.begin(); it != fives.end(); it++) {
-            auto cp = pattern(*it);
-            if((cp & six_p) == cp) {
-                m[*it] = 5;
-                v[5] = *it;
-                fives.erase(it);
+        for(int i = 0; i < fc; i++) {
+            if((fives[i] & fwd[9]) == fives[i]) {
+                fwd[5] = fives[i];
+                tab[fives[i]] = 5;
+                fc--;
+                std::swap(fives[i], fives[fc]);
                 break;
             }
         }
 
-        // 2 is left
-        m[fives.front()] = 2;
-        v[2] = fives.front();
+        // 2 left
+        fwd[2] = fives[0];
+        tab[fives[0]] = 2;
 
         int tmp = 0;
-        for(auto && s : v2[i])
-        {
-            std::sort(s.begin(), s.end());
+        for(size_t i = 10; i < 14; i++) {
+            switch(popcnt(a[i])) {
+                case 2:
+                case 3:
+                case 4:
+                case 7:
+                    ans1++;
+                    break;
+                default:
+                    break;
+            }
             tmp *= 10;
-            tmp += m[s];
+            tmp += tab[a[i]];
         }
+
         ans2 += tmp;
     }
 
