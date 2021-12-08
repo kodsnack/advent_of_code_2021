@@ -12,23 +12,16 @@ namespace aoc
 
         // Day 08: Decode scrambled seven-segment displays
 
-        static List<(List<string>, List<string>)> ReadInput(string file)
+        static List<(List<string>, List<string>)> ReadData(string file)
         {
-            StreamReader reader = File.OpenText(AdventOfCode.ReadInput.GetPath(day, file));
-            var r = new List<(List<string>, List<string>)>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                var v = line.Split('|');
-                r.Add((v[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList(),
-                       v[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList()));
-            }
-            return r;
+            static List<string> f(string s) => s.Split(' ', StringSplitOptions.RemoveEmptyEntries).ToList();
+            var lines = File.ReadAllLines(ReadInput.GetPath(day, file));
+            return lines.Select(x => x.Split('|')).Select(x => (f(x[0]), f(x[1]))).ToList();
         }
 
         public static Object PartA(string file)
         {
-            var rows = ReadInput(file);
+            var rows = ReadData(file);
             var lengths = new int[] { 2, 3, 4, 7 };
             var s = rows.Select(x => x.Item2);
             return s.Select(x => x.Where(a => lengths.Contains(a.Length)).Count()).Sum();
@@ -55,23 +48,23 @@ namespace aoc
 
         public static Object PartB(string file)
         {
-            var rows = ReadInput(file);
+            var rows = ReadData(file);
             int sum = 0;
             foreach (var (patterns, outputs) in rows)
             {
-                var seg = new Dictionary<char, char>();
                 var freq = new Dictionary<char, int>();
+                var fs = String.Join("", patterns).ToList();
+                fs.ForEach(c => freq[c] = freq.GetValueOrDefault(c, 0) + 1);
+                var seg = new Dictionary<char, char>();
+                seg[freq.Where(x => x.Value == 9).First().Key] = 'f';
+                char f = seg.First().Key;
+                seg[freq.Where(x => x.Value == 4).First().Key] = 'e';
+                seg[freq.Where(x => x.Value == 6).First().Key] = 'b';
                 string p1 = patterns.Where(x => x.Length == 2).First();
                 string p4 = patterns.Where(x => x.Length == 4).First();
                 string p7 = patterns.Where(x => x.Length == 3).First();
-                var fs = String.Join("", patterns).ToList();
-                fs.ForEach(c => freq[c] = freq.GetValueOrDefault(c, 0) + 1);
-                char f = freq.Where(x => x.Value == 9).First().Key;
-                seg[f] = 'f';
                 seg[p1.Where(x => x != f).First()] = 'c';
                 seg[p7.Except(p1).First()] = 'a';
-                seg[freq.Where(x => x.Value == 4).First().Key] = 'e';
-                seg[freq.Where(x => x.Value == 6).First().Key] = 'b';
                 var seg7 = freq.Where(x => x.Value == 7).Select(x => x.Key);
                 seg[seg7.Where(x => !p4.Contains(x)).First()] = 'g';
                 seg["abcdefg".Except(seg.Keys).First()] = 'd';
