@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using AdventOfCode;
 
-namespace day03
+namespace aoc
 {
     public class Day03
     {
-        readonly static string nsname = typeof(Day03).Namespace;
-        readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+        static readonly string day = "day03";
 
         // Day 03: Bit calculations will get you dizzy
 
@@ -31,16 +29,14 @@ namespace day03
             return s.Select((c, i) => (c == '1' ? 1 : 0) << (s.Length - 1 - i)).Sum();
         }
 
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var input = ReadIndata.Strings(inputPath);
+            var input = ReadInput.Strings(day, file);
             var cs = GetMajorityBits(input);
             int a = BinStringToInt(cs);
             int ones = (1 << cs.Length) - 1;
             int b = a ^ ones;
-            int ans = a * b;
-            Console.WriteLine("Part A: Result is {0}", ans);
-            return ans;
+            return a * b;
         }
 
         static List<string> KeepMostCommon(List<string> input, int bitPos, bool invert)
@@ -55,9 +51,9 @@ namespace day03
             return res;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var input = ReadIndata.Strings(inputPath);
+            var input = ReadInput.Strings(day, file);
             var al = input;
             var bl = input;
             for (int i = 0; i < input[0].Length; i++)
@@ -69,26 +65,9 @@ namespace day03
             }
             int a = BinStringToInt(al[0]);
             int b = BinStringToInt(bl[0]);
-            int ans = a * b;
-            Console.WriteLine("Part B: Result is {0}", ans);
-            return ans;
+            return a * b;
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("AoC 2021 - " + nsname + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
-            PartA();
-            PartB();
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
-        }
-
-        public static bool MainTest()
-        {
-            int a = 2261546;
-            int b = 6775520;
-            return (PartA().Equals(a)) && (PartB().Equals(b));
-        }
+        static void Main() => Aoc.Execute(day, PartA, PartB);
     }
 }

@@ -1,6 +1,6 @@
 use std::fs::read_to_string;
 
-fn main() {
+pub fn main() {
     // aoc1a();
     aoc1b();
 }

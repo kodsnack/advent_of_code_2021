@@ -69,3 +69,6 @@
 [submodule "johan1a-python"]
 	path = johan1a-python
 	url = https://github.com/johan1a/adventofcode2021.git
+[submodule "clonest1ck-python"]
+	path = clonest1ck-python
+	url = https://github.com/clonest1ck/adventofcode2021.git
