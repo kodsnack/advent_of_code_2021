@@ -16,7 +16,7 @@ namespace aoc
         {
             var lows = new List<Pos>();
             foreach (var p in m.Positions())
-                if (CoordsXY.directions4.Select(d => !m.HasPosition(p + d) || m[p] < m[p + d]).Aggregate((a, x) => a && x))
+                if (CoordsXY.Neighbours4(p).Select(n => !m.HasPosition(n) || m[p] < m[n]).Aggregate((a, x) => a && x))
                     lows.Add(p);
             return lows;
         }
@@ -29,7 +29,7 @@ namespace aoc
         }
 
         static bool AllNeighs9(Map m, Pos p) => 
-            CoordsXY.directions4.Select(d => !m.HasPosition(p + d) || m[p + d] == '9').Aggregate((a, x) => a && x);
+            CoordsXY.Neighbours4(p).Select(n => !m.HasPosition(n) || m[n] == '9').Aggregate((a, x) => a && x);
 
         static int GetArea(Map m, Pos p)
         {
@@ -41,9 +41,9 @@ namespace aoc
                 visited.UnionWith(check);
                 foreach (var q in check)
                     if (!AllNeighs9(m, q))
-                        foreach (var d in CoordsXY.directions4)
-                            if (m.HasPosition(q + d) && !visited.Contains(q + d) && m[q + d] != '9')
-                                checkNext.Add(q + d);
+                        foreach (var n in CoordsXY.Neighbours4(q))
+                            if (m.HasPosition(n) && !visited.Contains(n) && m[n] != '9')
+                                checkNext.Add(n);
                 check = checkNext;
             }
             return visited.Count;

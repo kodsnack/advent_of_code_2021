@@ -394,6 +394,10 @@ namespace AdventOfCode
         {
             goUpLeft, goUp, goUpRight, goRight, goDownRight, goDown, goDownLeft, goLeft
         };
+        public static List<GenericPosition2D<int>> Neighbours4(GenericPosition2D<int> p) =>
+            CoordsRC.directions4.Select(x => p + x).ToList();
+        public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
+            CoordsRC.directions8.Select(x => p + x).ToList();
     }
 
     public static class CoordsXY
@@ -414,6 +418,10 @@ namespace AdventOfCode
         {
             goUpLeft, goUp, goUpRight, goRight, goDownRight, goDown, goDownLeft, goLeft
         };
+        public static List<GenericPosition2D<int>> Neighbours4(GenericPosition2D<int> p) =>
+            CoordsXY.directions4.Select(x => p + x).ToList();
+        public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
+            CoordsXY.directions8.Select(x => p + x).ToList();
     }
 
     public static class CoordsHex
@@ -440,7 +448,6 @@ namespace AdventOfCode
             { "sw", new GenericPosition2D<int>(-1, 1) },
             { "nw", new GenericPosition2D<int>(-1, -1) },
         };
-
         public static readonly Dictionary<string, GenericPosition2D<int>> directionsWide = new Dictionary<string, GenericPosition2D<int>>()
         {
             { "ne", new GenericPosition2D<int>(1, -1) },
@@ -450,7 +457,6 @@ namespace AdventOfCode
             { "w", new GenericPosition2D<int>(-2, 0) },
             { "nw", new GenericPosition2D<int>(-1, -1) },
         };
-
     }
 
     public static class Utils
