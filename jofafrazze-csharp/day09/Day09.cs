@@ -14,127 +14,58 @@ namespace aoc
     {
         static readonly string day = "day09";
 
-        // Day 09: 
+        // Day 09: Find local lows and baisins in map
+
+        static List<Position> GetLows(Map m)
+        {
+            var lows = new List<Position>();
+            int w = m.width;
+            int h = m.height;
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    var p = new Position(x, y);
+                    if (CoordsXY.directions4.Select(d => !m.HasPosition(p + d) || m[p] < m[p + d]).Aggregate((a, x) => a && x))
+                        lows.Add(p);
+                }
+            }
+            return lows;
+        }
 
         public static Object PartA(string file)
         {
             Map m = Map.Build(ReadInput.Strings(day, file));
-            int w = m.width;
-            int h = m.height;
-            int sum = 0;
-            for (int y = 0; y < h; y++)
-            {
-                for (int x = 0; x < w; x++)
-                {
-                    bool ok = true;
-                    var p = new Position(x, y);
-                    var pl = p + CoordsRC.goLeft;
-                    var pu = p + CoordsRC.goUp;
-                    var pr = p + CoordsRC.goRight;
-                    var pd = p + CoordsRC.goDown;
-                    ok = ok && (!m.HasPosition(pl) || m[pl] > m[p]);
-                    ok = ok && (!m.HasPosition(pu) || m[pu] > m[p]);
-                    ok = ok && (!m.HasPosition(pr) || m[pr] > m[p]);
-                    ok = ok && (!m.HasPosition(pd) || m[pd] > m[p]);
-                    if (ok)
-                        sum += (m[p] - '0' + 1);
-                }
-            }
-            //Console.WriteLine("A is {0}", a);
-            return sum;
+            var lows = GetLows(m);
+            return lows.Select(p => m[p] - '0' + 1).Sum();
         }
 
-        static void GetLows(Map m, List<Position> lows)
-        {
-            int w = m.width;
-            int h = m.height;
-            for (int y = 0; y < h; y++)
-            {
-                for (int x = 0; x < w; x++)
-                {
-                    bool ok = true;
-                    var p = new Position(x, y);
-                    var pl = p + CoordsRC.goLeft;
-                    var pu = p + CoordsRC.goUp;
-                    var pr = p + CoordsRC.goRight;
-                    var pd = p + CoordsRC.goDown;
-                    ok = ok && (!m.HasPosition(pl) || m[pl] > m[p]);
-                    ok = ok && (!m.HasPosition(pu) || m[pu] > m[p]);
-                    ok = ok && (!m.HasPosition(pr) || m[pr] > m[p]);
-                    ok = ok && (!m.HasPosition(pd) || m[pd] > m[p]);
-                    if (ok)
-                        lows.Add(p);
-                }
-            }
-        }
-
-        static bool IsLow(Map m, Position p)
-        {
-            bool ok = true;
-            var pl = p + CoordsRC.goLeft;
-            var pu = p + CoordsRC.goUp;
-            var pr = p + CoordsRC.goRight;
-            var pd = p + CoordsRC.goDown;
-            ok = ok && (!m.HasPosition(pl) || m[pl] > m[p]);
-            ok = ok && (!m.HasPosition(pu) || m[pu] > m[p]);
-            ok = ok && (!m.HasPosition(pr) || m[pr] > m[p]);
-            ok = ok && (!m.HasPosition(pd) || m[pd] > m[p]);
-            return ok;
-        }
-        static bool AllNeighs9(Map m, Position p)
-        {
-            bool ok = true;
-            var pl = p + CoordsRC.goLeft;
-            var pu = p + CoordsRC.goUp;
-            var pr = p + CoordsRC.goRight;
-            var pd = p + CoordsRC.goDown;
-            ok = ok && (!m.HasPosition(pl) || m[pl] == '9');
-            ok = ok && (!m.HasPosition(pu) || m[pu] == '9');
-            ok = ok && (!m.HasPosition(pr) || m[pr] == '9');
-            ok = ok && (!m.HasPosition(pd) || m[pd] == '9');
-            return ok;
-        }
+        static bool AllNeighs9(Map m, Position p) => 
+            CoordsXY.directions4.Select(d => !m.HasPosition(p + d) || m[p + d] == '9').Aggregate((a, x) => a && x);
 
         static int GetArea(Map m, Position p)
         {
-            var been = new HashSet<Position>();
-            var check = new List<Position>();
-            check.Add(p);
+            var visited = new HashSet<Position>();
+            var check = new List<Position> { p };
             while (check.Count > 0)
             {
                 var checkNext = new List<Position>();
+                visited.UnionWith(check);
                 foreach (var q in check)
-                {
-                    been.Add(q);
                     if (!AllNeighs9(m, q))
-                    {
-                        foreach (var d in CoordsRC.directions4)
-                        {
-                            Position r = new Position(q + d);
-                            if (m.HasPosition(r) && !been.Contains(r) && m[r] != '9')
-                                checkNext.Add(r);
-                        }
-                    }
-                }
+                        foreach (var d in CoordsXY.directions4)
+                            if (m.HasPosition(q + d) && !visited.Contains(q + d) && m[q + d] != '9')
+                                checkNext.Add(q + d);
                 check = checkNext;
             }
-            return been.Count;
+            return visited.Count;
         }
 
 
         public static Object PartB(string file)
         {
             Map m = Map.Build(ReadInput.Strings(day, file));
-            var lows = new List<Position>();
-            GetLows(m, lows);
-            List<int> areas = new List<int>();
-            foreach (var p in lows)
-                areas.Add(GetArea(m, p));
-            areas.Sort();
-            int a = 1;
-            for (int i = 0; i < 3; i++)
-                a *= areas[areas.Count - 1 - i];
-            return a;
+            return GetLows(m).Select(x => GetArea(m, x)).OrderByDescending(x => x).Take(3).Aggregate((a, x) => a * x);
         }
 
         static void Main() => Aoc.Execute(day, PartA, PartB);
