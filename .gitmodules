@@ -4,9 +4,6 @@
 [submodule "tradfursten-elixir"]
 	path = tradfursten-elixir
 	url = https://github.com/tradfursten/advent_of_code_2021
-[submodule "johangrahn-rust"]
-	path = johangrahn-rust
-	url = https://github.com/johangrahn/advent_of_code_2021
 [submodule "cheif-swift"]
 	path = cheif-swift
 	url = git@github.com:cheif/advent-of-code.git
@@ -14,7 +11,6 @@
 [submodule "nilskj-javascript"]
 	path = nilskj-javascript
 	url = git@github.com:nilskj/AdventOfCode-2021.git
-	
 [submodule "ygge-java"]
 	path = ygge-java
 	url = git@github.com:ygge/adventofcode2021.git
@@ -24,3 +20,57 @@
 [submodule "prositen-python"]
 	path = prositen-python
 	url = git@github.com:prositen/advent-of-code.git
+[submodule "johangrahn-rust"]
+	path = johangrahn-rust
+	url = https://github.com/johangrahn/advent_of_code_2021
+[submodule "yxhuvud-crystal"]
+  path = yxhuvud-crystal
+  url = https://github.com/yxhuvud/aoc21
+[submodule "p1xelher0-ocaml"]
+	path = p1xelher0-ocaml
+	url = https://github.com/p1xelHer0/advent-of-code-2021-ocaml.git
+[submodule "johan-oelrich-fsharp"]
+	path = johan-oelrich-fsharp
+	url = git@github.com:oelrich/advent-of-code-2021.git
+[submodule "heinerud-python"]
+	path = heinerud-python
+	url = https://github.com/heinerud/aoc21
+[submodule "meck-haskell"]
+	path = meck-haskell
+	url = https://github.com/meck/AoC2021.git
+[submodule "idrougge-swift"]
+	path = idrougge-swift
+	url = https://github.com/idrougge/advent-of-code-2021-swift.git
+[submodule "idrougge-oorexx"]
+	path = idrougge-oorexx
+	url = https://github.com/idrougge/advent-of-code-2021-oorexx.git
+[submodule "mlogic1-cpp"]
+	path = mlogic1-cpp
+	url = https://github.com/mlogic1/advent-of-code-2021.git
+[submodule "LinAGKar-rust"]
+	path = LinAGKar-rust
+	url = https://github.com/LinAGKar/advent-of-code-2021-rust.git
+[submodule "edenvin-rust"]
+	path = edenvin-rust
+	url = git@github.com:edenvin/advent-of-code-2021.git
+[submodule "pin2t-java-go"]
+	path = pin2t-java-go
+	url = https://github.com/pin2t/aoc2021.git
+[submodule "Br1ght0ne-elixir-go-rust-zig"]
+	path = Br1ght0ne-elixir-go-rust-zig
+	url = https://github.com/Br1ght0ne/aoc-2021.git
+[submodule "rcarlsson-rust"]
+	path = rcarlsson-rust
+	url = git@github.com:rcarlsson/adventofcode2021.git
+[submodule "zhangjunyan2580-cpp"]
+  path = zhangjunyan2580-cpp
+	url = https://github.com/zhangjunyan2580/Advent-of-Code-2021.git
+[submodule "johan1a-python"]
+	path = johan1a-python
+	url = https://github.com/johan1a/adventofcode2021.git
+[submodule "clonest1ck-python"]
+	path = clonest1ck-python
+	url = https://github.com/clonest1ck/adventofcode2021.git
+[submodule "basicprogrammer10-rust"]
+	path = basicprogrammer10-rust
+	url = https://github.com/Basicprogrammer10/Advent-Of-Code-2021.git

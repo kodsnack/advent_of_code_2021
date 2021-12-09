@@ -301,6 +301,15 @@ namespace AdventOfCode
             return p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
         }
 
+        public List<GenericPosition2D<int>> Positions()
+        {
+            var positions = new List<GenericPosition2D<int>>(width * height);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    positions.Add(new GenericPosition2D<int>(x, y));
+            return positions;
+        }
+
         public void Expand(int n, char fill) { Expand(n, n, n, n, fill); }
         public void Expand(int top, int right, int bottom, int left, char fill)
         {
@@ -385,6 +394,10 @@ namespace AdventOfCode
         {
             goUpLeft, goUp, goUpRight, goRight, goDownRight, goDown, goDownLeft, goLeft
         };
+        public static List<GenericPosition2D<int>> Neighbours4(GenericPosition2D<int> p) =>
+            CoordsRC.directions4.Select(x => p + x).ToList();
+        public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
+            CoordsRC.directions8.Select(x => p + x).ToList();
     }
 
     public static class CoordsXY
@@ -405,6 +418,10 @@ namespace AdventOfCode
         {
             goUpLeft, goUp, goUpRight, goRight, goDownRight, goDown, goDownLeft, goLeft
         };
+        public static List<GenericPosition2D<int>> Neighbours4(GenericPosition2D<int> p) =>
+            CoordsXY.directions4.Select(x => p + x).ToList();
+        public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
+            CoordsXY.directions8.Select(x => p + x).ToList();
     }
 
     public static class CoordsHex
@@ -431,7 +448,6 @@ namespace AdventOfCode
             { "sw", new GenericPosition2D<int>(-1, 1) },
             { "nw", new GenericPosition2D<int>(-1, -1) },
         };
-
         public static readonly Dictionary<string, GenericPosition2D<int>> directionsWide = new Dictionary<string, GenericPosition2D<int>>()
         {
             { "ne", new GenericPosition2D<int>(1, -1) },
@@ -441,7 +457,6 @@ namespace AdventOfCode
             { "w", new GenericPosition2D<int>(-2, 0) },
             { "nw", new GenericPosition2D<int>(-1, -1) },
         };
-
     }
 
     public static class Utils
@@ -712,43 +727,53 @@ namespace AdventOfCode
         };
     }
 
-    public static class ReadIndata
+    public static class ReadInput
     {
-        public static List<int> Ints(string path)
+        public static string GetPath(string nsname, string file)
         {
-            StreamReader reader = File.OpenText(path);
-            List<int> list = new List<int>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.AddRange(line.Split(',').Select(int.Parse).ToList());
-            }
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\" + file);
+        }
+
+        public static List<int> Ints(string day, string file, char delimiter = ',')
+        {
+            var list = new List<int>();
+            foreach (var line in File.ReadAllLines(ReadInput.GetPath(day, file)))
+                list.AddRange(line.Split(delimiter).Select(int.Parse));
             return list;
         }
 
-        public static List<long> Longs(string path)
+        public static List<long> Longs(string day, string file, char delimiter = ',')
         {
-            StreamReader reader = File.OpenText(path);
-            List<long> list = new List<long>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.AddRange(line.Split(',').Select(long.Parse).ToList());
-            }
+            var list = new List<long>();
+            foreach (var line in File.ReadAllLines(ReadInput.GetPath(day, file)))
+                list.AddRange(line.Split(delimiter).Select(long.Parse));
             return list;
         }
 
-        public static List<string> Strings(string path)
+        public static List<string> Strings(string day, string file)
         {
-            StreamReader reader = File.OpenText(path);
-            List<string> list = new List<string>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.Add(line);
-            }
-            return list;
+            return File.ReadAllLines(ReadInput.GetPath(day, file)).ToList();
         }
 
+        public static List<List<string>> StringLists(string day, string file, string delimiter = " ")
+        {
+            return Strings(day, file).Select(x => x.Split(delimiter).ToList()).ToList();
+        }
+    }
+
+    public static class Aoc
+    {
+        public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
+        {
+            Console.WriteLine("AoC 2021 - " + day + ":");
+            var w = System.Diagnostics.Stopwatch.StartNew();
+            string file = example ? "example.txt" : "input.txt";
+            Object a = PartA(file);
+            Console.WriteLine("Part A: Result is {0}", a);
+            Object b = PartB(file);
+            Console.WriteLine("Part B: Result is {0}", b);
+            w.Stop();
+            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
+        }
     }
 }

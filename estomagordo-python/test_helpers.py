@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits
 
 
 def test_distance():
@@ -202,3 +202,28 @@ def test_neighs_bounded_corner():
     assert(2 == len(neighbours))    
     assert([6, 6] in neighbours)
     assert([5, 5] in neighbours)  
+
+
+def test_columns():
+    matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+    cols = columns(matrix)
+
+    assert([1, 4, 7] == cols[0])
+    assert([2, 5, 8] == cols[1])
+    assert([3, 6, 9] == cols[2])
+
+    non_square_matrix = [[1, 2], [3, 4], [5, 6]]
+
+    non_square_cols = columns(non_square_matrix)
+
+    assert([1, 3, 5] == non_square_cols[0])
+    assert([2, 4, 6] == non_square_cols[1])
+
+
+def test_digits():
+    s = '8936982'
+
+    result = digits(s)
+
+    assert([8,9,3,6,9,8,2] == result)
