@@ -1,0 +1,22 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "benchmark",
+			"command": "cargo",
+			"options": {
+				"cwd": "runner",
+			},
+			"args": [
+				"run",
+				"--release",
+				"--bin",
+				"bench"
+			],
+			"problemMatcher": [
+				"$rustc"
+			]
+		}
+	]
+}

@@ -11,7 +11,6 @@
 [submodule "nilskj-javascript"]
 	path = nilskj-javascript
 	url = git@github.com:nilskj/AdventOfCode-2021.git
-	
 [submodule "ygge-java"]
 	path = ygge-java
 	url = git@github.com:ygge/adventofcode2021.git
@@ -25,8 +24,8 @@
 	path = johangrahn-rust
 	url = https://github.com/johangrahn/advent_of_code_2021
 [submodule "yxhuvud-crystal"]
-        path = yxhuvud-crystal
-        url = https://github.com/yxhuvud/aoc21
+  path = yxhuvud-crystal
+  url = https://github.com/yxhuvud/aoc21
 [submodule "p1xelher0-ocaml"]
 	path = p1xelher0-ocaml
 	url = https://github.com/p1xelHer0/advent-of-code-2021-ocaml.git
@@ -64,8 +63,14 @@
 	path = rcarlsson-rust
 	url = git@github.com:rcarlsson/adventofcode2021.git
 [submodule "zhangjunyan2580-cpp"]
-        path = zhangjunyan2580-cpp
+  path = zhangjunyan2580-cpp
 	url = https://github.com/zhangjunyan2580/Advent-of-Code-2021.git
 [submodule "johan1a-python"]
 	path = johan1a-python
 	url = https://github.com/johan1a/adventofcode2021.git
+[submodule "clonest1ck-python"]
+	path = clonest1ck-python
+	url = https://github.com/clonest1ck/adventofcode2021.git
+[submodule "basicprogrammer10-rust"]
+	path = basicprogrammer10-rust
+	url = https://github.com/Basicprogrammer10/Advent-Of-Code-2021.git

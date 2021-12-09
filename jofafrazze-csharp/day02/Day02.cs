@@ -1,34 +1,17 @@
 ﻿using System;
-using System.IO;
 using AdventOfCode;
 
-namespace day02
+namespace aoc
 {
     public class Day02
     {
-        readonly static string nsname = typeof(Day02).Namespace;
-        readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+        static readonly string day = "day02";
 
         // Day 02: Steer submarine up, down and forward
 
-        /*
-        static List<(char c, int i)> ReadInput()
+        public static Object PartA(string file)
         {
-            StreamReader reader = File.OpenText(inputPath);
-            var list = new List<(char, int)>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                string[] s = line.Split(' ').ToArray();
-                list.Add((s[0][0], int.Parse(s[1])));
-            }
-            return list;
-        }
-        */
-
-        static Object PartA()
-        {
-            var input = ReadIndata.StringLists(inputPath, " ");
+            var input = ReadInput.StringLists(day, file);
             int d = 0;
             int f = 0;
             foreach (var v in input)
@@ -42,14 +25,12 @@ namespace day02
                 else
                     f += i;
             }
-            int ans = d * f;
-            Console.WriteLine("Part A: Result is {0}", ans);
-            return ans;
+            return d * f;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var input = ReadIndata.StringLists(inputPath);
+            var input = ReadInput.StringLists(day, file);
             int d = 0;
             int f = 0;
             int aim = 0;
@@ -67,26 +48,9 @@ namespace day02
                     f += i;
                 }
             }
-            int ans = d * f;
-            Console.WriteLine("Part B: Result is {0}", ans);
-            return ans;
+            return d * f;
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("AoC 2021 - " + nsname + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
-            PartA();
-            PartB();
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
-        }
-
-        public static bool MainTest()
-        {
-            int a = 1727835;
-            int b = 1544000595;
-            return (PartA().Equals(a)) && (PartB().Equals(b));
-        }
+        static void Main() => Aoc.Execute(day, PartA, PartB);
     }
 }
