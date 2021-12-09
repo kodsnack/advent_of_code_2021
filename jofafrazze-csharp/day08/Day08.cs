@@ -40,7 +40,7 @@ namespace aoc
         //   -G-             0-23-56-89          -7-
 
 
-        static readonly Dictionary<string, char> seg2num = new Dictionary<string, char>
+        static readonly Dictionary<string, char> segs2num = new Dictionary<string, char>
         {
             ["abcefg"] = '0', ["cf"] = '1', ["acdeg"] = '2', ["acdfg"] = '3', ["bcdf"] = '4',
             ["abdfg"] = '5', ["abdefg"] = '6', ["acf"] = '7', ["abcdefg"] = '8', ["abcdfg"] = '9'
@@ -55,21 +55,21 @@ namespace aoc
                 var freq = new Dictionary<char, int>();
                 var fs = String.Join("", patterns).ToList();
                 fs.ForEach(c => freq[c] = freq.GetValueOrDefault(c, 0) + 1);
-                var seg = new Dictionary<char, char>();
-                seg[freq.Where(x => x.Value == 9).First().Key] = 'f';
-                char f = seg.First().Key;
-                seg[freq.Where(x => x.Value == 4).First().Key] = 'e';
-                seg[freq.Where(x => x.Value == 6).First().Key] = 'b';
+                var decode = new Dictionary<char, char>();
+                decode[freq.Where(x => x.Value == 9).First().Key] = 'f';
+                char cf = decode.First().Key;
+                decode[freq.Where(x => x.Value == 4).First().Key] = 'e';
+                decode[freq.Where(x => x.Value == 6).First().Key] = 'b';
                 string p1 = patterns.Where(x => x.Length == 2).First();
                 string p4 = patterns.Where(x => x.Length == 4).First();
                 string p7 = patterns.Where(x => x.Length == 3).First();
-                seg[p1.Where(x => x != f).First()] = 'c';
-                seg[p7.Except(p1).First()] = 'a';
+                decode[p1.Where(x => x != cf).First()] = 'c';
+                decode[p7.Except(p1).First()] = 'a';
                 var seg7 = freq.Where(x => x.Value == 7).Select(x => x.Key);
-                seg[seg7.Where(x => !p4.Contains(x)).First()] = 'g';
-                seg["abcdefg".Except(seg.Keys).First()] = 'd';
-                string decode(string s) => new string(s.Select(x => seg[x]).OrderBy(y => y).ToArray());
-                sum += int.Parse(outputs.Select(w => seg2num[decode(w)]).ToArray());
+                decode[seg7.Where(x => !p4.Contains(x)).First()] = 'g';
+                decode["abcdefg".Except(decode.Keys).First()] = 'd';
+                string f(string s) => new string(s.Select(x => decode[x]).OrderBy(y => y).ToArray());
+                sum += int.Parse(outputs.Select(w => segs2num[f(w)]).ToArray());
             }
             return sum;
         }
