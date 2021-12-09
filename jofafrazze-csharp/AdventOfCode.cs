@@ -301,6 +301,15 @@ namespace AdventOfCode
             return p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
         }
 
+        public List<GenericPosition2D<int>> Positions()
+        {
+            var positions = new List<GenericPosition2D<int>>(width * height);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    positions.Add(new GenericPosition2D<int>(x, y));
+            return positions;
+        }
+
         public void Expand(int n, char fill) { Expand(n, n, n, n, fill); }
         public void Expand(int top, int right, int bottom, int left, char fill)
         {
