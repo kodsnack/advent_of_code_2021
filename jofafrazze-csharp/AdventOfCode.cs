@@ -301,6 +301,15 @@ namespace AdventOfCode
             return p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
         }
 
+        public List<GenericPosition2D<int>> Positions()
+        {
+            var positions = new List<GenericPosition2D<int>>(width * height);
+            for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
+                    positions.Add(new GenericPosition2D<int>(x, y));
+            return positions;
+        }
+
         public void Expand(int n, char fill) { Expand(n, n, n, n, fill); }
         public void Expand(int top, int right, int bottom, int left, char fill)
         {
@@ -719,52 +728,30 @@ namespace AdventOfCode
             return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\" + file);
         }
 
-        public static List<int> Ints(string nsname, string file, char delimiter = ',')
+        public static List<int> Ints(string day, string file, char delimiter = ',')
         {
-            StreamReader reader = File.OpenText(GetPath(nsname, file));
-            List<int> list = new List<int>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.AddRange(line.Split(delimiter).Select(int.Parse).ToList());
-            }
+            var list = new List<int>();
+            foreach (var line in File.ReadAllLines(ReadInput.GetPath(day, file)))
+                list.AddRange(line.Split(delimiter).Select(int.Parse));
             return list;
         }
 
-        public static List<long> Longs(string nsname, string file, char delimiter = ',')
+        public static List<long> Longs(string day, string file, char delimiter = ',')
         {
-            StreamReader reader = File.OpenText(GetPath(nsname, file));
-            List<long> list = new List<long>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.AddRange(line.Split(delimiter).Select(long.Parse).ToList());
-            }
+            var list = new List<long>();
+            foreach (var line in File.ReadAllLines(ReadInput.GetPath(day, file)))
+                list.AddRange(line.Split(delimiter).Select(long.Parse));
             return list;
         }
 
-        public static List<string> Strings(string nsname, string file)
+        public static List<string> Strings(string day, string file)
         {
-            StreamReader reader = File.OpenText(GetPath(nsname, file));
-            List<string> list = new List<string>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.Add(line);
-            }
-            return list;
+            return File.ReadAllLines(ReadInput.GetPath(day, file)).ToList();
         }
 
-        public static List<List<string>> StringLists(string nsname, string file, string delimiter = " ")
+        public static List<List<string>> StringLists(string day, string file, string delimiter = " ")
         {
-            StreamReader reader = File.OpenText(GetPath(nsname, file));
-            var list = new List<List<string>>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.Add(line.Split(delimiter).ToList());
-            }
-            return list;
+            return Strings(day, file).Select(x => x.Split(delimiter).ToList()).ToList();
         }
     }
 
