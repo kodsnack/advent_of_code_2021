@@ -19,7 +19,7 @@ def group_by_segment(display):
     return bysegment
 
 
-def build_key(bysegment, display, letters):
+def build_key(bysegment, letters):
     key = [' ' for _ in range(7)]
 
     for letter in bysegment[3][0]:
@@ -119,9 +119,9 @@ def calculate_value(display, key, letters, translation):
 def solve_display(display):
     letters = 'abcdefg'
     bysegment = group_by_segment(display)
-    key = build_key(bysegment, display, letters)
+    key = build_key(bysegment, letters)
     translation = build_translation(display, key, letters)
-    
+
     return calculate_value(display, key, letters, translation)
 
 def solve(lines):
