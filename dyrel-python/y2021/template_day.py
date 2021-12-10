@@ -1,4 +1,10 @@
 from common import getPuzzle, submitSecure
+from collections import deque
+from functools import reduce
+from operator import mul
+from itertools import permutations
+from collections import Counter
+from itertools import accumulate
 
 puzzle = getPuzzle()
 
