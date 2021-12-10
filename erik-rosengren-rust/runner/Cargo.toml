@@ -1,0 +1,36 @@
+[package]
+name = "runner"
+version = "0.1.0"
+authors = ["Tim Visee <3a4fb3964f@sinenomine.email>"]
+edition = "2021"
+
+[dependencies]
+rayon = "1.5"
+took = "0.1"
+
+# Days
+# day1 = { path = "../day1" }
+# day2 = { path = "../day2" }
+# day3 = { path = "../day3" }
+# day4 = { path = "../day4" }
+# day5 = { path = "../day5" }
+day6 = { path = "../day6" }
+day7 = { path = "../day7" }
+# day8 = { path = "../day8" }
+# day9 = { path = "../day9" }
+# day10 = { path = "../day10" }
+# day11 = { path = "../day11" }
+# day12 = { path = "../day12" }
+# day13 = { path = "../day13" }
+# day14 = { path = "../day14" }
+# day15 = { path = "../day15" }
+# day16 = { path = "../day16" }
+# day17 = { path = "../day17" }
+# day18 = { path = "../day18" }
+# day19 = { path = "../day19" }
+# day20 = { path = "../day20" }
+# day21 = { path = "../day21" }
+# day22 = { path = "../day22" }
+# day23 = { path = "../day23" }
+# day24 = { path = "../day24" }
+# day25 = { path = "../day25" }
