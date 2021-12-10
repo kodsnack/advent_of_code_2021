@@ -8,6 +8,16 @@ import day4a
 import day4b
 import day5a
 import day5b
+import day6a
+import day6b
+import day7a
+import day7b
+import day8a
+import day8b
+import day9a
+import day9b
+import day10a
+import day10b
 
 
 def test_1a():
@@ -58,3 +68,53 @@ def test_5a():
 def test_5b():
     result = day5b.main()
     assert(19851 == result)
+
+
+def test_6a():
+    result = day6a.main()
+    assert(395627 == result)
+
+
+def test_6b():
+    result = day6b.main()
+    assert(1767323539209 == result)
+
+
+def test_7a():
+    result = day7a.main()
+    assert(359648 == result)
+
+
+def test_7b():
+    result = day7b.main()
+    assert(100727924 == result)
+
+
+def test_8a():
+    result = day8a.main()
+    assert(525 == result)
+
+
+def test_8b():
+    result = day8b.main()
+    assert(1083859 == result)
+
+
+def test_9a():
+    result = day9a.main()
+    assert(512 == result)
+
+
+def test_9b():
+    result = day9b.main()
+    assert(1600104 == result)
+
+
+def test_10a():
+    result = day10a.main()
+    assert(374061 == result)
+
+
+def test_10b():
+    result = day10b.main()
+    assert(2116639949 == result)

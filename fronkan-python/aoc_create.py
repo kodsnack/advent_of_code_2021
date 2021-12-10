@@ -73,7 +73,7 @@ f"""
         input_file = Path(__file__).parent / "input.txt"
         # input_file = Path(__file__).parent / "example_input.txt"
         print("Puzzle 1:", puzzle1(input_file))
-        print("Puzzle 2:", puzzle2(input_file))
+        # print("Puzzle 2:", puzzle2(input_file))
 """)
 
 # --------------------------------------- GENERATE FILES ---------------------------------------

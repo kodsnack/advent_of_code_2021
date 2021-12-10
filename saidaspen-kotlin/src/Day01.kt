@@ -1,7 +1,5 @@
 import java.io.File
 
-fun ints(input: String) = "-?\\d+".toRegex(RegexOption.MULTILINE).findAll(input).map { it.value.toInt() }.toList()
-
 fun main() {
     println(Day01.part1())
     println(Day01.part2())

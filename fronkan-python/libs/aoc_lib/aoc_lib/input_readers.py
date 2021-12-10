@@ -2,7 +2,7 @@ from typing import List
 from pathlib import Path
 
 
-def read_chunk(input_file: Path) -> List[List[str]]:
+def read_chunks(input_file: Path) -> List[List[str]]:
     chunks: List[List[str]] = []
     current_chunk: List[str] = []
     with open(input_file) as f:
