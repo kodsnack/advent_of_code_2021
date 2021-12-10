@@ -14,6 +14,10 @@ import day7a
 import day7b
 import day8a
 import day8b
+import day9a
+import day9b
+import day10a
+import day10b
 
 
 def test_1a():
@@ -94,3 +98,23 @@ def test_8a():
 def test_8b():
     result = day8b.main()
     assert(1083859 == result)
+
+
+def test_9a():
+    result = day9a.main()
+    assert(512 == result)
+
+
+def test_9b():
+    result = day9b.main()
+    assert(1600104 == result)
+
+
+def test_10a():
+    result = day10a.main()
+    assert(374061 == result)
+
+
+def test_10b():
+    result = day10b.main()
+    assert(2116639949 == result)

@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits
 
 
 def test_distance():
@@ -219,3 +219,11 @@ def test_columns():
 
     assert([1, 3, 5] == non_square_cols[0])
     assert([2, 4, 6] == non_square_cols[1])
+
+
+def test_digits():
+    s = '8936982'
+
+    result = digits(s)
+
+    assert([8,9,3,6,9,8,2] == result)
