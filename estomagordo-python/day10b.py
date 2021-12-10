@@ -6,6 +6,12 @@ from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_
 
 
 def solve(lines):
+    openers = {
+        '(': 1,
+        '[': 2,
+        '{': 3,
+        '<': 4
+    }
     scores = []
 
     for line in lines:
@@ -43,7 +49,7 @@ def solve(lines):
 
         for c in stack[::-1]:
             points *= 5
-            points += (1 if c == '(' else 2 if c == '[' else 3 if c == '{' else 4)
+            points += openers[c]
 
         scores.append(points)
 

@@ -5,37 +5,34 @@ from itertools import combinations, permutations, product
 from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
+def corruption_score(line):
+    stack = []
+
+    for c in line:
+        if c in '([{<':
+            stack.append(c)
+        elif c == ')':
+            if stack[-1] != '(':
+                return 3
+            stack.pop()
+        elif c == ']':
+            if stack[-1] != '[':
+                return 57
+            stack.pop()
+        elif c == '}':
+            if stack[-1] != '{':
+                return 1197
+            stack.pop()
+        elif c == '>':
+            if stack[-1] != '<':
+                return 25137
+            stack.pop()
+
+    return 0
+
+
 def solve(lines):
-    count = 0
-
-    for line in lines:
-        stack = []
-
-        for c in line:
-            if c in '([{<':
-                stack.append(c)
-            elif c == ')':
-                if not stack or stack[-1] != '(':
-                    count += 3
-                    break
-                stack.pop()
-            elif c == ']':
-                if not stack or stack[-1] != '[':
-                    count += 57
-                    break
-                stack.pop()
-            elif c == '}':
-                if not stack or stack[-1] != '{':
-                    count += 1197
-                    break
-                stack.pop()
-            elif c == '>':
-                if not stack or stack[-1] != '<':
-                    count += 25137
-                    break
-                stack.pop()
-
-    return count
+    return sum(corruption_score(line) for line in lines)
 
 
 def main():
