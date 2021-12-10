@@ -15,22 +15,22 @@ def solve(lines):
             if c in '([{<':
                 stack.append(c)
             elif c == ')':
-                if not stack or stack[-1] != '(':
+                if stack[-1] != '(':
                     count += 3
                     break
                 stack.pop()
             elif c == ']':
-                if not stack or stack[-1] != '[':
+                if stack[-1] != '[':
                     count += 57
                     break
                 stack.pop()
             elif c == '}':
-                if not stack or stack[-1] != '{':
+                if stack[-1] != '{':
                     count += 1197
                     break
                 stack.pop()
             elif c == '>':
-                if not stack or stack[-1] != '<':
+                if stack[-1] != '<':
                     count += 25137
                     break
                 stack.pop()
