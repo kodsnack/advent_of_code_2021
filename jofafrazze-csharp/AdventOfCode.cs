@@ -775,5 +775,10 @@ namespace AdventOfCode
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }
+
+        public static string Day(System.Reflection.MethodBase mb)
+        {
+            return mb.ReflectedType.FullName.Split('.').Last().ToLower();
+        }
     }
 }
