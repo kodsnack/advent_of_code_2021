@@ -127,4 +127,16 @@ namespace test
         [Fact]
         public void TestB() => Assert.Equal(2391385187L, aoc.Day10.PartB(Input.actual));
     }
+
+    public class TestDay11
+    {
+        [Fact]
+        public void ExampleA() => Assert.Equal(1656, aoc.Day11.PartA(Input.example));
+        [Fact]
+        public void TestA() => Assert.Equal(1599, aoc.Day11.PartA(Input.actual));
+        [Fact]
+        public void ExampleB() => Assert.Equal(195, aoc.Day11.PartB(Input.example));
+        [Fact]
+        public void TestB() => Assert.Equal(418, aoc.Day11.PartB(Input.actual));
+    }
 }
