@@ -118,3 +118,7 @@ def hexneighs(r, c):
 
 def columns(matrix):
     return [[line[x] for line in matrix] for x in range(len(matrix[0]))]
+
+
+def digits(line):
+    return list(map(int, list(line.rstrip())))

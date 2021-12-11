@@ -2,7 +2,7 @@ from collections import Counter, defaultdict, deque
 from functools import reduce
 from heapq import heappop, heappush
 from itertools import combinations, permutations, product
-from helpers import distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, columns
+from helpers import digits,distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, columns
 
 
 def solve(lines):
@@ -29,9 +29,7 @@ def main():
 
     with open('9.txt') as f:
         for line in f.readlines():
-            l = line.rstrip()
-            ll = list(l)
-            lines.append(list(map(int, ll)))
+            lines.append(digits(line))
             
     return solve(lines)
 
