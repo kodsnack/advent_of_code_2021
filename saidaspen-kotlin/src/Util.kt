@@ -50,6 +50,11 @@ fun toMap(input: String): MutableMap<P<Int, Int>, Char> {
     }
     return map
 }
+fun neighbors(i: P<Int, Int>) = listOf(
+    i + P(-1, -1), i + P(-1, 0), i + P(-1, 1),
+    i + P(0, -1), i + P(0, 1),
+    i + P(1, -1), i + P(1, 0), i + P(1, 1))
+
 
 fun neighborsSimple(i: P<Int, Int>) = listOf(
     i + P(-1, 0),
