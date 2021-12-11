@@ -1,1 +1,4 @@
 dyrel-python/y2021/__pycache__/**
+.idea
+cmake-build-*
+.DS_Store

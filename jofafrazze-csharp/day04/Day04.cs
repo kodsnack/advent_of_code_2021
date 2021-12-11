@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AdventOfCode;
 
-namespace day04
+namespace aoc
 {
     public class Day04
     {
-        readonly static string nsname = typeof(Day04).Namespace;
-        readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+        static readonly string day = "day04";
 
         // Day 04: Play bingo with giant squid (no diagonals, RTFM!)
 
-        static List<List<int>> ReadBoards()
+        static List<List<int>> ReadBoards(string file)
         {
-            StreamReader reader = File.OpenText(inputPath);
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             var list = new List<List<int>>();
             var bingo = new List<int>();
             string line;
@@ -24,7 +24,7 @@ namespace day04
             {
                 var ls = line.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToList();
                 bingo.AddRange(ls);
-                if (ls.Count == 0)
+                if (bingo.Count == 25)
                 {
                     list.Add(bingo);
                     bingo = new List<int>();
@@ -33,9 +33,9 @@ namespace day04
             return list;
         }
 
-        static List<int> ReadInts()
+        static List<int> ReadInts(string file)
         {
-            StreamReader reader = File.OpenText(inputPath);
+            StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             List<int> list = new List<int>();
             string line = reader.ReadLine();
             list.AddRange(line.Split(',').Select(int.Parse).ToList());
@@ -50,56 +50,38 @@ namespace day04
             return true;
         }
 
+        static Func<T1, TRes> ApplyPartial<T1, T2, T3, T4, TRes>(Func<T1, T2, T3, T4, TRes> func, T2 t2, T3 t3, T4 t4)
+        {
+            return (t1) => func(t1, t2, t3, t4);
+        }
         static bool CheckBingo(List<int> board, List<int> drawn)
         {
-            return CheckStride(0, 5, board, drawn) 
-                || CheckStride(1, 5, board, drawn) 
-                || CheckStride(2, 5, board, drawn) 
-                || CheckStride(3, 5, board, drawn) 
-                || CheckStride(4, 5, board, drawn) 
-                || CheckStride(0, 1, board, drawn) 
-                || CheckStride(5, 1, board, drawn) 
-                || CheckStride(10, 1, board, drawn) 
-                || CheckStride(15, 1, board, drawn) 
-                || CheckStride(20, 1, board, drawn);
+            Func<int, bool> fh = ApplyPartial<int, int, List<int>, List<int>, bool>(CheckStride, 1, board, drawn);
+            Func<int, bool> fv = ApplyPartial<int, int, List<int>, List<int>, bool>(CheckStride, 5, board, drawn);
+            return fv(0) || fv(1) || fv(2) || fv(3) || fv(4) || fh(0) || fh(5) || fh(10) || fh(15) || fh(20);
         }
 
-        static int Calc(List<int> board, List<int> drawn, int last)
+        public static Object PartA(string file)
         {
-            int a = 0;
-            foreach (int i in board)
-                if (!drawn.Contains(i))
-                    a += i;
-            return a * last;
-        }
-
-        static Object PartA()
-        {
-            var boards = ReadBoards();
-            var nums = ReadInts();
+            var boards = ReadBoards(file);
+            var nums = ReadInts(file);
             var drawn = new List<int>();
-            int ans = 0;
             foreach (int i in nums)
             {
                 drawn.Add(i);
                 foreach (var b in boards)
                 {
                     if (CheckBingo(b, drawn))
-                    {
-                        ans = Calc(b, drawn, i);
-                        goto Found;
-                    }
+                        return b.Except(drawn).Sum() * i;
                 }
             }
-            Found:
-            Console.WriteLine("Part A: Result is {0}", ans);
-            return ans;
+            return -1;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            var boards = ReadBoards();
-            var nums = ReadInts();
+            var boards = ReadBoards(file);
+            var nums = ReadInts(file);
             var drawn = new List<int>();
             int ans = 0;
             foreach (int i in nums)
@@ -109,33 +91,17 @@ namespace day04
                 foreach (var b in boards)
                 {
                     if (CheckBingo(b, drawn))
-                        ans = Calc(b, drawn, i);
+                        ans = b.Except(drawn).Sum() * i;
                     else
                         nextBoards.Add(b);
                 }
                 boards = nextBoards;
                 if (boards.Count == 0)
-                    break;
+                    return ans;
             }
-            Console.WriteLine("Part B: Result is {0}", ans);
-            return ans;
+            return -1;
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("AoC 2021 - " + nsname + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
-            PartA();
-            PartB();
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
-        }
-
-        public static bool MainTest()
-        {
-            int a = 29440;
-            int b = 13884;
-            return (PartA().Equals(a)) && (PartB().Equals(b));
-        }
+        static void Main() => Aoc.Execute(day, PartA, PartB);
     }
 }
