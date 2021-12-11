@@ -24,8 +24,7 @@ namespace aoc
         public static Object PartA(string file)
         {
             Map m = Map.Build(ReadInput.Strings(day, file));
-            var lows = GetLows(m);
-            return lows.Select(p => m[p] - '0' + 1).Sum();
+            return GetLows(m).Select(p => m[p] - '0' + 1).Sum();
         }
 
         static bool AllNeighs9(Map m, Pos p) => 

@@ -38,3 +38,28 @@ fun <V> List<V>.permutations(): Sequence<List<V>> {
         }
     }
 }
+
+fun toMap(input: String): MutableMap<P<Int, Int>, Char> {
+    val lines = input.lines()
+    val map = mutableMapOf<P<Int, Int>, Char>()
+    for (line in lines.indices) {
+        val lineChars = lines[line].toCharArray()
+        for (col in lineChars.indices) {
+            map[P(col, line)] = lineChars[col]
+        }
+    }
+    return map
+}
+fun neighbors(i: P<Int, Int>) = listOf(
+    i + P(-1, -1), i + P(-1, 0), i + P(-1, 1),
+    i + P(0, -1), i + P(0, 1),
+    i + P(1, -1), i + P(1, 0), i + P(1, 1))
+
+
+fun neighborsSimple(i: P<Int, Int>) = listOf(
+    i + P(-1, 0),
+    i + P(0, -1),
+    i + P(0, 1),
+    i + P(1, 0))
+
+operator fun Pair<Int, Int>.plus(that: Pair<Int, Int>) = Pair(this.first + that.first, this.second + that.second)
