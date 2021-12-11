@@ -26,11 +26,8 @@ namespace aoc
             }
             return (0, stack);
         }
-        public static Object PartA(string file)
-        {
-            var z = ReadInput.Strings(Day, file);
-            return z.Select(x => Score(x).v).Sum();
-        }
+        public static Object PartA(string file) =>
+            ReadInput.Strings(Day, file).Select(x => Score(x).v).Sum();
 
         public static Object PartB(string file)
         {
