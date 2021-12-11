@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AdventOfCode;
 using Pos = AdventOfCode.GenericPosition2D<int>;
 
@@ -13,9 +9,9 @@ namespace aoc
 {
     public class Day11
     {
-        // Today: 
+        // Today: Handle octupuses that flash in a 10 by 10 grid
 
-        static void FlashPos(Map m, Pos p, ref HashSet<Pos> visited)
+        static void FlashPos(Map m, Pos p, HashSet<Pos> visited)
         {
             visited.Add(p);
             foreach (Pos n in CoordsXY.Neighbours8(p))
@@ -23,7 +19,7 @@ namespace aoc
                 {
                     m[n] = (char)(m[n] + 1);
                     if (m[n] > '9' && !visited.Contains(n))
-                        FlashPos(m, n, ref visited);
+                        FlashPos(m, n, visited);
                 }
         }
 
@@ -34,10 +30,8 @@ namespace aoc
                 m[p] = (char) (m[p] + 1);
             var flashed = m.Positions().Where(x => m[x] > '9').ToList();
             foreach (Pos p in flashed)
-            {
                 if (!visited.Contains(p))
-                    FlashPos(m, p, ref visited);
-            }
+                    FlashPos(m, p, visited);
             foreach (Pos p in visited)
                 m[p] = '0';
             return visited.Count;
@@ -46,14 +40,7 @@ namespace aoc
         public static Object PartA(string file)
         {
             Map m = Map.Build(ReadInput.Strings(Day, file));
-            int sum = 0;
-            for (int i = 0; i < 100; i++)
-            {
-                int a = StepMap(m);
-                //m.Print();
-                sum += a;
-            }
-            return sum;
+            return Enumerable.Range(0, 100).Select(x => StepMap(m)).Sum();
         }
 
         public static Object PartB(string file)
