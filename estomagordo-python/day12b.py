@@ -36,7 +36,8 @@ def solve(lines):
         l = len(graph[node])
 
         if index == l:
-            visited[node] -= 1
+            if node not in uppers:
+                visited[node] -= 1
             continue
 
         following = graph[node][index]
@@ -54,7 +55,7 @@ def solve(lines):
             stack.append([node, index+1])
             stack.append([following, 0])
         else:
-            if following in visited and visited[following] > 0:
+            if visited[following] > 0:
                 if visited.most_common(1)[0][1] == 1:
                     stack.append([node, index+1])
                     stack.append([following, 0])
