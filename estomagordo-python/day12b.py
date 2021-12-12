@@ -25,13 +25,27 @@ def can_add(path, node):
 
 def solve(lines):
     graph = defaultdict(list)
+    translation = {}
+    uppers = set()
 
     for a,b in lines:
-        graph[a].append(b)
-        graph[b].append(a)
+        if a not in translation:
+            translation[a] = len(translation)
+        if b not in translation:
+            translation[b] = len(translation)
 
+        if a.isupper():
+            uppers.add(translation[a])
+        if b.isupper():
+            uppers.add(translation[b])
+
+        graph[translation[a]].append(translation[b])
+        graph[translation[b]].append(translation[a])
+
+    start = translation['start']
+    end = translation['end']
     visited = Counter()
-    stack = [['start', 0]]
+    stack = [[start, 0]]
     count = 0
 
     while stack:
@@ -45,16 +59,16 @@ def solve(lines):
 
         following = graph[node][index]
 
-        if following == 'end':
+        if following == end:
             count += 1
             stack.append([node, index+1])
             continue
 
-        if following == 'start':
+        if following == start:
             stack.append([node, index+1])
             continue
         
-        if following.isupper():
+        if following in uppers:
             stack.append([node, index+1])
             stack.append([following, 0])
         else:
