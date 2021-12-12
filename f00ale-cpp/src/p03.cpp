@@ -75,9 +75,9 @@ std::tuple<std::string, std::string> p03(const std::string & input) {
 
     mp = maxpos;
     v = vv;
+    decltype(v) vc;
 
     while(mp) {
-        decltype(v) vc;
         vc.swap(v);
         int c0 = 0, c1 = 0;
         mp--;
@@ -95,6 +95,7 @@ std::tuple<std::string, std::string> p03(const std::string & input) {
             co2 = v[0];
             break;
         }
+        vc.clear();
     }
 
     ans2 = oxygen * co2;
