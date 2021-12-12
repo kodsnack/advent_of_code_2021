@@ -1,30 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AdventOfCode;
-//using Position = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
 {
     public class Day12
     {
-        // Today: 
+        // Today: Find paths through caves, some reenterable
 
         class Node
         {
             public string name;
             public List<Node> neighs;
-            public bool canBeReentred;
+            public bool reenterable;
             public Node(string s)
             {
                 name = s;
                 neighs = new List<Node>();
-                canBeReentred = (s == s.ToUpper());
+                reenterable = (s == s.ToUpper());
             }
         }
 
@@ -49,41 +44,7 @@ namespace aoc
             return nodes;
         }
 
-        static void GoToNeighs(Node n1, Dictionary<string, Node> nodes, 
-            Dictionary<string, int> visits, string myPath, ref int nOk)
-        {
-            if (n1.name == "end")
-            {
-                nOk += 1;
-                //Console.WriteLine(myPath + "," + "end");
-            }
-            else
-            {
-                visits[n1.name] = visits.GetValueOrDefault(n1.name, 0) + 1;
-                foreach (var n in n1.neighs)
-                {
-                    if (n.canBeReentred || !visits.ContainsKey(n.name))
-                    {
-                        var d = new Dictionary<string, int>(visits);
-                        GoToNeighs(n, nodes, d, myPath + "," + n1.name, ref nOk);
-                    }
-                }
-            }
-        }
-
-        public static Object PartA(string file)
-        {
-            var nodes = ReadNodes(file);
-            var visits = new Dictionary<string, int>();
-            var start = nodes["start"];
-            //var paths = new List<List<Node>>();
-            int n = 0;
-            GoToNeighs(start, nodes, visits, "", ref n);
-            //Console.WriteLine("A is {0}", a);
-            return n;
-        }
-
-        static void GoToNeighsB(Node n1, Dictionary<string, Node> nodes,
+        static void GoToNeighs(Node n1, Dictionary<string, Node> nodes,
             Dictionary<string, int> visits, string myPath, ref int nOk, bool canGoTwice)
         {
             if (n1.name == "end")
@@ -96,19 +57,29 @@ namespace aoc
                 visits[n1.name] = visits.GetValueOrDefault(n1.name, 0) + 1;
                 foreach (var n in n1.neighs)
                 {
-                    bool validPath = n.canBeReentred || !visits.ContainsKey(n.name);
+                    bool validPath = n.reenterable || !visits.ContainsKey(n.name);
                     if (validPath)
                     {
                         var d = new Dictionary<string, int>(visits);
-                        GoToNeighsB(n, nodes, d, myPath + "," + n1.name, ref nOk, canGoTwice);
+                        GoToNeighs(n, nodes, d, myPath + "," + n1.name, ref nOk, canGoTwice);
                     }
-                    else if (!n.canBeReentred && canGoTwice && n.name != "start")
+                    else if (!n.reenterable && canGoTwice && n.name != "start")
                     {
                         var d = new Dictionary<string, int>(visits);
-                        GoToNeighsB(n, nodes, d, myPath + "," + n1.name, ref nOk, false);
+                        GoToNeighs(n, nodes, d, myPath + "," + n1.name, ref nOk, false);
                     }
                 }
             }
+        }
+
+        public static Object PartA(string file)
+        {
+            var nodes = ReadNodes(file);
+            var visits = new Dictionary<string, int>();
+            var start = nodes["start"];
+            int n = 0;
+            GoToNeighs(start, nodes, visits, "", ref n, false);
+            return n;
         }
 
         public static Object PartB(string file)
@@ -116,9 +87,8 @@ namespace aoc
             var nodes = ReadNodes(file);
             var visits = new Dictionary<string, int>();
             var start = nodes["start"];
-            //var paths = new List<List<Node>>();
             int n = 0;
-            GoToNeighsB(start, nodes, visits, "", ref n, true);
+            GoToNeighs(start, nodes, visits, "", ref n, true);
             return n;
         }
 
