@@ -12,21 +12,23 @@ def solve(lines):
         graph[a].append(b)
         graph[b].append(a)
 
-    paths = set()
-    frontier = [['start']]
+    def find(visited, node):
+        if node == 'end':
+            return 1
 
-    for path in frontier:
-        if path[-1] == 'end':
-            paths.add(tuple(path))
-            continue
+        count = 0
 
-        for node in graph[path[-1]]:
-            if node[0].islower() and node in path:
-                continue
+        for following in graph[node]:
+            if following.isupper():
+                count += find(visited, following)
+            elif following != 'start' and following not in visited:
+                visited.add(following)
+                count += find(visited, following)
+                visited.remove(following)
 
-            frontier.append(path + [node])
+        return count
 
-    return len(paths)
+    return find({'start'}, 'start')
 
 
 def main():
