@@ -7,6 +7,7 @@ from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_
 
 def solve(lines):
     graph = defaultdict(list)
+
     translation = {}
     uppers = set()
 
@@ -26,48 +27,30 @@ def solve(lines):
 
     start = translation['start']
     end = translation['end']
-    visited = Counter()
-    stack = [[start, 0]]
-    count = 0
+    visited = Counter([start])
+    
+    def find(node):
+        count = 0
 
-    while stack:
-        node, index = stack.pop()                
-
-        l = len(graph[node])
-
-        if index == l:
-            if node not in uppers:
-                visited[node] -= 1
-            continue
-
-        following = graph[node][index]
-
-        if following == end:
-            count += 1
-            stack.append([node, index+1])
-            continue
-
-        if following == start:
-            stack.append([node, index+1])
-            continue
-        
-        if following in uppers:
-            stack.append([node, index+1])
-            stack.append([following, 0])
-        else:
-            if visited[following] > 0:
-                if visited.most_common(1)[0][1] == 1:
-                    stack.append([node, index+1])
-                    stack.append([following, 0])
-                    visited[following] += 1
-                else:
-                    stack.append([node, index+1])
-            else:
-                stack.append([node, index+1])
-                stack.append([following, 0])
+        for following in graph[node]:
+            if following == start:
+                continue
+            elif following == end:
+                count += 1
+            elif following in uppers:
+                count += find(following)
+            elif visited[following] < 1:
                 visited[following] += 1
+                count += find(following)
+                visited[following] -= 1
+            elif visited.most_common(1)[0][1] < 2:
+                visited[following] += 1
+                count += find(following)
+                visited[following] -= 1
 
-    return count
+        return count
+
+    return find(start)
 
 
 def main():
