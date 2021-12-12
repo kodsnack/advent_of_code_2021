@@ -20,11 +20,11 @@ def solve(lines):
             paths.add(tuple(path))
             continue
 
-        for next in graph[path[-1]]:
-            if next[0].islower() and next in path:
+        for node in graph[path[-1]]:
+            if node[0].islower() and node in path:
                 continue
 
-            frontier.append(path + [next])
+            frontier.append(path + [node])
 
     return len(paths)
 
