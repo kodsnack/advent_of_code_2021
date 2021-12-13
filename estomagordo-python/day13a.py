@@ -8,12 +8,23 @@ from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_
 def solve(dots, folds):
     d = set()
 
+    for x, y in dots:        
+        d.add((x, y))
 
-    for x, y in dots:
-        if x < 655:
-            d.add((x, y))
-        else:
-            d.add((655-(x-655), y))
+    for alongx, val in folds[:1]:
+        toremove = set()
+        toadd = set()
+
+        for x, y in d:
+            if (alongx and x > val) or (not alongx and y > val):
+                toremove.add((x, y))
+                if alongx:
+                    toadd.add((2*val-x, y))
+                else:
+                    toadd.add((x, 2*val-y))
+
+        d |= toadd
+        d -= toremove
 
     return len(d)
 
