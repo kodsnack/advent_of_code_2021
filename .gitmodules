@@ -74,3 +74,6 @@
 [submodule "basicprogrammer10-rust"]
 	path = basicprogrammer10-rust
 	url = https://github.com/Basicprogrammer10/Advent-Of-Code-2021.git
+[submodule "polkas-R"]
+	path = polkas-R
+	url = https://github.com/Polkas/codeadvent2021
