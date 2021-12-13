@@ -5,46 +5,52 @@ from itertools import combinations, permutations, product
 from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def can_add(path, node):
-    if node == 'start':
-        return False
-
-    if node.isupper():
-        return True
-
-    nodecounts = Counter(path)
-
-    if node not in nodecounts:
-        return True
-
-    if nodecounts[node] == 2:
-        return False
-
-    return not any(k.islower() and nodecounts[k] == 2 for k in nodecounts.keys())
-
-
 def solve(lines):
     graph = defaultdict(list)
 
+    translation = {}
+    uppers = set()
+
     for a,b in lines:
-        graph[a].append(b)
-        graph[b].append(a)
+        if a not in translation:
+            translation[a] = len(translation)
+        if b not in translation:
+            translation[b] = len(translation)
 
-    paths = set()
-    frontier = [['start']]
+        if a.isupper():
+            uppers.add(translation[a])
+        if b.isupper():
+            uppers.add(translation[b])
 
-    for path in frontier:
-        if path[-1] == 'end':
-            paths.add(tuple(path))
-            continue
+        graph[translation[a]].append(translation[b])
+        graph[translation[b]].append(translation[a])
 
-        for node in graph[path[-1]]:
-            if not can_add(path, node):
+    start = translation['start']
+    end = translation['end']
+    visited = Counter([start])
+    
+    def find(node):
+        count = 0
+
+        for following in graph[node]:
+            if following == start:
                 continue
+            elif following == end:
+                count += 1
+            elif following in uppers:
+                count += find(following)
+            elif visited[following] < 1:
+                visited[following] += 1
+                count += find(following)
+                visited[following] -= 1
+            elif visited.most_common(1)[0][1] < 2:
+                visited[following] += 1
+                count += find(following)
+                visited[following] -= 1
 
-            frontier.append(path + [node])
+        return count
 
-    return len(paths)
+    return find(start)
 
 
 def main():
