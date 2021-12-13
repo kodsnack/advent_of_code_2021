@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AdventOfCode;
 using Pos = AdventOfCode.GenericPosition2D<int>;
 
@@ -13,95 +10,46 @@ namespace aoc
 {
     public class Day13
     {
-        // Today: 
+        // Today: Fold paper, do manual OCR 
 
-        static (HashSet<Pos>, List<Pos>) ReadInput(string file)
+        static (HashSet<Pos>, List<(bool useX, int n)>) ReadInput(string file)
         {
             var ps = new HashSet<Pos>();
-            var fs = new List<Pos>();
+            var fs = new List<(bool, int)>();
             foreach (var s in File.ReadAllLines(AdventOfCode.ReadInput.GetPath(Day, file)))
             {
-                if (s.Contains(','))
-                {
-                    var v = s.Split(',');
-                    var p = new Pos(int.Parse(v[0]), int.Parse(v[1]));
-                    ps.Add(p);
-                }
-                else if (s.Contains('='))
-                {
-                    var w = s.Split(' ').TakeLast(1).ToArray()[0].Split('=');
-                    int x = w[0] == "x" ? int.Parse(w[1]) : 0;
-                    int y = w[0] == "y" ? int.Parse(w[1]) : 0;
-                    fs.Add(new Pos(x, y));
-                }
+                var v = s.Split(',');
+                var w = s.Split(' ').TakeLast(1).ToArray()[0].Split('=');
+                if (v.Length > 1)
+                    ps.Add(new Pos(int.Parse(v[0]), int.Parse(v[1])));
+                else if (w.Length > 1)
+                    fs.Add((w[0] == "x", int.Parse(w[1])));
             }
             return (ps, fs);
         }
+
+        static HashSet<Pos> FoldPositions(HashSet<Pos> pos, List<(bool useX, int n)> fold)
+        {
+            static Pos FoldX(Pos p, int f) => new Pos((p.x > f) ? 2 * f - p.x : p.x, p.y);
+            foreach (var (useX, n) in fold)
+                pos = pos.Select(p => useX ? p : p.SwitchXY()).
+                    Where(p => p.x != n).Select(p => FoldX(p, n)).
+                    Select(p => useX ? p : p.SwitchXY()).ToHashSet();
+            return pos;
+        }
+
         public static Object PartA(string file)
         {
             var (pos, fold) = ReadInput(file);
-            var f = fold[0];
-            var paper = new HashSet<Pos>();
-            if (f.y == 0)
-            {
-                foreach (var p in pos)
-                {
-                    var q = new Pos(p);
-                    if (q.x > f.x)
-                        q.x = f.x - (q.x - f.x);
-                    if (q.x != f.x && q.x >= 0)
-                        paper.Add(q);
-                }
-            }
-            else
-            {
-                foreach (var p in pos)
-                {
-                    var q = new Pos(p);
-                    if (q.y > f.y)
-                        q.y = f.y - (q.y - f.y);
-                    if (q.y != f.y && q.y >= 0)
-                        paper.Add(q);
-                }
-            }
-            return paper.Count();
+            return FoldPositions(pos, new List<(bool, int)>() { fold[0] }).Count();
         }
 
         public static Object PartB(string file)
         {
             var (pos, fold) = ReadInput(file);
-            foreach (Pos f in fold)
-            {
-                var paper = new HashSet<Pos>();
-                if (f.y == 0)
-                {
-                    foreach (var p in pos)
-                    {
-                        var q = new Pos(p);
-                        if (q.x > f.x)
-                            q.x = f.x - (q.x - f.x);
-                        if (q.x != f.x && q.x >= 0)
-                            paper.Add(q);
-                    }
-                }
-                else
-                {
-                    foreach (var p in pos)
-                    {
-                        var q = new Pos(p);
-                        if (q.y > f.y)
-                            q.y = f.y - (q.y - f.y);
-                        if (q.y != f.y && q.y >= 0)
-                            paper.Add(q);
-                    }
-                }
-                pos = paper;
-            }
-            int x = pos.Select(a => a.x).Max()+1;
-            int y = pos.Select(a => a.y).Max()+1;
-            Map m = new Map(x, y, new Pos(), ' ');
-            foreach (var p in pos)
-                m[p] = '#';
+            pos = FoldPositions(pos, fold);
+            Map m = new Map(pos.Select(a => a.x).Max() + 1, pos.Select(a => a.y).Max() + 1, ' ');
+            pos.ToList().ForEach(p => m[p] = '#');
             return m.PrintToString();
         }
 

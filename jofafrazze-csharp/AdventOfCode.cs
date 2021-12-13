@@ -103,6 +103,10 @@ namespace AdventOfCode
                 Extensions.Abs(Extensions.Subtract(y, p.y))
                 );
         }
+        public GenericPosition2D<T> SwitchXY()
+        {
+            return new GenericPosition2D<T>(y, x);
+        }
         // Rotates pos n steps clock-wize around center
         public static GenericPosition2D<T> Rotate4Steps(GenericPosition2D<T> pos, int n, GenericPosition2D<T> center = new GenericPosition2D<T>())
         {
@@ -250,7 +254,7 @@ namespace AdventOfCode
         public GenericPosition2D<int> pos;
         public char[,] data;
 
-        public Map(int w, int h, GenericPosition2D<int> p, char fill = '\0')
+        public Map(int w, int h, char fill, GenericPosition2D<int> p = new GenericPosition2D<int>())
         {
             width = w;
             height = h;
@@ -277,7 +281,7 @@ namespace AdventOfCode
         {
             int w = list[0].Length;
             int h = list.Count;
-            Map m = new Map(w, h, new GenericPosition2D<int>(0, 0));
+            Map m = new Map(w, h, ' ');
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                     m.data[x, y] = list[y][x];
@@ -316,7 +320,7 @@ namespace AdventOfCode
             int w = left + right + width;
             int h = top + bottom + height;
             GenericPosition2D<int> s = new GenericPosition2D<int>(pos.x + left, pos.y + top);
-            Map m = new Map(w, h, s, fill);
+            Map m = new Map(w, h, fill, s);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                     m.data[x + left, y + top] = data[x, y];
