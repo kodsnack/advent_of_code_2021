@@ -5,4 +5,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="AdventOfCode.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\AdventOfCode.cs" Link="AdventOfCode.cs" />
+  </ItemGroup>
+
 </Project>

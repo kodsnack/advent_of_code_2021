@@ -336,7 +336,7 @@ namespace AdventOfCode
                 {
                     sb.Append(data[x, y]);
                 }
-                s += sb.ToString() + "\r\n";
+                s += sb.ToString() + Environment.NewLine;
             }
             return s;
         }
@@ -765,13 +765,15 @@ namespace AdventOfCode
     {
         public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
         {
+            static Object FixOutput(Object x) =>
+                (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
             Console.WriteLine("AoC 2021 - " + day + ":");
             var w = System.Diagnostics.Stopwatch.StartNew();
             string file = example ? "example.txt" : "input.txt";
-            Object a = PartA(file);
-            Console.WriteLine("Part A: Result is {0}", a);
-            Object b = PartB(file);
-            Console.WriteLine("Part B: Result is {0}", b);
+            Object a = FixOutput(PartA(file));
+            Console.WriteLine("Part A - Result is: {0}", a);
+            Object b = FixOutput(PartB(file));
+            Console.WriteLine("Part B - Result is: {0}", b);
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }
