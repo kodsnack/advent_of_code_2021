@@ -26,16 +26,10 @@ def solve(dots, folds):
         d |= toadd
         d -= toremove
 
-    lox = 100
-    hix = -100
-    loy = 100
-    hiy = -100
-
-    for x, y in d:
-        lox = min(lox, x)
-        hix = max(hix, x)
-        loy = min(loy, y)
-        hiy = max(hiy, y)
+    lox = min(point[0] for point in d)
+    hix = max(point[0] for point in d)
+    loy = min(point[1] for point in d)
+    hiy = max(point[1] for point in d)
 
     image = []
     
