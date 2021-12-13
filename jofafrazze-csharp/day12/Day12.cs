@@ -25,17 +25,16 @@ namespace aoc
             }
         }
 
-        static void GoToNeighs(string n0, HashSet<string> visits, ref int nOk, bool twice)
+        static void GoToNeighs(string n0, HashSet<string> visited, ref int nOk, bool twice)
         {
             if (n0 != "end")
             {
-                visits.Add(n0);
+                visited.Add(n0);
                 foreach (var n in nodes[n0])
                 {
-                    bool valid1 = n.All(char.IsUpper) || !visits.Contains(n);
-                    bool valid2 = !n.All(char.IsUpper) && twice && n != "start";
-                    if (valid1 || valid2)
-                        GoToNeighs(n, new HashSet<string>(visits), ref nOk, valid1 && twice);
+                    bool valid = n.All(char.IsUpper) || !visited.Contains(n);
+                    if (valid || (!n.All(char.IsUpper) && twice && n != "start"))
+                        GoToNeighs(n, new HashSet<string>(visited), ref nOk, valid && twice);
                 }
             }
             else
