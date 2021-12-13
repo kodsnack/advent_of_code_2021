@@ -19,32 +19,36 @@ def solve(dots, folds):
             if (alongx and x > val) or (not alongx and y > val):
                 toremove.add((x, y))
                 if alongx:
-                    toadd.add((val-(x-val), y))
+                    toadd.add((2*val-x, y))
                 else:
-                    toadd.add((x, val-(y-val)))
+                    toadd.add((x, 2*val-y))
 
         d |= toadd
         d -= toremove
 
-    lowx = 100
+    lox = 100
     hix = -100
-    lowy = 100
+    loy = 100
     hiy = -100
 
     for x, y in d:
-        lowx = min(lowx, x)
+        lox = min(lox, x)
         hix = max(hix, x)
-        lowy = min(lowy, y)
+        loy = min(loy, y)
         hiy = max(hiy, y)
 
-    for y in range(lowy, hiy+1):
-        row = [' ' for _ in range(hix-lowx+1)]
-        for x in range(lowx, hix+1):
+    image = []
+    
+    for y in range(loy, hiy+1):
+        row = [' ' for _ in range(hix-lox+1)]
+
+        for x in range(lox, hix+1):
             if (x, y) in d:
                 row[x] = '#'
-        print(row)
-    print(d)
-    return len(d), lowx, hix, lowy, hiy
+        
+        image.append(row)
+
+    return '\n'.join(''.join(row) for row in image)
 
 def main():
     dots = []
