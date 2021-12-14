@@ -630,9 +630,18 @@ namespace AdventOfCode
             return enable ? elements.Select(p => p.SwitchXY()) : elements;
         }
 
-        public static void DefAdd<T, U>(this Dictionary<T, U> dictionary, T key, U value)
+        public static void Inc<T, U>(this Dictionary<T, U> dictionary, T key, U value)
         {
             dictionary[key] = Add(dictionary.GetValueOrDefault(key, default), value);
+        }
+
+        public static Dictionary<T, int> Counter<T>(this IEnumerable<T> elements)
+        {
+            return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
+        }
+        public static Dictionary<T, long> CounterLong<T>(this IEnumerable<T> elements)
+        {
+            return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => (long)x.Count());
         }
     }
 
