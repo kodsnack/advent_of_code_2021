@@ -3,29 +3,54 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AdventOfCode;
-//using Position = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
 {
     public class Day12
     {
-        // Today: 
+        // Today: Find paths through caves, some reenterable
 
-        public static Object PartA(string file)
+        static Dictionary<string, List<string>> nodes;
+        static void ReadNodes(string file)
         {
-            var z = ReadInput.Ints(Day, file);
-            //Console.WriteLine("A is {0}", a);
-            return 0;
+            nodes = new Dictionary<string, List<string>>();
+            static void AddNode(string s, string neigh) =>
+                (nodes[s] = nodes.ContainsKey(s) ? nodes[s] : new List<string>()).Add(neigh);
+            foreach (var s in File.ReadAllLines(ReadInput.GetPath(Day, file)))
+            {
+                var v = s.Split('-');
+                AddNode(v[0], v[1]);
+                AddNode(v[1], v[0]);
+            }
         }
 
-        public static Object PartB(string file)
+        static void GoToNeighs(string n0, HashSet<string> visited, ref int nOk, bool twice)
         {
-            return 0;
+            if (n0 != "end")
+            {
+                visited.Add(n0);
+                foreach (var n in nodes[n0])
+                {
+                    bool valid = n.All(char.IsUpper) || !visited.Contains(n);
+                    if (valid || (!n.All(char.IsUpper) && twice && n != "start"))
+                        GoToNeighs(n, new HashSet<string>(visited), ref nOk, valid && twice);
+                }
+            }
+            else
+                nOk += 1;
         }
+
+        static Object Part(string file, bool partA)
+        {
+            ReadNodes(file);
+            int n = 0;
+            GoToNeighs("start", new HashSet<string>(), ref n, !partA);
+            return n;
+        }
+
+        public static Object PartA(string file) => Part(file, true);
+        public static Object PartB(string file) => Part(file, false);
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
         static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()); } }

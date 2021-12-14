@@ -11,21 +11,21 @@ std::tuple<std::string, std::string> p02(const std::string & input) {
     int x = 0, y = 0;
     int64_t x2 = 0, y2 = 0, a = 0;
     {
-        std::string dir;
+        char d = 0;
         int num = 0;
         for(const auto c : input) {
             if(c >= '0' && c <= '9') {
                 num *= 10;
                 num += c - '0';
             } else if(c >= 'a' && c <= 'z') {
-                dir += c;
+                if(!d) d = c;
             } else {
-                if( !dir.empty() && num) {
-                    if(dir == "forward") { x += num; x2 += num; y2 += a*num; }
-                    else if(dir == "up") { y -= num; a -= num; }
-                    else if(dir == "down") { y += num; a+= num; }
+                if( d && num) {
+                    if(d == 'f') { x += num; x2 += num; y2 += a*num; }
+                    else if(d == 'u') { y -= num; a -= num; }
+                    else if(d == 'd') { y += num; a+= num; }
                     else { }
-                    dir.clear();
+                    d = 0;
                     num = 0;
                 }
             }
