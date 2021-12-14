@@ -5,8 +5,8 @@ from itertools import combinations, permutations, product
 from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def solve(chain, transforms, times=3):
-    chain = 'NNCB'
+def solve(chain, transforms, times=10):
+    chain = 'PHVCVBFHCVPFKBNHKNBO'
     pairs = []
 
     for x in range(1, len(chain)):
@@ -15,10 +15,11 @@ def solve(chain, transforms, times=3):
     seen = {}
 
     def helper(pair, remaining, letter):
-        if remaining == 1:
+        if remaining == 0:
+            return pair.count(letter)
             for tp, _, middle in transforms:
                 if tp == pair:
-                    return middle==letter
+                    return (pair+middle).count(letter)
 
         if (pair, remaining, letter) in seen:
             return seen[(pair, remaining, letter)]
@@ -27,7 +28,7 @@ def solve(chain, transforms, times=3):
 
         for tp, _, middle in transforms:
             if tp == pair:
-                count = helper(pair[0] + middle, remaining-1, letter) + helper(middle+pair[1], remaining-1, letter)
+                count = helper(pair[0] + middle, remaining-1, letter) + helper(middle+pair[1], remaining-1, letter)#//(2 if remaining == 1 else 1)
                 break
 
         seen[(pair, remaining, letter)] = count
@@ -36,13 +37,15 @@ def solve(chain, transforms, times=3):
 
     lettersums = []
     alletters = set(chain)
+    # pairs = ['NC']
     for _, _, let in transforms:
         alletters.add(let)
     print(alletters)
     for letter in alletters:
-        total = 0
+        total = 0#-chain[1:-1].count(letter)
         for pair in pairs:
-            total += helper(pair, times, letter)
+            v = helper(pair, times, letter)
+            total += v - (v - pair.count(letter))//2
         lettersums.append(total)
         print(letter, total)
 
@@ -97,4 +100,4 @@ def main():
 if __name__ == '__main__':
     print(main())
 
-# 177487
+# 4439442043737 too low
