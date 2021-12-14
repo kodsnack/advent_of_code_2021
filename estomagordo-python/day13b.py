@@ -6,16 +6,16 @@ from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_
 
 
 def solve(dots, folds):
-    d = set()
+    dotset = set()
 
     for x, y in dots:        
-        d.add((x, y))
+        dotset.add((x, y))
 
     for alongx, val in folds:
         toremove = set()
         toadd = set()
 
-        for x, y in d:
+        for x, y in dotset:
             if (alongx and x > val) or (not alongx and y > val):
                 toremove.add((x, y))
                 if alongx:
@@ -23,19 +23,13 @@ def solve(dots, folds):
                 else:
                     toadd.add((x, 2*val-y))
 
-        d |= toadd
-        d -= toremove
+        dotset |= toadd
+        dotset -= toremove
 
-    lox = 100
-    hix = -100
-    loy = 100
-    hiy = -100
-
-    for x, y in d:
-        lox = min(lox, x)
-        hix = max(hix, x)
-        loy = min(loy, y)
-        hiy = max(hiy, y)
+    lox = min(point[0] for point in dotset)
+    hix = max(point[0] for point in dotset)
+    loy = min(point[1] for point in dotset)
+    hiy = max(point[1] for point in dotset)
 
     image = []
     
@@ -43,7 +37,7 @@ def solve(dots, folds):
         row = [' ' for _ in range(hix-lox+1)]
 
         for x in range(lox, hix+1):
-            if (x, y) in d:
+            if (x, y) in dotset:
                 row[x] = '#'
         
         image.append(row)
