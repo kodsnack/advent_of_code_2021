@@ -2,7 +2,7 @@ from collections import Counter, defaultdict, deque
 from functools import reduce
 from heapq import heappop, heappush
 from itertools import combinations, permutations, product
-from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
+from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
 def solve(chain, transforms, times=10):
@@ -22,10 +22,10 @@ def solve(chain, transforms, times=10):
                 seen[(pair, remaining)] = result
                 return result
 
-    for x in range(1, len(chain)):
-        letters += helper(chain[x-1]+chain[x], times)
+    for pair in chunks_with_overlap(chain, 2):
+        letters += helper(pair, times)
     
-    return letters.most_common(1)[0][1] - letters.most_common(len(letters))[-1][1]
+    return max(letters.values()) - min(letters.values())
 
 
 def main():
