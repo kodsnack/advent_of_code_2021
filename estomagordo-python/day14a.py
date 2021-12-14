@@ -5,8 +5,33 @@ from itertools import combinations, permutations, product
 from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def solve(chain, transforms, times=10):
+def solve(chain, transforms, times=40):
+    chain = 'NNCB'
     chain = 'PHVCVBFHCVPFKBNHKNBO'
+
+    letters = Counter(chain)
+    seen = {}
+
+    def helper(pair, remaining):
+        if remaining == 1:
+            for tp, _, middle in transforms:
+                if tp == pair:
+                    return Counter(middle)
+
+        if (pair, remaining) in seen:
+            return seen[(pair, remaining)]
+
+        for tp, _, middle in transforms:
+            if tp == pair:
+                theselets = Counter(middle) + helper(tp[0]+middle, remaining-1) + helper(middle+tp[1], remaining-1)
+                seen[(pair, remaining)] = theselets
+                return theselets
+
+    for x in range(1, len(chain)):
+        letters += helper(chain[x-1]+chain[x], times)
+    print(letters)
+    return letters.most_common(1)[0][1] - letters.most_common(len(letters))[-1][1]
+    
     pairs = []
 
     for x in range(1, len(chain)):
@@ -51,7 +76,7 @@ def solve(chain, transforms, times=10):
 
     lettersums.sort()
     print(lettersums)
-    return lettersums[-1]-lettersums[0]
+    # return lettersums[-1]-lettersums[0]
 
     for step in range(times):
         newchain = []
@@ -82,7 +107,7 @@ def solve(chain, transforms, times=10):
 
     c = Counter(chain)
     n = len(c)
-
+    print(c)
     return c.most_common(1)[0][1] - c.most_common(n)[-1][1]
 
 
@@ -99,5 +124,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 4439442043737 too low
