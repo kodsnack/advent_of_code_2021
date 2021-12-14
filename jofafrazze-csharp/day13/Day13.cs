@@ -32,10 +32,8 @@ namespace aoc
         static HashSet<Pos> FoldPositions(HashSet<Pos> pos, bool partA)
         {
             static Pos FoldX(Pos p, int f) => new Pos((p.x > f) ? 2 * f - p.x : p.x, p.y);
-            foreach (var (useX, n) in (partA ? new List<(bool, int)>() { fold[0] } : fold))
-                pos = pos.Select(p => useX ? p : p.SwitchXY()).
-                    Where(p => p.x != n).Select(p => FoldX(p, n)).
-                    Select(p => useX ? p : p.SwitchXY()).ToHashSet();
+            foreach (var (b, n) in (partA ? new List<(bool, int)>() { fold[0] } : fold))
+                pos = pos.Flip(!b).Where(p => p.x != n).Select(p => FoldX(p, n)).Flip(!b).ToHashSet();
             return pos;
         }
 
