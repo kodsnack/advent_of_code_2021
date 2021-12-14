@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <limits>
+
 std::tuple<std::string, std::string> p14(const std::string & input) {
     int64_t ans1 = 0;
     int64_t ans2 = 0;
@@ -34,6 +36,9 @@ std::tuple<std::string, std::string> p14(const std::string & input) {
         }
     }
 
+    std::vector<int64_t> counts('Z'-'A'+1);
+    for(auto c : start) counts[c-'A']++;
+
     std::map<std::string, int64_t> paircounts;
     for(size_t i = 0; i < start.size()-1; i++) {
         auto c1 = start[i];
@@ -42,31 +47,30 @@ std::tuple<std::string, std::string> p14(const std::string & input) {
         paircounts[k]++;
     }
 
-    auto countem = [&start](auto && pairs) {
-        std::vector<int64_t> cnts('Z' - 'A' + 1);
-        for(auto [k,v]:pairs) {
-            cnts[k[0] - 'A'] += v;
-            cnts[k[1] - 'A'] += v;
+    auto getans = [](auto && vec) {
+        int64_t mi = std::numeric_limits<int64_t>::max();
+        int64_t ma = std::numeric_limits<int64_t>::min();
+        for(const auto v : vec) {
+            if(v) {
+                if(v > ma) ma = v;
+                if(v < mi) mi = v;
+            }
         }
-
-        cnts[start.front() - 'A']++;
-        cnts[start.back() - 'A']++;
-        std::sort(cnts.begin(), cnts.end());
-        cnts.erase(std::remove(cnts.begin(), cnts.end(), 0), cnts.end());
-        return (cnts.back() - cnts.front()) / 2;
+        return ma - mi;
     };
 
     for(int varv = 0; varv < 40; varv++) {
-        if(varv == 10) ans1 = countem(paircounts);
+        if(varv == 10) ans1 = getans(counts);
         decltype(paircounts) next;
         for(auto [k,v] : paircounts) {
+            counts[m[k].front()-'A'] +=v;
             next[k[0]+m[k]] += v;
             next[m[k]+k[1]] += v;
         }
         paircounts.swap(next);
     }
 
-    ans2 = countem(paircounts);
+    ans2 = getans(counts);
 
     return {std::to_string(ans1), std::to_string(ans2)};
 }
