@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
-
+#include <array>
 
 std::tuple<std::string, std::string> p08(const std::string & input) {
     int64_t ans1 = 0;

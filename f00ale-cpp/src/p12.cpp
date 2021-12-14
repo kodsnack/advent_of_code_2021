@@ -6,6 +6,7 @@
 #include <map>
 #include <queue>
 #include <set>
+#include <array>
 
 std::tuple<std::string, std::string> p12(const std::string & input) {
     int64_t ans1 = 0;
