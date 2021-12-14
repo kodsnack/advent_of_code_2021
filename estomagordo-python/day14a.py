@@ -25,7 +25,7 @@ def solve(chain, transforms, times=10):
     for x in range(1, len(chain)):
         letters += helper(chain[x-1]+chain[x], times)
     
-    return letters.most_common(1)[0][1] - letters.most_common(len(letters))[-1][1]
+    return max(letters.values()) - min(letters.values())
 
 
 def main():
