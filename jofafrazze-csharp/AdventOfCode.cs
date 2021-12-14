@@ -624,6 +624,11 @@ namespace AdventOfCode
               elements.SelectMany((e, i) =>
                 elements.Skip(i + 1).Combinations(k - 1).Select(c => (new[] { e }).Concat(c)));
         }
+
+        public static IEnumerable<GenericPosition2D<T>> Flip<T>(this IEnumerable<GenericPosition2D<T>> elements, bool enable)
+        {
+            return enable ? elements.Select(p => p.SwitchXY()) : elements;
+        }
     }
 
     public static class CircularLinkedList
