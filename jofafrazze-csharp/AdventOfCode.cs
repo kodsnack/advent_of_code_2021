@@ -629,6 +629,11 @@ namespace AdventOfCode
         {
             return enable ? elements.Select(p => p.SwitchXY()) : elements;
         }
+
+        public static void DefAdd<T, U>(this Dictionary<T, U> dictionary, T key, U value)
+        {
+            dictionary[key] = Add(dictionary.GetValueOrDefault(key, default), value);
+        }
     }
 
     public static class CircularLinkedList
