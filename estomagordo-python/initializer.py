@@ -5,7 +5,7 @@ dayfile = lambda day: f"""from collections import Counter, defaultdict, deque
 from functools import reduce
 from heapq import heappop, heappush
 from itertools import combinations, permutations, product
-from helpers import columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
+from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
 def solve(lines):
