@@ -8,14 +8,14 @@
 std::tuple<std::string, std::string> p13(const std::string &input) {
     int64_t ans1 = 0;
     std::string ans2;
-    std::vector<std::tuple<int, int>> v;
-    std::vector<std::tuple<char, int>> folds;
+    std::vector<std::tuple<int64_t, int64_t>> v;
+    std::vector<std::tuple<char, int64_t>> folds;
     {
-        int num = 0;
+        int64_t num = 0;
         bool havenum = false;
         bool havecomma = false;
         char xy = 0;
-        int old = 0;
+        int64_t old = 0;
         for (const auto c: input) {
             if (c >= '0' && c <= '9') {
                 num *= 10;
@@ -41,19 +41,6 @@ std::tuple<std::string, std::string> p13(const std::string &input) {
 
     }
 
-    auto dumpv = [](const auto &v) {
-        int maxx = 0, maxy = 0;
-        for (auto[x, y]: v) {
-            maxx = std::max(maxx, x);
-            maxy = std::max(maxy, y);
-        }
-        std::vector<std::string> p(maxy + 1);
-        for (auto &s: p) s.append(maxx + 1, '.');
-        for (auto[x, y]: v) p[y][x] = '#';
-        for (auto &s: p) std::cout << s << std::endl;
-        std::cout << std::endl;
-    };
-
     int varv = 0;
     for (auto[c, xy]: folds) {
         for (auto &[x, y]: v) {
@@ -64,15 +51,28 @@ std::tuple<std::string, std::string> p13(const std::string &input) {
             }
         }
         if(varv++ == 0) {
-            std::set<std::tuple<int,int>> s;
+            std::set<std::tuple<int64_t,int64_t>> s;
             for(auto [x,y] : v) {
                 s.emplace(x,y);
             }
             ans1 = s.size();
         }
     }
-
-    //dumpv(v);
+#if 0
+    auto dumpv = [](const auto &v) {
+        int64_t maxx = 0, maxy = 0;
+        for (auto[x, y]: v) {
+            maxx = std::max(maxx, x);
+            maxy = std::max(maxy, y);
+        }
+        std::vector<std::string> p(maxy + 1);
+        for (auto &s: p) s.append(maxx + 1, '.');
+        for (auto[x, y]: v) p[y][x] = '#';
+        for (auto &s: p) std::cout << s << std::endl;
+        std::cout << std::endl;
+    };
+    dumpv(v);
+#endif
     ans2 = "RGZLBHFP"; // HARDCODED!
 
     return {std::to_string(ans1), ans2};
