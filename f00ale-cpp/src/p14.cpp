@@ -9,7 +9,9 @@ std::tuple<std::string, std::string> p14(const std::string & input) {
     int64_t ans1 = 0;
     int64_t ans2 = 0;
     std::string start;
-    std::map<std::string,std::string> m;
+    constexpr auto OFFS = 'Z'-'A'+1;
+
+    std::vector<char> m(OFFS * OFFS);
     {
         bool havedash = false;
         std::string tmp1, tmp2;
@@ -23,7 +25,7 @@ std::tuple<std::string, std::string> p14(const std::string & input) {
             } else if(c == '\n') {
                 if(!tmp1.empty()) {
                     if (havedash) {
-                        m[tmp1] = tmp2;
+                        m[(tmp1[0]-'A')+(tmp1[1]-'A')*OFFS] = tmp2[0];
                     } else {
                         start = tmp1;
                     }
@@ -63,9 +65,10 @@ std::tuple<std::string, std::string> p14(const std::string & input) {
         if(varv == 10) ans1 = getans(counts);
         decltype(paircounts) next;
         for(auto [k,v] : paircounts) {
-            counts[m[k].front()-'A'] +=v;
-            next[k[0]+m[k]] += v;
-            next[m[k]+k[1]] += v;
+            auto idx = (k[0]-'A') + (k[1]-'A') * OFFS;
+            counts[m[idx]-'A'] +=v;
+            next[std::string{k[0],m[idx]}] += v;
+            next[std::string{m[idx],k[1]}] += v;
         }
         paircounts.swap(next);
     }
