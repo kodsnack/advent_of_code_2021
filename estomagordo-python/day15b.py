@@ -14,16 +14,17 @@ def solve(lines):
 
     while True:
         score, y, x = heappop(frontier)
-        bigy = y // height
-        bigx = x // width
-        smally = y % height
-        smallx = x % width
 
         if y == height*5-1 and x == width*5-1:
             return score
 
         for ny, nx in neighs_bounded(y, x, 0, height*5-1, 0, width*5-1):
+            bigy = ny // height
+            bigx = nx // width
+            smally = ny % height
+            smallx = nx % width
             neighscore = lines[smally][smallx] + bigy + bigx
+
             if neighscore > 9:
                 neighscore -= 9
 
