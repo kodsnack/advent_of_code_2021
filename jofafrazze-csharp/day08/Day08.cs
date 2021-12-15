@@ -52,9 +52,7 @@ namespace aoc
             int sum = 0;
             foreach (var (patterns, outputs) in rows)
             {
-                var freq = new Dictionary<char, int>();
-                var fs = String.Join("", patterns).ToList();
-                fs.ForEach(c => freq[c] = freq.GetValueOrDefault(c, 0) + 1);
+                var freq = String.Join("", patterns).Counter();
                 var decode = new Dictionary<char, char>();
                 decode[freq.Where(x => x.Value == 9).First().Key] = 'f';
                 char cf = decode.First().Key;
