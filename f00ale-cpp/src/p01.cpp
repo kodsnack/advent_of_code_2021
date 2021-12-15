@@ -5,35 +5,33 @@
 std::tuple<std::string, std::string> p01(const std::string & input) {
     int64_t ans1 = 0;
     int64_t ans2 = 0;
-    std::vector<int> v;
 
     {
         int num = 0;
+        int l1 = 0, l2 = 0, l3 = 0;
+        int cnt = 0;
+        bool havenum = false;
         for(const auto c : input) {
             if(c >= '0' && c <= '9') {
                 num *= 10;
                 num += c-'0';
-            } else {
-                if(num) {
-                    v.push_back(num);
+                havenum = true;
+            } else if(havenum) {
+                cnt++;
+
+                if(cnt > 1) {
+                    if(num > l1) ans1++;
                 }
+                if(cnt > 3) {
+                    if(num > l3) ans2++; // N_i + N_i-1 + N_i-2 > N_i-1 + N_i-2 + N_i-3 -> N_i > N_i-3
+                }
+                l3 = l2;
+                l2 = l1;
+                l1 = num;
                 num = 0;
             }
 
         }
-    }
-
-    for(size_t i = 1; i < v.size(); i++) {
-        if(v[i] > v[i-1]) ans1++;
-    }
-
-    decltype(v) v2;
-    for(size_t i = 0; i < v.size()-2; i++) {
-        v2.push_back(v[i] + v[i+1] + v[i+2]);
-    }
-
-    for(size_t i = 1; i < v2.size(); i++) {
-        if(v2[i] > v2[i-1]) ans2++;
     }
 
     return {std::to_string(ans1), std::to_string(ans2)};

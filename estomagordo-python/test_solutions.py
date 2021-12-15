@@ -18,7 +18,16 @@ import day9a
 import day9b
 import day10a
 import day10b
-
+import day11a
+import day11b
+import day12a
+import day12b
+import day13a
+import day13b
+import day14a
+import day14b
+import day15a
+import day15b
 
 def test_1a():
     result = day1a.main()
@@ -118,3 +127,59 @@ def test_10a():
 def test_10b():
     result = day10b.main()
     assert(2116639949 == result)
+
+
+def test_11a():
+    result = day11a.main()
+    assert(1725 == result)
+
+
+def test_11b():
+    result = day11b.main()
+    assert(308 == result)
+
+
+def test_12a():
+    result = day12a.main()
+    assert(3230 == result)
+
+
+def test_12b():
+    result = day12b.main()
+    assert(83475 == result)
+
+
+def test_13a():
+    result = day13a.main()
+    assert(735 == result)
+
+
+def test_13b():
+    result = day13b.main()
+    s = '''#  # #### ###  #### #  #  ##  #  # ####
+#  # #    #  #    # # #  #  # #  #    #
+#  # ###  #  #   #  ##   #  # #  #   # 
+#  # #    ###   #   # #  #### #  #  #  
+#  # #    # #  #    # #  #  # #  # #   
+ ##  #    #  # #### #  # #  #  ##  ####'''
+    assert(s == result)
+
+
+def test_14a():
+    result = day14a.main()
+    assert(3555 == result)
+
+
+def test_14b():
+    result = day14b.main()
+    assert(4439442043739 == result)
+
+
+def test_15a():
+    result = day15a.main()
+    assert(589 == result)
+
+
+def test_15b():
+    result = day15b.main()
+    assert(2885 == result)

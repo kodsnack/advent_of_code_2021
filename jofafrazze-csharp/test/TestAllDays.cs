@@ -127,4 +127,69 @@ namespace test
         [Fact]
         public void TestB() => Assert.Equal(2391385187L, aoc.Day10.PartB(Input.actual));
     }
+
+    public class TestDay11
+    {
+        [Fact]
+        public void ExampleA() => Assert.Equal(1656, aoc.Day11.PartA(Input.example));
+        [Fact]
+        public void TestA() => Assert.Equal(1599, aoc.Day11.PartA(Input.actual));
+        [Fact]
+        public void ExampleB() => Assert.Equal(195, aoc.Day11.PartB(Input.example));
+        [Fact]
+        public void TestB() => Assert.Equal(418, aoc.Day11.PartB(Input.actual));
+    }
+
+    public class TestDay12
+    {
+        [Fact]
+        public void ExampleA() => Assert.Equal(226, aoc.Day12.PartA(Input.example));
+        [Fact]
+        public void TestA() => Assert.Equal(4885, aoc.Day12.PartA(Input.actual));
+        [Fact]
+        public void ExampleB() => Assert.Equal(3509, aoc.Day12.PartB(Input.example));
+        [Fact]
+        public void TestB() => Assert.Equal(117095, aoc.Day12.PartB(Input.actual));
+    }
+
+    public class TestDay13
+    {
+        [Fact]
+        public void ExampleA() => Assert.Equal(17, aoc.Day13.PartA(Input.example));
+        [Fact]
+        public void TestA() => Assert.Equal(602, aoc.Day13.PartA(Input.actual));
+        readonly string b =
+            " ##   ##  ####   ## #  # ####  ##  #  #" + System.Environment.NewLine +
+            "#  # #  # #       # #  #    # #  # # # " + System.Environment.NewLine +
+            "#    #  # ###     # ####   #  #    ##  " + System.Environment.NewLine +
+            "#    #### #       # #  #  #   #    # # " + System.Environment.NewLine +
+            "#  # #  # #    #  # #  # #    #  # # # " + System.Environment.NewLine +
+            " ##  #  # #     ##  #  # ####  ##  #  #" + System.Environment.NewLine;
+        [Fact]
+        public void TestB() => Assert.Equal(b, aoc.Day13.PartB(Input.actual));
+    }
+
+    public class TestDay14
+    {
+        [Fact]
+        public void ExampleA() => Assert.Equal(1588L, aoc.Day14.PartA(Input.example));
+        [Fact]
+        public void TestA() => Assert.Equal(3213L, aoc.Day14.PartA(Input.actual));
+        [Fact]
+        public void ExampleB() => Assert.Equal(2188189693529, aoc.Day14.PartB(Input.example));
+        [Fact]
+        public void TestB() => Assert.Equal(3711743744429, aoc.Day14.PartB(Input.actual));
+    }
+
+    public class TestDay15
+    {
+        [Fact]
+        public void ExampleA() => Assert.Equal(40, aoc.Day15.PartA(Input.example));
+        [Fact]
+        public void TestA() => Assert.Equal(503, aoc.Day15.PartA(Input.actual));
+        [Fact]
+        public void ExampleB() => Assert.Equal(315, aoc.Day15.PartB(Input.example));
+        [Fact]
+        public void TestB() => Assert.Equal(2853, aoc.Day15.PartB(Input.actual));
+    }
 }

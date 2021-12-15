@@ -103,6 +103,10 @@ namespace AdventOfCode
                 Extensions.Abs(Extensions.Subtract(y, p.y))
                 );
         }
+        public GenericPosition2D<T> SwitchXY()
+        {
+            return new GenericPosition2D<T>(y, x);
+        }
         // Rotates pos n steps clock-wize around center
         public static GenericPosition2D<T> Rotate4Steps(GenericPosition2D<T> pos, int n, GenericPosition2D<T> center = new GenericPosition2D<T>())
         {
@@ -250,7 +254,7 @@ namespace AdventOfCode
         public GenericPosition2D<int> pos;
         public char[,] data;
 
-        public Map(int w, int h, GenericPosition2D<int> p, char fill = '\0')
+        public Map(int w, int h, char fill, GenericPosition2D<int> p = new GenericPosition2D<int>())
         {
             width = w;
             height = h;
@@ -277,7 +281,7 @@ namespace AdventOfCode
         {
             int w = list[0].Length;
             int h = list.Count;
-            Map m = new Map(w, h, new GenericPosition2D<int>(0, 0));
+            Map m = new Map(w, h, ' ');
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                     m.data[x, y] = list[y][x];
@@ -301,11 +305,13 @@ namespace AdventOfCode
             return p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
         }
 
-        public List<GenericPosition2D<int>> Positions()
+        public List<GenericPosition2D<int>> Positions(GenericPosition2D<int> p0 = new GenericPosition2D<int>(), int w0 = 0, int h0 = 0)
         {
-            var positions = new List<GenericPosition2D<int>>(width * height);
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
+            int w = (w0 < 1) ? width - p0.x : w0;
+            int h = (h0 < 1) ? height - p0.y : h0;
+            var positions = new List<GenericPosition2D<int>>(w * h);
+            for (int y = p0.y; y < p0.y + h; y++)
+                for (int x = p0.x; x < p0.x + w; x++)
                     positions.Add(new GenericPosition2D<int>(x, y));
             return positions;
         }
@@ -316,7 +322,7 @@ namespace AdventOfCode
             int w = left + right + width;
             int h = top + bottom + height;
             GenericPosition2D<int> s = new GenericPosition2D<int>(pos.x + left, pos.y + top);
-            Map m = new Map(w, h, s, fill);
+            Map m = new Map(w, h, fill, s);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                     m.data[x + left, y + top] = data[x, y];
@@ -336,7 +342,7 @@ namespace AdventOfCode
                 {
                     sb.Append(data[x, y]);
                 }
-                s += sb.ToString() + "\r\n";
+                s += sb.ToString() + Environment.NewLine;
             }
             return s;
         }
@@ -620,6 +626,25 @@ namespace AdventOfCode
               elements.SelectMany((e, i) =>
                 elements.Skip(i + 1).Combinations(k - 1).Select(c => (new[] { e }).Concat(c)));
         }
+
+        public static IEnumerable<GenericPosition2D<T>> Flip<T>(this IEnumerable<GenericPosition2D<T>> elements, bool enable)
+        {
+            return enable ? elements.Select(p => p.SwitchXY()) : elements;
+        }
+
+        public static void Inc<T, U>(this Dictionary<T, U> dictionary, T key, U value)
+        {
+            dictionary[key] = Add(dictionary.GetValueOrDefault(key, default), value);
+        }
+
+        public static Dictionary<T, int> Counter<T>(this IEnumerable<T> elements)
+        {
+            return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
+        }
+        public static Dictionary<T, long> CounterLong<T>(this IEnumerable<T> elements)
+        {
+            return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => (long)x.Count());
+        }
     }
 
     public static class CircularLinkedList
@@ -765,13 +790,15 @@ namespace AdventOfCode
     {
         public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
         {
+            static Object FixOutput(Object x) =>
+                (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
             Console.WriteLine("AoC 2021 - " + day + ":");
             var w = System.Diagnostics.Stopwatch.StartNew();
             string file = example ? "example.txt" : "input.txt";
-            Object a = PartA(file);
-            Console.WriteLine("Part A: Result is {0}", a);
-            Object b = PartB(file);
-            Console.WriteLine("Part B: Result is {0}", b);
+            Object a = FixOutput(PartA(file));
+            Console.WriteLine("Part A - Result is: {0}", a);
+            Object b = FixOutput(PartB(file));
+            Console.WriteLine("Part B - Result is: {0}", b);
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }

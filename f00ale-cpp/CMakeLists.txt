@@ -30,12 +30,12 @@ add_library(aoc21_problems OBJECT
         src/p04.cpp
         src/p05.cpp
         src/p06.cpp
-#        src/p07.cpp
-#        src/p08.cpp
-#        src/p09.cpp
-#        src/p10.cpp
-#        src/p11.cpp
-#        src/p12.cpp
+        src/p07.cpp
+        src/p08.cpp
+        src/p09.cpp
+        src/p10.cpp
+        src/p11.cpp
+        src/p12.cpp
 #        src/p13.cpp
 #        src/p14.cpp
 #        src/p15.cpp

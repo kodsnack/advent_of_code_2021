@@ -1,4 +1,4 @@
-from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits
+from helpers import distance, distance_sq, ints, manhattan, neighs, neighs_bounded, columns, digits, chunks, chunks_with_overlap
 
 
 def test_distance():
@@ -227,3 +227,23 @@ def test_digits():
     result = digits(s)
 
     assert([8,9,3,6,9,8,2] == result)
+
+
+def test_chunks():
+    l = [1, 2, 7, 10, 12, 2]
+
+    twochunks = list(chunks(l, 2))
+    threechunks = list(chunks(l, 3))
+
+    assert([[1, 2], [7, 10], [12, 2]] == twochunks)
+    assert([[1, 2, 7], [10, 12, 2]] == threechunks)
+
+
+def test_chunks_with_overlap():
+    l = [1, 2, 7, 10, 12, 2]
+
+    twochunks = list(chunks_with_overlap(l, 2))
+    threechunks = list(chunks_with_overlap(l, 3))
+
+    assert([[1, 2], [2, 7], [7, 10], [10, 12], [12, 2]] == twochunks)
+    assert([[1, 2, 7], [2, 7, 10], [7, 10, 12], [10, 12, 2]] == threechunks)
