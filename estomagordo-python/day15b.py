@@ -20,25 +20,37 @@ def solve(lines):
     height = len(lines)
     width = len(lines[0])
 
+    newlines = []
+
+    for bigy in range(5):
+        for y in range(height):
+            line = []
+            for bigx in range(5):
+                for val in lines[y]:
+                    line.append(val+bigy+bigx)
+                    if line[-1] > 9:
+                        line[-1] -= 9
+
+            newlines.append(line)
+
+    lines = newlines
+
+
+    height = len(lines)
+    width = len(lines[0])        
+    
+
     frontier = [(0, 0, 0)]
     seen = {(0, 0): 0}
 
     while True:
         score, y, x = heappop(frontier)
-        bigy = y // height
-        bigx = x // width
-        smally = y % height
-        smallx = x % width
 
-        if y == height*5-1 and x == width*5-1:
+        if y == height-1 and x == width-1:
             return score
 
-        for ny, nx in neighs_bounded(y, x, 0, height*5-1, 0, width*5-1):
-            neighscore = lines[smally][smallx] + bigy + bigx
-            if neighscore > 9:
-                neighscore -= 9
-
-            newscore = score+neighscore
+        for ny, nx in neighs_bounded(y, x, 0, height-1, 0, width-1):
+            newscore = score+lines[ny][nx]
             if (ny, nx) not in seen or seen[(ny, nx)] > newscore:
                 seen[(ny, nx)] = newscore
                 heappush(frontier, (newscore, ny, nx))
