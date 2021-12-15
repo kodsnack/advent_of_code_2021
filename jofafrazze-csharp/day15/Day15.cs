@@ -11,9 +11,6 @@ namespace aoc
     {
         // Today: Walk map, find minimum total sum to the end position
 
-        static Dictionary<Pos, int> minRisk;
-        static int minFinalRisk;
-        
         class RiskComparer : IComparer<(Pos p, int r)>
         {
             public int Compare((Pos p, int r) a, (Pos p, int r)b) => (a.r == b.r) 
@@ -21,38 +18,30 @@ namespace aoc
                 : (a.r < b.r) ? -1 : 1;
         }
 
-        static void WalkMap(Map m)
+        static int WalkMap(Map m)
         {
             // Using SortedSet in the absence of a priority queue
-            var prio = new SortedSet<(Pos, int)>(new RiskComparer()) { (new Pos(), 0) };
-            var pEnd = m.Positions().Last();
-            while (prio.Count > 0)
+            var minRisk = new Dictionary<Pos, int>();
+            var steps = new SortedSet<(Pos, int)>(new RiskComparer()) { (new Pos(), 0) };
+            int iter = 0;
+            while (steps.Count > 0)
             {
-                (Pos p, int risk) = prio.First();
-                prio.Remove((p, risk));
-                if (risk < minFinalRisk && risk < minRisk.GetValueOrDefault(p, int.MaxValue))
+                (Pos p, int risk) = steps.First();
+                steps.Remove((p, risk));
+                iter++;
+                if (risk < minRisk.GetValueOrDefault(p, int.MaxValue))
                 {
                     minRisk[p] = risk;
-                    if (p == pEnd)
-                        minFinalRisk = Math.Min(risk, minFinalRisk);
-                    else
-                        foreach (var n in CoordsRC.Neighbours4(p).Where(x => m.HasPosition(x)))
-                        {
-                            int newRisk = risk + m[n] - '0';
-                            if (newRisk < minFinalRisk && newRisk < minRisk.GetValueOrDefault(n, int.MaxValue))
-                                prio.Add((n, newRisk));
-                        }
+                    foreach (var n in CoordsRC.Neighbours4(p).Where(x => m.HasPosition(x)))
+                        if (risk + m[n] - '0' < minRisk.GetValueOrDefault(n, int.MaxValue))
+                            steps.Add((n, risk + m[n] - '0'));
                 }
             }
+            //Console.WriteLine("Used {0} iterations.", iter);
+            return minRisk[m.Positions().Last()];
         }
 
-        public static Object PartA(string file)
-        {
-            minRisk = new Dictionary<Pos, int>();
-            minFinalRisk = int.MaxValue;
-            WalkMap(Map.Build(ReadInput.Strings(Day, file)));
-            return minFinalRisk;
-        }
+        public static Object PartA(string file) => WalkMap(Map.Build(ReadInput.Strings(Day, file)));
 
         public static Object PartB(string file)
         {
@@ -64,8 +53,6 @@ namespace aoc
                     m[p + (dp - sp)] = (char)((a > '9') ? a - 9 : a);
                 }
             }
-            minRisk = new Dictionary<Pos, int>();
-            minFinalRisk = int.MaxValue;
             Map m = Map.Build(ReadInput.Strings(Day, file));
             int w = m.width;
             int h = m.height;
@@ -77,8 +64,7 @@ namespace aoc
                 for (int x = 1; x < 5; x++)
                     CopyMap(m, w, h, new Pos(0, y * h), new Pos(x * w, y * h), x);
             }
-            WalkMap(m);
-            return minFinalRisk;
+            return WalkMap(m);
         }
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
