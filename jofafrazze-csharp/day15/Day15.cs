@@ -13,9 +13,8 @@ namespace aoc
 
         class RiskComparer : IComparer<(Pos p, int r)>
         {
-            public int Compare((Pos p, int r) a, (Pos p, int r)b) => (a.r == b.r) 
-                ? ((a.p == b.p) ? 0 : (a.p.ManhattanDistance() < b.p.ManhattanDistance() ? 1 : -1)) 
-                : (a.r < b.r) ? -1 : 1;
+            public int Compare((Pos p, int r) a, (Pos p, int r)b) => 
+                (a.r == b.r) ? ((a.p == b.p) ? 0 : -1) : (a.r < b.r) ? -1 : 1;
         }
 
         static int WalkMap(Map m)
