@@ -31,8 +31,8 @@ std::tuple<std::string, std::string> p15(const std::string & input) {
             decltype(v) n(5*v.size(), std::string(5*v[0].size(), 0));
             for(int dy = 0; dy < 5; dy++) {
                 for(int dx = 0; dx < 5; dx++) {
-                    for(int y = 0; y < v.size(); y++) {
-                        for(int x = 0; x < v[y].size(); x++) {
+                    for(size_t y = 0; y < v.size(); y++) {
+                        for(size_t x = 0; x < v[y].size(); x++) {
                             auto tmp = v[y][x]+dx+dy;
                             while(tmp >= 10) tmp-=9;
                             n[y+dy*v.size()][x+dx*v[y].size()] = tmp;
@@ -44,20 +44,18 @@ std::tuple<std::string, std::string> p15(const std::string & input) {
         }
         std::vector<std::vector<int>> risks(v.size(), std::vector<int>(v[0].size(), std::numeric_limits<int>::max()));
 
-        std::deque<std::tuple<int, int, int>> q;
-        q.emplace_back(0, 0, 0);
+        using type = std::tuple<int,int,int>;
+        std::priority_queue<type, std::vector<type>, std::greater<>> q;
+        q.emplace(0, 0, 0);
         while (!q.empty()) {
-            auto[y, x, w] = q.front();
-            q.pop_front();
-            if (w > risks.back().back()) continue;
-            if (y < 0 || y >= v.size()) continue;
-            if (x < 0 || x >= v[0].size()) continue;
+            auto[w, y, x] = q.top();
+            q.pop();
             if (w < risks[y][x]) {
                 risks[y][x] = w;
-                if (y - 1 >= 0) q.emplace_back(y - 1, x, w + v[y - 1][x]);
-                if (y + 1 < v.size()) q.emplace_back(y + 1, x, w + v[y + 1][x]);
-                if (x - 1 >= 0) q.emplace_back(y, x - 1, w + v[y][x - 1]);
-                if (x + 1 < v[0].size()) q.emplace_back(y, x + 1, w + v[y][x + 1]);
+                if (y - 1 >= 0) q.emplace(w + v[y - 1][x], y - 1, x);
+                if (y + 1 < static_cast<int>(v.size())) q.emplace(w + v[y + 1][x], y + 1, x);
+                if (x - 1 >= 0) q.emplace(w + v[y][x - 1], y, x - 1);
+                if (x + 1 < static_cast<int>(v[0].size())) q.emplace(w + v[y][x + 1], y, x + 1);
             }
         }
 
