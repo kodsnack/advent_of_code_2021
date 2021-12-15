@@ -6,17 +6,6 @@ from helpers import chunks, chunks_with_overlap, columns, digits, distance, dist
 
 
 def solve(lines):
-    # def transform(n):
-    #     m = n+1
-    #     if m == 10:
-    #         m = 1
-    #     return m
-
-    # newlines = [list(line) for line in lines]
-
-    # for line in lines:
-    #     newline = list(map(transform, line))
-
     height = len(lines)
     width = len(lines[0])
 
