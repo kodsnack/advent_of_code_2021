@@ -10,7 +10,7 @@ def solve(lines):
     width = len(lines[0])    
 
     frontier = [(0, 0, 0)]
-    seen = {(0, 0): 0}
+    seen = set()
 
     while True:
         score, y, x = heappop(frontier)
@@ -29,8 +29,8 @@ def solve(lines):
                 neighscore -= 9
 
             newscore = score+neighscore
-            if (ny, nx) not in seen or seen[(ny, nx)] > newscore:
-                seen[(ny, nx)] = newscore
+            if (ny, nx) not in seen:
+                seen.add((ny, nx))
                 heappush(frontier, (newscore, ny, nx))
 
 
