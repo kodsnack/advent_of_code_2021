@@ -19,21 +19,19 @@ namespace aoc
 
         static int WalkMap(Map m)
         {
-            // Using SortedSet in the absence of a priority queue
+            var steps = new PriorityQueue<Pos, int>();  // .NET 6.0 required
+            steps.Enqueue(new Pos(), 0);
             var minRisk = new Dictionary<Pos, int>();
-            var steps = new SortedSet<(Pos, int)>(new RiskComparer()) { (new Pos(), 0) };
             int iter = 0;
-            while (steps.Count > 0)
+            while (steps.TryDequeue(out Pos p, out int risk))
             {
-                (Pos p, int risk) = steps.First();
-                steps.Remove((p, risk));
                 iter++;
                 if (risk < minRisk.GetValueOrDefault(p, int.MaxValue))
                 {
                     minRisk[p] = risk;
                     foreach (var n in CoordsRC.Neighbours4(p).Where(x => m.HasPosition(x)))
                         if (risk + m[n] - '0' < minRisk.GetValueOrDefault(n, int.MaxValue))
-                            steps.Add((n, risk + m[n] - '0'));
+                            steps.Enqueue(n, risk + m[n] - '0');
                 }
             }
             //Console.WriteLine("Used {0} iterations.", iter);

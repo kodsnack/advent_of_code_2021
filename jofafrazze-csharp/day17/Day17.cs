@@ -11,7 +11,7 @@ using AdventOfCode;
 
 namespace aoc
 {
-    public class DayXX
+    public class Day17
     {
         // Today: 
 
