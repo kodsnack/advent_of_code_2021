@@ -77,3 +77,6 @@
 [submodule "polkas-R"]
 	path = polkas-R
 	url = https://github.com/Polkas/codeadvent2021
+[submodule "plux-erlang"]
+	path = plux-erlang
+	url = https://github.com/plux/advent2021.git
