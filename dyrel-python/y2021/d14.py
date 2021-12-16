@@ -34,7 +34,7 @@ lastElement = xl[-1][1]
 freq = Counter(xl)
 for i in range(10):
     freq = stepPolymers(freq, d)
-submitSecure(puzzle, "a", countElements(freq, last))
+submitSecure(puzzle, "a", countElements(freq, lastElement))
 for i in range(40-10):
     freq = stepPolymers(freq, d)
-submitSecure(puzzle, "b", countElements(freq, last))
+submitSecure(puzzle, "b", countElements(freq, lastElement))
