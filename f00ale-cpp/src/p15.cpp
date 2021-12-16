@@ -47,18 +47,20 @@ std::tuple<std::string, std::string> p15(const std::string & input) {
         using type = std::tuple<int,int,int>;
         std::priority_queue<type, std::vector<type>, std::greater<>> q;
         q.emplace(0, 0, 0);
+        constexpr std::array<std::tuple<int,int>,4> delta{std::make_tuple(-1,0),std::make_tuple(1,0),std::make_tuple(0,-1),std::make_tuple(0,1)};
+        const auto height = static_cast<int>(v.size());
+        const auto width = static_cast<int>(v[0].size());
+        risks[0][0] = 0;
         while (!q.empty()) {
             auto[w, y, x] = q.top();
             q.pop();
-            if (w < risks[y][x]) {
-                risks[y][x] = w;
-                if (y - 1 >= 0) q.emplace(w + v[y - 1][x], y - 1, x);
-                if (y + 1 < static_cast<int>(v.size())) q.emplace(w + v[y + 1][x], y + 1, x);
-                if (x - 1 >= 0) q.emplace(w + v[y][x - 1], y, x - 1);
-                if (x + 1 < static_cast<int>(v[0].size())) q.emplace(w + v[y][x + 1], y, x + 1);
+            for(auto [dy,dx] : delta) {
+                if(y + dy >= 0 && y + dy < height && x + dx >= 0 && x + dx < width && w+v[y+dy][x+dx]<risks[y+dy][x+dx]) {
+                    risks[y+dy][x+dx] = w+v[y+dy][x+dx];
+                    q.emplace(w+v[y+dy][x+dx], y+dy, x+dx);
+                }
             }
         }
-
         (p == 1 ? ans1 : ans2)  = risks.back().back();
     }
     return {std::to_string(ans1), std::to_string(ans2)};
