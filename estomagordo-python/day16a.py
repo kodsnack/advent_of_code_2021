@@ -25,9 +25,6 @@ def solve(hex):
             return 0
 
     def parse_packet(startpos):
-        # if all(c == '0' for c in binary[startpos:]):
-        #     return (0, 0)
-
         version = parsebin(startpos, startpos+3)
         typeid = parsebin(startpos+3, startpos+6)
 

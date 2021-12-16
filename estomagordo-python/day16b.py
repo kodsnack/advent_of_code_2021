@@ -15,9 +15,6 @@ def solve(hex):
         for c in padding+b:
             binary.append(c)
 
-    total = 0
-    pos = 0
-
     def parsebin(start, end):
         try:
             return int(''.join(binary[start:end]), 2)
@@ -31,14 +28,19 @@ def solve(hex):
         startpos += 6
 
         if typeid == 4:
+            vals = []
             while binary[startpos] == '1':
+                vals += binary[startpos+1:startpos+5]
                 startpos += 5
 
+            vals += binary[startpos+1:startpos+5]
             startpos += 5
 
-            return (version, startpos)
+            return (int(''.join(vals), 2), startpos)
 
         startpos += 1
+
+        package_vals = []
 
         if binary[startpos-1] == '0':
             bitlength = parsebin(startpos, startpos+15)
@@ -46,8 +48,8 @@ def solve(hex):
             waspos = startpos
 
             while startpos - waspos < bitlength:
-                subversion, startpos = parse_packet(startpos)
-                version += subversion
+                value, startpos = parse_packet(startpos)
+                package_vals.append(value)
 
         else:
             packlength = parsebin(startpos, startpos+11)
@@ -55,20 +57,26 @@ def solve(hex):
             parsedpacks = 0
 
             while parsedpacks < packlength:
-                subversion, startpos = parse_packet(startpos)
-                version += subversion
+                value, startpos = parse_packet(startpos)
+                package_vals.append(value)
                 parsedpacks += 1
 
-        return (version, startpos)
+        if typeid == 0:
+            return (sum(package_vals), startpos)
+        if typeid == 1:
+            return (multall(package_vals), startpos)
+        if typeid == 2:
+            return (min(package_vals), startpos)
+        if typeid == 3:
+            return (max(package_vals), startpos)
+        if typeid == 5:
+            return (1 if package_vals[0] > package_vals[1] else 0, startpos)
+        if typeid == 6:
+            return (1 if package_vals[0] < package_vals[1] else 0, startpos)
+        if typeid == 7:
+            return (1 if package_vals[0] == package_vals[1] else 0, startpos)
 
-    while pos < len(binary):
-        version, pos = parse_packet(pos)
-        total += version
-
-        if all(c == '0' for c in binary[pos:]):
-            break
-
-    return total
+    return parse_packet(0)[0]
 
 
 def main():
