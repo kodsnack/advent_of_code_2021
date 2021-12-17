@@ -6,22 +6,18 @@ from helpers import chunks, chunks_with_overlap, columns, digits, distance, dist
 
 
 def solve(x1, x2, y1, y2):    
-    steps = 57000
-    limit = 56000
+    minx = int((2*x1)**0.5)
     count = 0
 
-    for dx in range(1, 390):
-        for dy in range(-320, 510):
+    for dx in range(minx, x2+1):
+        for dy in range(y1, 510):
             x = 0
             y = 0
             xvel = dx
             yvel = dy
             success = False
 
-            for _ in range(steps):
-                if abs(x)+abs(y) > limit:
-                    break
-
+            while True:
                 x += xvel
                 y += yvel
                 

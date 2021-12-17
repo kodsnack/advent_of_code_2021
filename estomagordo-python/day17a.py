@@ -10,7 +10,7 @@ def solve(x1, x2, y1, y2):
     steps = 37000
     limit = 32000
 
-    for dx in range(1, 260):
+    for dx in range(1, x2+1):
         for dy in range(210):
             x = 0
             y = 0
