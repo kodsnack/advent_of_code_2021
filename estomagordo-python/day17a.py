@@ -20,7 +20,7 @@ def solve(x1, x2, y1, y2):
             success = False
 
             for _ in range(steps):
-                if x+y > limit:
+                if abs(x)+abs(y) > limit:
                     break
 
                 x += xvel
