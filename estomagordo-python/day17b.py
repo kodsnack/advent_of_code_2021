@@ -32,12 +32,21 @@ def solve(x1, x2, y1, y2):
 
                 yvel -= 1
 
-                if x1 <= x <= x2 and y1 <= y <= y2:
+                if x > x2:
+                    break
+
+                if y < y1 and yvel < 0:
+                    break
+
+                if x1 <= x and y <= y2:
                     success = True
+                    break
+
+                if x == 0:
+                    break
 
             if success:
-                count += 1                
-                print(dx, dy, count)
+                count += 1
 
     return count
 
