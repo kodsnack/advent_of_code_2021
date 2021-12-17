@@ -790,8 +790,13 @@ namespace AdventOfCode
     {
         public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
         {
-            static Object FixOutput(Object x) =>
-                (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
+            static Object FixOutput(Object x)
+            {
+                string xStr = x.ToString();
+                if (xStr != "0")
+                    TextCopy.ClipboardService.SetText(xStr);
+                return (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
+            }
             Console.WriteLine("AoC 2021 - " + day + ":");
             var w = System.Diagnostics.Stopwatch.StartNew();
             string file = example ? "example.txt" : "input.txt";

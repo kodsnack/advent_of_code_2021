@@ -101,3 +101,7 @@ private fun render(lines: List<MutableList<Char?>>) {
         println(sb)
     }
 }
+
+fun Int.toBinary(len: Int): String {
+    return String.format("%" + len + "s", this.toString(2)).replace(" ".toRegex(), "0")
+}

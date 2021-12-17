@@ -9,4 +9,8 @@
     <Compile Include="..\AdventOfCode.cs" Link="AdventOfCode.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="TextCopy" Version="4.3.1" />
+  </ItemGroup>
+
 </Project>
