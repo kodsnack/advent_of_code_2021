@@ -10,7 +10,7 @@ def solve(x1, x2, y1, y2):
     steps = 37000
     limit = 32000
 
-    for dx in range(1, 260):
+    for dx in range(1, x2+1):
         for dy in range(210):
             x = 0
             y = 0
@@ -20,7 +20,7 @@ def solve(x1, x2, y1, y2):
             success = False
 
             for _ in range(steps):
-                if x+y > limit:
+                if abs(x)+abs(y) > limit:
                     break
 
                 x += xvel
@@ -35,8 +35,18 @@ def solve(x1, x2, y1, y2):
 
                 yvel -= 1
 
-                if x1 <= x <= x2 and y1 <= y <= y2:
+                if x > x2:
+                    break
+
+                if y < y1 and yvel < 0:
+                    break
+
+                if x1 <= x and y <= y2:
                     success = True
+                    break
+
+                if x == 0:
+                    break
 
             if success:
                 highesty = max(highesty, thishighesty)
