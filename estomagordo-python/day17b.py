@@ -45,45 +45,12 @@ def solve(x1, x2, y1, y2):
         mindy0 = y1
         maxdy0 = 510 # pretty arbitrary
 
-        return {dy0 for dy0 in range(mindy0, maxdy0+1) if shoot(0, dy0, [ymove], [ywin], [ylose])}
+        return {dy0 for dy0 in range(mindy0, maxdy0+1) if shoot(0, dy0, [ymove], [ywin], [ylose])}    
 
-    count = 0
     dxvals = dxes()
     dyvals = dys()
 
-    for dx0 in dxvals:
-        for dy0 in dyvals:
-            x = 0
-            y = 0
-            dx = dx0
-            dy = dy0
-            success = False
-
-            while True:
-                x += dx
-                y += dy
-                
-                if dx > 0:
-                    dx -= 1
-                elif dx < 0:
-                    dx += 1
-
-                dy -= 1
-
-                if x > x2:
-                    break
-
-                if y < y1 and dy < 0:
-                    break
-
-                if x1 <= x and y <= y2:
-                    success = True
-                    break
-
-            if success:
-                count += 1
-
-    return count
+    return sum(shoot(dx, dy, [xmove, ymove], [xwin, ywin], [xlose, ylose]) for dx in dxvals for dy in dyvals)
 
 
 def main():
