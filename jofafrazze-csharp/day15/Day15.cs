@@ -9,7 +9,7 @@ namespace aoc
 {
     public class Day15
     {
-        // Today: Walk map, find minimum total sum to the end position
+        // Chiton: Walk map, find minimum total sum to the end position
 
         class RiskComparer : IComparer<(Pos p, int r)>
         {
@@ -65,6 +65,6 @@ namespace aoc
         }
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()); } }
+        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()!); } }
     }
 }

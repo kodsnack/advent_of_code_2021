@@ -10,7 +10,7 @@ namespace aoc
     {
         static readonly string day = "day04";
 
-        // Day 04: Play bingo with giant squid (no diagonals, RTFM!)
+        // Giant Squid: Play bingo with giant squid (but no diagonals, RTFM!)
 
         static List<List<int>> ReadBoards(string file)
         {

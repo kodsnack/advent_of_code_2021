@@ -5,41 +5,25 @@ namespace aoc
 {
     public class Day17
     {
-        // Today: Calculate initial speeds for projectile trajectories
+        // Trick Shot: Calculate initial speeds for projectile trajectories
 
-        static void ReadData(string file)
-        {
-            string Strip(string s) => new string(s.Where(c => "-0123456789".Contains(c)).ToArray());
-            var s = File.ReadAllLines(ReadInput.GetPath(Day, file))[0];
-            var v = s.Split(" ");
-            xmin = int.Parse(Strip(v[2].Split("..")[0]));
-            xmax = int.Parse(Strip(v[2].Split("..")[1]));
-            ymin = int.Parse(Strip(v[3].Split("..")[0]));
-            ymax = int.Parse(Strip(v[3].Split("..")[1]));
-        }
+        static int x1, x2, y1, y2;
+        static void ReadData(string file) =>
+            (x1, x2, y1, y2) = Extract.Ints(File.ReadAllLines(ReadInput.GetPath(Day, file))[0]);
 
-        static int xmin;
-        static int xmax;
-        static int ymin;
-        static int ymax;
-        static (bool ok, int yTop) DoIt(int xv0, int yv0)
+        static (bool ok, int yTop) Trajectory(int xv0, int yv0)
         {
             bool ok = false;
             int yTop = int.MinValue;
-            int x = 0;
-            int y = 0;
-            int xv = xv0;
-            int yv = yv0;
-            while (x <= xmax && y >= ymin)
+            int x = 0, y = 0, xv = xv0, yv = yv0;
+            while (x <= x2 && y >= y1)
             {
                 x += xv;
                 y += yv;
-                if (xv > 0)
-                    xv -= 1;
+                xv = Math.Max(xv - 1, 0);
                 yv -= 1;
-                if (y > yTop)
-                    yTop = y;
-                if (x >= xmin && x <= xmax && y >= ymin && y <= ymax)
+                yTop = Math.Max(y, yTop);
+                if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
                     ok = true;
             }
             return (ok, yTop);
@@ -48,12 +32,11 @@ namespace aoc
         public static (int n, int yMax) Part(string file)
         {
             ReadData(file);
-            int n = 0;
-            int yMax = int.MinValue;
-            for (int x = 1; x <= xmax; x++)
-                for (int y = ymin; y <= 500; y++)
+            int n = 0, yMax = int.MinValue;
+            for (int x = 1; x <= x2; x++)
+                for (int y = y1; y <= 500; y++)
                 {
-                    (bool ok, int yTop) = DoIt(x, y);
+                    (bool ok, int yTop) = Trajectory(x, y);
                     n += ok ? 1 : 0;
                     if (ok && yTop > yMax)
                         yMax = yTop;
@@ -64,6 +47,6 @@ namespace aoc
         public static Object PartB(string file) => Part(file).n;
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day => Aoc.Day(MethodBase.GetCurrentMethod());
+        static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
 }

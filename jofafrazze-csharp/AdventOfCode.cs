@@ -647,6 +647,56 @@ namespace AdventOfCode
         }
     }
 
+    public static class ArrayExt
+    {
+        public static void Deconstruct<T>(this T[] s, out T a0)
+        {
+            a0 = s[0];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1)
+        {
+            a0 = s[0]; a1 = s[1];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4, out T a5)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4]; a5 = s[5];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4, out T a5, out T a6)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4]; a5 = s[5]; a6 = s[6];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4, out T a5, out T a6, out T a7)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4]; a5 = s[5]; a6 = s[6]; a7 = s[7];
+        }
+    }
+
+    public struct Range<T> where T : IComparable<T>
+    {
+        public T lo { get; set; }
+        public T hi { get; set; }
+
+        public override string ToString() => string.Format("[{0} - {1}]", lo, hi);
+        public bool IsValid() => lo.CompareTo(hi) <= 0;
+        public bool Contains(T value) => (lo.CompareTo(value) <= 0) && (value.CompareTo(hi) <= 0);
+        public bool IsInside(Range<T> range) =>
+            IsValid() && range.IsValid() && range.Contains(lo) && range.Contains(hi);
+        public bool Contains(Range<T> range) =>
+            IsValid() && range.IsValid() && this.Contains(range.lo) && this.Contains(range.hi);
+    }
+
     public static class CircularLinkedList
     {
         public static LinkedListNode<T> NextOrFirst<T>(this LinkedListNode<T> current)
@@ -785,7 +835,17 @@ namespace AdventOfCode
             return Strings(day, file).Select(x => x.Split(delimiter).ToList()).ToList();
         }
     }
-
+    public static class Extract
+    {
+        public static int[] Ints(string s, int base_ = 10) => Longs(s, base_).Select(x => (int)x).ToArray();
+        public static long[] Longs(string s, int base_ = 10)
+        {
+            var validChars = "+-0123456789abcdef".Substring(0, base_ + 2);
+            s = new string(s.ToLower().Select(c => validChars.Contains(c) ? c : ' ').ToArray());
+            var v = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return v.Select(x => Convert.ToInt64(x, base_)).ToArray();
+        }
+    }
     public static class Aoc
     {
         public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
