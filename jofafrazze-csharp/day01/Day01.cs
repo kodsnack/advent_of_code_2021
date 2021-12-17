@@ -7,7 +7,7 @@ namespace aoc
     {
         static readonly string day = "day01";
 
-        // Day 01: Count increments
+        // Sonar Sweep: Count increments
 
         public static Object PartA(string file)
         {

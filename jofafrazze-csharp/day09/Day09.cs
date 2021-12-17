@@ -10,7 +10,7 @@ namespace aoc
     {
         static readonly string day = "day09";
 
-        // Day 09: Find local lows and baisins in map
+        // Smoke Basin: Find local lows and baisins in map
 
         static List<Pos> GetLows(Map m)
         {

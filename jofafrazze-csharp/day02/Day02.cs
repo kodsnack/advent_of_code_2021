@@ -7,7 +7,7 @@ namespace aoc
     {
         static readonly string day = "day02";
 
-        // Day 02: Steer submarine up, down and forward
+        // Dive!: Steer submarine up, down and forward
 
         public static Object PartA(string file)
         {

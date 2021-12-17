@@ -9,7 +9,7 @@ namespace aoc
 {
     public class Day14
     {
-        // Today: Polymerization, each generation grows exponentially
+        // Extended Polymerization: Each generation grows exponentially
 
         static Dictionary<string, char> rules;
         static string ReadData(string file)
@@ -41,6 +41,6 @@ namespace aoc
         public static Object PartB(string file) => Part(file, 40);
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()); } }
+        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()!); } }
     }
 }

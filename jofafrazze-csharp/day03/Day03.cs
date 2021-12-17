@@ -9,7 +9,7 @@ namespace aoc
     {
         static readonly string day = "day03";
 
-        // Day 03: Bit calculations will get you dizzy
+        // Binary Diagnostic: Bit calculations will get you dizzy
 
         static string GetMajorityBits(List<string> input)
         {

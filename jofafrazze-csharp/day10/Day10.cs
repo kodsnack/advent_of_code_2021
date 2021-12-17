@@ -8,7 +8,7 @@ namespace aoc
 {
     public class Day10
     {
-        // Today: Parse lines with different opening and closing brackets
+        // Syntax Scoring: Parse lines with different opening and closing brackets
 
         static (int v, Stack<char> t) Score(string s)
         {
@@ -40,6 +40,6 @@ namespace aoc
         }
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()); } }
+        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()!); } }
     }
 }
