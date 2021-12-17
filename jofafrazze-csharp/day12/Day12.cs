@@ -17,9 +17,8 @@ namespace aoc
             nodes = new Dictionary<string, List<string>>();
             static void AddNode(string s, string neigh) =>
                 (nodes[s] = nodes.ContainsKey(s) ? nodes[s] : new List<string>()).Add(neigh);
-            foreach (var s in File.ReadAllLines(ReadInput.GetPath(Day, file)))
+            foreach (var v in File.ReadAllLines(ReadInput.GetPath(Day, file)).Select(x => x.Split('-')))
             {
-                var v = s.Split('-');
                 AddNode(v[0], v[1]);
                 AddNode(v[1], v[0]);
             }

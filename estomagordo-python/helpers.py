@@ -122,3 +122,13 @@ def columns(matrix):
 
 def digits(line):
     return list(map(int, list(line.rstrip())))
+
+
+def chunks(l, n):
+    for x in range(0, len(l), n):
+        yield(l[x:x+n])
+
+
+def chunks_with_overlap(l, n):
+    for x in range(n, len(l)+1):
+        yield(l[x-n:x])
