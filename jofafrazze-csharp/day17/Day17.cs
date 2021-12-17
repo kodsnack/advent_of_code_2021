@@ -13,39 +13,36 @@ namespace aoc
 
         static (bool ok, int yTop) Trajectory(int xv0, int yv0)
         {
-            bool ok = false;
-            int yTop = int.MinValue;
-            int x = 0, y = 0, xv = xv0, yv = yv0;
+            int n = 0, ymax = int.MinValue, x = 0, y = 0, xv = xv0, yv = yv0;
             while (x <= x2 && y >= y1)
             {
                 x += xv;
                 y += yv;
                 xv = Math.Max(xv - 1, 0);
                 yv -= 1;
-                yTop = Math.Max(y, yTop);
+                ymax = Math.Max(y, ymax);
                 if (x >= x1 && x <= x2 && y >= y1 && y <= y2)
-                    ok = true;
+                    n++;
             }
-            return (ok, yTop);
+            return (n > 0, ymax);
         }
 
-        public static (int n, int yMax) Part(string file)
+        public static (int n, int ymax) Part(string file)
         {
             ReadData(file);
-            int n = 0, yMax = int.MinValue;
+            int n = 0, ymax = int.MinValue;
             for (int x = 1; x <= x2; x++)
                 for (int y = y1; y <= 500; y++)
                 {
-                    (bool ok, int yTop) = Trajectory(x, y);
+                    (bool ok, int yhi) = Trajectory(x, y);
                     n += ok ? 1 : 0;
-                    if (ok && yTop > yMax)
-                        yMax = yTop;
+                    if (ok && yhi > ymax)
+                        ymax = yhi;
                 }
-            return (n, yMax);
+            return (n, ymax);
         }
-        public static Object PartA(string file) => Part(file).yMax;
+        public static Object PartA(string file) => Part(file).ymax;
         public static Object PartB(string file) => Part(file).n;
-
         static void Main() => Aoc.Execute(Day, PartA, PartB);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
