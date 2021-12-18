@@ -74,7 +74,7 @@ def split(snailnum):
     return (False, snailnum)
 
 
-def reduce(snailnum):
+def reduction(snailnum):
     while True:
         exploded, snailnum = explode(snailnum)
         
@@ -94,10 +94,10 @@ def add(a, b):
 
 
 def calc(snailnums):
-    val = reduce(add(snailnums[0], snailnums[1]))
+    val = reduction(add(snailnums[0], snailnums[1]))
 
     for snailnum in snailnums[2:]:
-        val = reduce(add(val, snailnum))
+        val = reduction(add(val, snailnum))
 
     return val
 
