@@ -2,52 +2,32 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
 using AdventOfCode;
 //using Position = AdventOfCode.GenericPosition2D<int>;
 
-namespace day01
+namespace aoc
 {
     public class DayXX
     {
-        readonly static string nsname = typeof(DayXX).Namespace;
-        readonly static string inputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\input.txt");
+        // Today: 
 
-        // Day XX: 
-
-        static Object PartA()
+        public static Object PartA(string file)
         {
-            var input = ReadIndata.Ints(inputPath);
-            int ans = 0;
-            Console.WriteLine("Part A: Result is {0}", ans);
-            return ans;
+            var z = ReadInput.Ints(Day, file);
+            //Console.WriteLine("A is {0}", a);
+            return 0;
         }
 
-        static Object PartB()
+        public static Object PartB(string file)
         {
-            int ans = 0;
-            Console.WriteLine("Part B: Result is {0}", ans);
-            return ans;
+            return 0;
         }
 
-        static void Main(string[] args)
-        {
-            Console.WriteLine("AoC 2020 - " + nsname + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
-            PartA();
-            PartB();
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
-        }
-
-        public static bool MainTest()
-        {
-            int a = 42;
-            int b = 4711;
-            return (PartA().Equals(a)) && (PartB().Equals(b));
-        }
+        static void Main() => Aoc.Execute(Day, PartA, PartB);
+        static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
 }

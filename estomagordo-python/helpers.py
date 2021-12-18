@@ -114,3 +114,21 @@ def hexneighs(r, c):
         neighs |= { (r+1, c), (r+1, c+1), (r-1, c+1), (r-1, c) }
 
     return neighs
+
+
+def columns(matrix):
+    return [[line[x] for line in matrix] for x in range(len(matrix[0]))]
+
+
+def digits(line):
+    return list(map(int, list(line.rstrip())))
+
+
+def chunks(l, n):
+    for x in range(0, len(l), n):
+        yield(l[x:x+n])
+
+
+def chunks_with_overlap(l, n):
+    for x in range(n, len(l)+1):
+        yield(l[x-n:x])

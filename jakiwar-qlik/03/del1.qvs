@@ -1,0 +1,53 @@
+﻿NoConcatenate
+Del1:
+load *,
+	epsDec*gammaDec as answerPart1
+    ;
+load
+	num(Num#(gamma, '(Bin)')) as gammaDec
+    ,gamma,
+    '001111000000',
+    num(Num#('001111000000', '(Bin)')) as epsDec
+    ;
+ 	//'110000111111' gamma
+    // 001111000000
+load
+    gamma
+    ;
+load
+	m1 & m2 & m3 & m4 & m5 & m6 & m7 & m8 & m9 &m10 &m11 & m12 as gamma
+    ;
+load
+	mode(a1) as m1,
+    mode(a2) as m2,
+    mode(a3) as m3,
+    mode(a4) as m4,
+    mode(a5) as m5,
+    mode(a6) as m6,
+    mode(a7) as m7,
+    mode(a8) as m8,
+    mode(a9) as m9,
+    mode(a10) as m10,
+    mode(a11) as m11,
+    mode(a12) as m12
+;
+load
+	bas,
+	mid(bas,1,1) as a1,
+    mid(bas,2,1) as a2,
+    mid(bas,3,1) as a3,
+    mid(bas,4,1) as a4,
+    mid(bas,5,1) as a5,
+    mid(bas,6,1) as a6,
+    mid(bas,7,1) as a7,
+    mid(bas,8,1) as a8,
+    mid(bas,9,1) as a9,
+    mid(bas,10,1) as a10,
+    mid(bas,11,1) as a11,
+    mid(bas,12,1) as a12,
+;
+LOAD
+    @1 as bas
+FROM [lib://Advent of code 2021:DataFiles/aoc_dec03.txt]
+(txt, utf8, no labels, delimiter is '\t', msq);
+

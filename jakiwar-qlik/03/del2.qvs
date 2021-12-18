@@ -1,0 +1,138 @@
+﻿// NoConcatenate
+// testdata:
+// load * inline [
+// data
+// 00100
+// 11110
+// 10110
+// 10111
+// 10101
+// 01111
+// 00111
+// 11100
+// 10000
+// 11001
+// 00010
+// 01010
+// ];
+
+NoConcatenate
+grunddataDel2:
+LOAD
+    @1 as data
+FROM [lib://Advent of code 2021:DataFiles/aoc_dec03.txt]
+(txt, utf8, no labels, delimiter is '\t', msq);
+
+NoConcatenate
+workingTable:
+load * Resident grunddataDel2;
+
+for i=1 to 12
+	trace $(i);
+    
+    NoConcatenate
+    countOne:
+    load * Resident workingTable where mid(data, $(i), 1)='1';
+    
+    let noOfOnes = 0 + NoOfRows('countOne');
+    drop table countOne;
+    
+    NoConcatenate
+    countZero:
+    load * Resident workingTable where mid(data, $(i), 1)='0';
+    
+    let noOfZeros = 0+ NoOfRows('countZero');
+    drop table countZero;
+    
+    
+    
+    if $(noOfOnes)>$(noOfZeros) then
+    	set condChar ='1';
+    elseif $(noOfOnes)=$(noOfZeros) then
+         set condChar ='1';
+    else
+    	set condChar='0';
+    endif;
+    
+    trace ITER $(i) countOne $(noOfOnes) countZero $(noOfZeros) condChar $(condChar);
+    
+    NoConcatenate
+    tmp:
+    load * Resident workingTable where mid(data, $(i), 1)='$(condChar)';
+    
+    drop Table workingTable;
+    
+    rename table tmp to workingTable;
+    
+    exit for when NoOfRows('tmp')=1;
+    
+    
+next i;
+
+
+let oxyGenBin = peek('data', 0,'workingTable');
+let oxyGenDec = num(Num#('$(oxyGenBin)', '(Bin)'));
+
+trace oxyGenBin $(oxyGenBin);
+trace oxyGenDec $(oxyGenDec);
+
+drop table workingTable;
+
+
+NoConcatenate
+workingTable:
+load * Resident grunddataDel2;
+
+for i=1 to 12
+	trace $(i);
+    
+    NoConcatenate
+    countOne:
+    load * Resident workingTable where mid(data, $(i), 1)='1';
+    
+    let noOfOnes = 0 + NoOfRows('countOne');
+    drop table countOne;
+    
+    NoConcatenate
+    countZero:
+    load * Resident workingTable where mid(data, $(i), 1)='0';
+    
+    let noOfZeros = 0+ NoOfRows('countZero');
+    drop table countZero;
+    
+    
+    
+    if $(noOfOnes)<$(noOfZeros) then
+    	set condChar ='1';
+    elseif $(noOfOnes)=$(noOfZeros) then
+         set condChar ='0';
+    else
+    	set condChar='0';
+    endif;
+    
+    trace ITER $(i) countOne $(noOfOnes) countZero $(noOfZeros) condChar $(condChar);
+    
+    NoConcatenate
+    tmp:
+    load * Resident workingTable where mid(data, $(i), 1)='$(condChar)';
+    
+    drop Table workingTable;
+    
+    rename table tmp to workingTable;
+    
+    exit for when NoOfRows('workingTable')=1;
+    
+    
+    
+    
+next i;
+
+
+let co2GenBin = peek('data', 0,'workingTable');
+let co2GenDec = num(Num#('$(co2GenBin)', '(Bin)'));
+
+trace co2GenBin $(co2GenBin);
+trace co2GenDec $(co2GenDec);
+
+let answerPart2 = $(co2GenDec)*$(oxyGenDec);
+trace answerPart2 $(answerPart2);

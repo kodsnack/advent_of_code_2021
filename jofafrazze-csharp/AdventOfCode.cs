@@ -103,6 +103,10 @@ namespace AdventOfCode
                 Extensions.Abs(Extensions.Subtract(y, p.y))
                 );
         }
+        public GenericPosition2D<T> SwitchXY()
+        {
+            return new GenericPosition2D<T>(y, x);
+        }
         // Rotates pos n steps clock-wize around center
         public static GenericPosition2D<T> Rotate4Steps(GenericPosition2D<T> pos, int n, GenericPosition2D<T> center = new GenericPosition2D<T>())
         {
@@ -250,7 +254,7 @@ namespace AdventOfCode
         public GenericPosition2D<int> pos;
         public char[,] data;
 
-        public Map(int w, int h, GenericPosition2D<int> p, char fill = '\0')
+        public Map(int w, int h, char fill, GenericPosition2D<int> p = new GenericPosition2D<int>())
         {
             width = w;
             height = h;
@@ -277,7 +281,7 @@ namespace AdventOfCode
         {
             int w = list[0].Length;
             int h = list.Count;
-            Map m = new Map(w, h, new GenericPosition2D<int>(0, 0));
+            Map m = new Map(w, h, ' ');
             for (int y = 0; y < h; y++)
                 for (int x = 0; x < w; x++)
                     m.data[x, y] = list[y][x];
@@ -301,13 +305,24 @@ namespace AdventOfCode
             return p.x >= 0 && p.x < width && p.y >= 0 && p.y < height;
         }
 
+        public List<GenericPosition2D<int>> Positions(GenericPosition2D<int> p0 = new GenericPosition2D<int>(), int w0 = 0, int h0 = 0)
+        {
+            int w = (w0 < 1) ? width - p0.x : w0;
+            int h = (h0 < 1) ? height - p0.y : h0;
+            var positions = new List<GenericPosition2D<int>>(w * h);
+            for (int y = p0.y; y < p0.y + h; y++)
+                for (int x = p0.x; x < p0.x + w; x++)
+                    positions.Add(new GenericPosition2D<int>(x, y));
+            return positions;
+        }
+
         public void Expand(int n, char fill) { Expand(n, n, n, n, fill); }
         public void Expand(int top, int right, int bottom, int left, char fill)
         {
             int w = left + right + width;
             int h = top + bottom + height;
             GenericPosition2D<int> s = new GenericPosition2D<int>(pos.x + left, pos.y + top);
-            Map m = new Map(w, h, s, fill);
+            Map m = new Map(w, h, fill, s);
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                     m.data[x + left, y + top] = data[x, y];
@@ -327,7 +342,7 @@ namespace AdventOfCode
                 {
                     sb.Append(data[x, y]);
                 }
-                s += sb.ToString() + "\r\n";
+                s += sb.ToString() + Environment.NewLine;
             }
             return s;
         }
@@ -385,6 +400,10 @@ namespace AdventOfCode
         {
             goUpLeft, goUp, goUpRight, goRight, goDownRight, goDown, goDownLeft, goLeft
         };
+        public static List<GenericPosition2D<int>> Neighbours4(GenericPosition2D<int> p) =>
+            CoordsRC.directions4.Select(x => p + x).ToList();
+        public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
+            CoordsRC.directions8.Select(x => p + x).ToList();
     }
 
     public static class CoordsXY
@@ -405,6 +424,10 @@ namespace AdventOfCode
         {
             goUpLeft, goUp, goUpRight, goRight, goDownRight, goDown, goDownLeft, goLeft
         };
+        public static List<GenericPosition2D<int>> Neighbours4(GenericPosition2D<int> p) =>
+            CoordsXY.directions4.Select(x => p + x).ToList();
+        public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
+            CoordsXY.directions8.Select(x => p + x).ToList();
     }
 
     public static class CoordsHex
@@ -431,7 +454,6 @@ namespace AdventOfCode
             { "sw", new GenericPosition2D<int>(-1, 1) },
             { "nw", new GenericPosition2D<int>(-1, -1) },
         };
-
         public static readonly Dictionary<string, GenericPosition2D<int>> directionsWide = new Dictionary<string, GenericPosition2D<int>>()
         {
             { "ne", new GenericPosition2D<int>(1, -1) },
@@ -441,7 +463,6 @@ namespace AdventOfCode
             { "w", new GenericPosition2D<int>(-2, 0) },
             { "nw", new GenericPosition2D<int>(-1, -1) },
         };
-
     }
 
     public static class Utils
@@ -605,6 +626,75 @@ namespace AdventOfCode
               elements.SelectMany((e, i) =>
                 elements.Skip(i + 1).Combinations(k - 1).Select(c => (new[] { e }).Concat(c)));
         }
+
+        public static IEnumerable<GenericPosition2D<T>> Flip<T>(this IEnumerable<GenericPosition2D<T>> elements, bool enable)
+        {
+            return enable ? elements.Select(p => p.SwitchXY()) : elements;
+        }
+
+        public static void Inc<T, U>(this Dictionary<T, U> dictionary, T key, U value)
+        {
+            dictionary[key] = Add(dictionary.GetValueOrDefault(key, default), value);
+        }
+
+        public static Dictionary<T, int> Counter<T>(this IEnumerable<T> elements)
+        {
+            return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
+        }
+        public static Dictionary<T, long> CounterLong<T>(this IEnumerable<T> elements)
+        {
+            return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => (long)x.Count());
+        }
+    }
+
+    public static class ArrayExt
+    {
+        public static void Deconstruct<T>(this T[] s, out T a0)
+        {
+            a0 = s[0];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1)
+        {
+            a0 = s[0]; a1 = s[1];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4, out T a5)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4]; a5 = s[5];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4, out T a5, out T a6)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4]; a5 = s[5]; a6 = s[6];
+        }
+        public static void Deconstruct<T>(this T[] s, out T a0, out T a1, out T a2, out T a3, out T a4, out T a5, out T a6, out T a7)
+        {
+            a0 = s[0]; a1 = s[1]; a2 = s[2]; a3 = s[3]; a4 = s[4]; a5 = s[5]; a6 = s[6]; a7 = s[7];
+        }
+    }
+
+    public struct Range<T> where T : IComparable<T>
+    {
+        public T lo { get; set; }
+        public T hi { get; set; }
+
+        public override string ToString() => string.Format("[{0} - {1}]", lo, hi);
+        public bool IsValid() => lo.CompareTo(hi) <= 0;
+        public bool Contains(T value) => (lo.CompareTo(value) <= 0) && (value.CompareTo(hi) <= 0);
+        public bool IsInside(Range<T> range) =>
+            IsValid() && range.IsValid() && range.Contains(lo) && range.Contains(hi);
+        public bool Contains(Range<T> range) =>
+            IsValid() && range.IsValid() && this.Contains(range.lo) && this.Contains(range.hi);
     }
 
     public static class CircularLinkedList
@@ -712,43 +802,75 @@ namespace AdventOfCode
         };
     }
 
-    public static class ReadIndata
+    public static class ReadInput
     {
-        public static List<int> Ints(string path)
+        public static string GetPath(string nsname, string file)
         {
-            StreamReader reader = File.OpenText(path);
-            List<int> list = new List<int>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.AddRange(line.Split(',').Select(int.Parse).ToList());
-            }
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\" + file);
+        }
+
+        public static List<int> Ints(string day, string file, char delimiter = ',')
+        {
+            var list = new List<int>();
+            foreach (var line in File.ReadAllLines(ReadInput.GetPath(day, file)))
+                list.AddRange(line.Split(delimiter).Select(int.Parse));
             return list;
         }
 
-        public static List<long> Longs(string path)
+        public static List<long> Longs(string day, string file, char delimiter = ',')
         {
-            StreamReader reader = File.OpenText(path);
-            List<long> list = new List<long>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.AddRange(line.Split(',').Select(long.Parse).ToList());
-            }
+            var list = new List<long>();
+            foreach (var line in File.ReadAllLines(ReadInput.GetPath(day, file)))
+                list.AddRange(line.Split(delimiter).Select(long.Parse));
             return list;
         }
 
-        public static List<string> Strings(string path)
+        public static List<string> Strings(string day, string file)
         {
-            StreamReader reader = File.OpenText(path);
-            List<string> list = new List<string>();
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                list.Add(line);
-            }
-            return list;
+            return File.ReadAllLines(ReadInput.GetPath(day, file)).ToList();
         }
 
+        public static List<List<string>> StringLists(string day, string file, string delimiter = " ")
+        {
+            return Strings(day, file).Select(x => x.Split(delimiter).ToList()).ToList();
+        }
+    }
+    public static class Extract
+    {
+        public static int[] Ints(string s, int base_ = 10) => Longs(s, base_).Select(x => (int)x).ToArray();
+        public static long[] Longs(string s, int base_ = 10)
+        {
+            var validChars = "+-0123456789abcdef".Substring(0, base_ + 2);
+            s = new string(s.ToLower().Select(c => validChars.Contains(c) ? c : ' ').ToArray());
+            var v = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return v.Select(x => Convert.ToInt64(x, base_)).ToArray();
+        }
+    }
+    public static class Aoc
+    {
+        public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
+        {
+            static Object FixOutput(Object x)
+            {
+                string xStr = x.ToString();
+                if (xStr != "0")
+                    TextCopy.ClipboardService.SetText(xStr);
+                return (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
+            }
+            Console.WriteLine("AoC 2021 - " + day + ":");
+            var w = System.Diagnostics.Stopwatch.StartNew();
+            string file = example ? "example.txt" : "input.txt";
+            Object a = FixOutput(PartA(file));
+            Console.WriteLine("Part A - Result is: {0}", a);
+            Object b = FixOutput(PartB(file));
+            Console.WriteLine("Part B - Result is: {0}", b);
+            w.Stop();
+            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
+        }
+
+        public static string Day(System.Reflection.MethodBase mb)
+        {
+            return mb.ReflectedType.FullName.Split('.').Last().ToLower();
+        }
     }
 }
