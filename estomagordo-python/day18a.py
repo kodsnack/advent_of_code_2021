@@ -22,7 +22,7 @@ def explode(snailnum):
             brackets += 1
         elif c == ']':
             brackets -= 1
-        elif c.isdigit() and brackets > 4 and snailnum[i+1] == ',' and snailnum[i+2].isdigit():
+        elif c not in '[],' and brackets > 4 and snailnum[i+1] == ',' and snailnum[i+2] not in '[],':
             a = parseint(c)
             b = parseint(snailnum[i+2])
             leftat = -1
