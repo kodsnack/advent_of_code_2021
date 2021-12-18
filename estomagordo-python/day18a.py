@@ -6,10 +6,14 @@ from helpers import chunks, chunks_with_overlap, columns, digits, distance, dist
 
 
 def parseint(s):
+    if ord(s) > 1000:
+        return ord(s)-ord('0') - 1000
     return ord(s)-ord('0')
 
 
 def encodeint(n):
+    if n in (43, 45):
+        return chr(n+1000+ord('0'))
     return chr(n+ord('0'))
 
 
