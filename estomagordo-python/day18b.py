@@ -116,19 +116,7 @@ def magnitude(snailnum):
 
 
 def solve(snailnums):
-    best = 0
-
-    for i in range(len(snailnums)):
-        for j in range(len(snailnums)):
-            if i == j:
-                continue
-
-            l = [snailnums[i], snailnums[j]]
-            best = max(best, magnitude(calc(l)))
-
-    return best
-
-    return max(magnitude(add(a, b) for a,b in permutations(snailnums, 2)))
+    return max(magnitude(calc(p)) for p in permutations(snailnums, 2))
 
 
 def main():
