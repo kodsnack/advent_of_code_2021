@@ -23,7 +23,52 @@ def solve(snailnums):
             else:
                 stack.append(int(c))
 
-        return stack     
+        return stack
+
+    def parseint(s):
+        if s.isdigit():
+            return int(s)
+
+        if s == 'A':
+            return 10
+        if s == 'B':
+            return 11
+        if s == 'C':
+            return 12
+        if s == 'D':
+            return 13
+        if s == 'E':
+            return 14
+        if s == 'F':
+            return 15
+        if s == 'G':
+            return 16
+        if s == 'H':
+            return 17                
+        return 18
+
+    def encodeint(n):
+        if n > 18:
+            print('disaster', n)
+        if n < 10:
+            return str(n)
+        if n == 10:
+            return 'A'
+        if n == 11:
+            return 'B'
+        if n == 12:
+            return 'C'
+        if n == 13:
+            return 'D'
+        if n == 14:
+            return 'E'
+        if n == 15:
+            return 'F'
+        if n == 16:
+            return 'G'
+        if n == 17:
+            return 'H'
+        return 'I'
 
     def explode(snailnum):
         n = len(snailnum)
@@ -34,50 +79,26 @@ def solve(snailnums):
                 brackets += 1
             elif c == ']':
                 brackets -= 1
-            elif c.isdigit() and brackets > 4:
-                bracketed = True
-                aend = i+1
-
-                while True:
-                    if snailnum[aend] == ']':
-                        bracketed = False
-                        break
-                    if snailnum[aend] == ',':
-                        break
-
-                    aend += 1
-
-                if not bracketed:
-                    continue
-
-                a = int(snailnum[i:aend])
-                bbegin = aend+1
-                bend = bbegin + 1
-
-                while snailnum[bend].isdigit():
-                    bend += 1
-
-                b = int(snailnum[bbegin:bend])
-
-                leftendat = -1
-                leftbegat = -1
-                rightendat = -1
-                rightbegat = -1
+            elif c.isdigit() and brackets > 4 and snailnum[i+1] == ',' and snailnum[i+2].isdigit():
+                a = parseint(c)
+                b = parseint(snailnum[i+2])
+                leftat = -1
+                rightat = -1
 
                 for j in range(i-1, -1, -1):
-                    if snailnum[j].isdigit() and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
+                    if snailnum[j] not in '[],' and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
                         leftat = j
                         break
 
                 for j in range(i+4, n):
-                    if snailnum[j].isdigit() and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
+                    if snailnum[j] not in '[],' and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
                         rightat = j
                         break
 
                 leftest = snailnum[:i-1]
 
                 if leftat > -1:
-                    leftval = int(snailnum[leftat]) + a
+                    leftval = encodeint(parseint(snailnum[leftat]) + a)
                     leftest = snailnum[:leftat] + str(leftval) + snailnum[leftat+1:i-1]
 
                 middle = '0'
@@ -85,7 +106,7 @@ def solve(snailnums):
                 rightest = snailnum[i+4:]
 
                 if rightat > -1:
-                    rightval = int(snailnum[rightat]) + b
+                    rightval = encodeint(parseint(snailnum[rightat]) + b)
                     rightest = snailnum[i+4:rightat] + str(rightval) + snailnum[rightat+1:]
 
                 return (True, leftest + middle + rightest)
@@ -96,11 +117,11 @@ def solve(snailnums):
         n = len(snailnum)
 
         for i, c in enumerate(snailnum[:-1]):
-            if c.isdigit() and snailnum[i+1].isdigit():
-                val = int(snailnum[i:i+2])
+            if c.isalpha():
+                val = parseint(c)
                 a = val//2
                 b = val-a
-                return (True, snailnum[:i] + f'[{a},{b}]' + snailnum[i+2:])
+                return (True, snailnum[:i] + f'[{a},{b}]' + snailnum[i+1:])
 
         return (False, snailnum)
 
