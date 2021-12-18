@@ -800,6 +800,20 @@ namespace AdventOfCode
                 children = new HashSet<Node<T>>();
             }
         };
+        public class BinNode<T>
+        {
+            public BinNode<T>? parent;
+            public T t;
+            public BinNode<T>? left;
+            public BinNode<T>? right;
+            public BinNode(T v, BinNode<T>? p)
+            {
+                t = v;
+                parent = p;
+                left = null;
+                right = null;
+            }
+        };
     }
 
     public static class ReadInput
