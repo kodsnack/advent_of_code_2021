@@ -34,11 +34,35 @@ def solve(snailnums):
                 brackets += 1
             elif c == ']':
                 brackets -= 1
-            elif c.isdigit() and brackets > 4 and snailnum[i+1] == ',' and snailnum[i+2].isdigit():
-                a = int(c)
-                b = int(snailnum[i+2])
-                leftat = -1
-                rightat = -1
+            elif c.isdigit() and brackets > 4:
+                bracketed = True
+                aend = i+1
+
+                while True:
+                    if snailnum[aend] == ']':
+                        bracketed = False
+                        break
+                    if snailnum[aend] == ',':
+                        break
+
+                    aend += 1
+
+                if not bracketed:
+                    continue
+
+                a = int(snailnum[i:aend])
+                bbegin = aend+1
+                bend = bbegin + 1
+
+                while snailnum[bend].isdigit():
+                    bend += 1
+
+                b = int(snailnum[bbegin:bend])
+
+                leftendat = -1
+                leftbegat = -1
+                rightendat = -1
+                rightbegat = -1
 
                 for j in range(i-1, -1, -1):
                     if snailnum[j].isdigit() and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
@@ -83,9 +107,13 @@ def solve(snailnums):
     def calc(snailnum):
         while True:
             exploded, snailnum = explode(snailnum)
+            
+            if exploded:
+                continue
+
             didsplit, snailnum = split(snailnum)
 
-            if not exploded and not didsplit:
+            if not didsplit:
                 break
 
         return snailnum
