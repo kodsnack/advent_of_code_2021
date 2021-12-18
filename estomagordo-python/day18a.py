@@ -83,7 +83,7 @@ def calc(snailnum):
             break
 
     return snailnum
-    
+
 
 def add(a, b):
     return f'[{a},{b}]'
@@ -108,8 +108,6 @@ def solve(snailnums):
                 stack.append(int(c))
 
         return stack
-
-    
 
     val = calc(add(snailnums[0], snailnums[1]))
 
