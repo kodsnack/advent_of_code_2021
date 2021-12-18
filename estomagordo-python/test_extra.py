@@ -1,4 +1,4 @@
-from day18a import explode, reduce, add, calc
+from day18a import explode, reduce, add, calc, magnitude
 
 
 def test_explode():
@@ -75,3 +75,26 @@ def test_calc():
     assert('[[[[7,7],[7,8]],[[9,5],[8,7]]],[[[6,8],[0,8]],[[9,9],[9,0]]]]' == result7)
     assert('[[[[6,6],[6,6]],[[6,0],[6,7]]],[[[7,7],[8,9]],[8,[8,1]]]]' == result8)
     assert('[[[[6,6],[6,6]],[[6,0],[6,7]]],[[[7,7],[8,9]],[8,[8,1]]]]' == result9)
+
+
+def test_magnitude():
+    s1 = '[[1,2],[[3,4],5]]'
+    s2 = '[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'
+    s3 = '[[[[1,1],[2,2]],[3,3]],[4,4]]'
+    s4 = '[[[[3,0],[5,3]],[4,4]],[5,5]]'
+    s5 = '[[[[5,0],[7,4]],[5,5]],[6,6]]'
+    s6 = '[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]'
+
+    result1 = magnitude(s1)
+    result2 = magnitude(s2)
+    result3 = magnitude(s3)
+    result4 = magnitude(s4)
+    result5 = magnitude(s5)
+    result6 = magnitude(s6)
+
+    assert(143 == result1)
+    assert(1384 == result2)
+    assert(445 == result3)
+    assert(791 == result4)
+    assert(1137 == result5)
+    assert(3488 == result6)

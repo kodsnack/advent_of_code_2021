@@ -102,27 +102,27 @@ def calc(snailnums):
     return val
 
 
+def magnitude(snailnum):
+    while True:
+        prevstart = -1
+        calculated = False
+
+        for i, c in enumerate(snailnum):
+            if c == '[':
+                prevstart = i
+            if c == ']':
+                calculated = True
+                a, b = map(int, snailnum[prevstart+1:i].split(','))
+                snailnum = snailnum[:prevstart] + str(3*a + 2*b) + snailnum[i+1:]
+                break
+                
+        if not calculated:
+            return int(snailnum)
+
+
 def solve(snailnums):
-    # def parse(snailnum):
-    #     stack = []
-    #     pair = []
-
-    #     for c in snailnum:
-    #         if c == '[':
-    #             stack.append(pair)
-    #             pair = []
-    #         elif c == ']':
-    #             pair2 = stack.pop()
-    #             stack.append(pair) 
-    #             pair = pair2
-    #         elif c == ',':
-    #             pair = [stack.pop()]
-    #         else:
-    #             stack.append(int(c))
-
-    #     return stack
-
-    return calc(snailnums)
+    parsed = calc(snailnums)
+    return magnitude(parsed)
 
 
 def main():
