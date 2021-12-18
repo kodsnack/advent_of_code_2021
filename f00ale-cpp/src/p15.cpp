@@ -5,6 +5,7 @@
 #include <queue>
 #include <tuple>
 #include <limits>
+#include <array>
 
 std::tuple<std::string, std::string> p15(const std::string & input) {
     int64_t ans1 = 0;
