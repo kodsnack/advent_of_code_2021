@@ -42,7 +42,7 @@ def explode(snailnum):
 
             if leftat > -1:
                 leftval = encodeint(parseint(snailnum[leftat]) + a)
-                leftest = snailnum[:leftat] + str(leftval) + snailnum[leftat+1:i-1]
+                leftest = snailnum[:leftat] + leftval + snailnum[leftat+1:i-1]
 
             middle = '0'
 
@@ -50,7 +50,7 @@ def explode(snailnum):
 
             if rightat > -1:
                 rightval = encodeint(parseint(snailnum[rightat]) + b)
-                rightest = snailnum[i+4:rightat] + str(rightval) + snailnum[rightat+1:]
+                rightest = snailnum[i+4:rightat] + rightval + snailnum[rightat+1:]
 
             return (True, leftest + middle + rightest)
 
@@ -65,7 +65,7 @@ def split(snailnum):
             val = parseint(c)
             a = val//2
             b = val-a
-            return (True, snailnum[:i] + f'[{a},{b}]' + snailnum[i+1:])
+            return (True, snailnum[:i] + f'[{encodeint(a)},{encodeint(b)}]' + snailnum[i+1:])
 
     return (False, snailnum)
 
