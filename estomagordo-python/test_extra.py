@@ -1,4 +1,4 @@
-from day18a import explode, calc, add
+from day18a import explode, reduce, add, calc
 
 
 def test_explode():
@@ -30,9 +30,23 @@ def test_add():
     assert('[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]' == result)
 
 
-def test_calc():
+def test_reduce():
     s = '[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]'
 
-    result = calc(s)
+    result = reduce(s)
 
     assert('[[[[0,7],4],[[7,8],[6,0]]],[8,1]]' == result)
+
+
+def test_calc():
+    nums1 = ['[1,1]', '[2,2]', '[3,3]', '[4,4]']
+    nums2 = ['[1,1]', '[2,2]', '[3,3]', '[4,4]', '[5,5]']
+    nums3 = ['[1,1]', '[2,2]', '[3,3]', '[4,4]', '[5,5]', '[6,6]']
+
+    result1 = calc(nums1)
+    result2 = calc(nums2)
+    result3 = calc(nums3)
+
+    assert('[[[[1,1],[2,2]],[3,3]],[4,4]]' == result1)
+    assert('[[[[3,0],[5,3]],[4,4]],[5,5]]' == result2)
+    assert('[[[[5,0],[7,4]],[5,5]],[6,6]]' == result3)

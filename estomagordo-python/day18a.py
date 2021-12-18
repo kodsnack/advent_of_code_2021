@@ -70,7 +70,7 @@ def split(snailnum):
     return (False, snailnum)
 
 
-def calc(snailnum):
+def reduce(snailnum):
     while True:
         exploded, snailnum = explode(snailnum)
         
@@ -89,34 +89,36 @@ def add(a, b):
     return f'[{a},{b}]'
 
 
-def solve(snailnums):
-    def parse(snailnum):
-        stack = []
-        pair = []
-
-        for c in snailnum:
-            if c == '[':
-                stack.append(pair)
-                pair = []
-            elif c == ']':
-                pair2 = stack.pop()
-                stack.append(pair) 
-                pair = pair2
-            elif c == ',':
-                pair = [stack.pop()]
-            else:
-                stack.append(int(c))
-
-        return stack
-
-    val = calc(add(snailnums[0], snailnums[1]))
+def calc(snailnums):
+    val = reduce(add(snailnums[0], snailnums[1]))
 
     for snailnum in snailnums[2:]:
-        val = calc(add(val, snailnum))
+        val = reduce(add(val, snailnum))
 
     return val
 
-    return sum(calc(num) for num in snailnums)
+
+def solve(snailnums):
+    # def parse(snailnum):
+    #     stack = []
+    #     pair = []
+
+    #     for c in snailnum:
+    #         if c == '[':
+    #             stack.append(pair)
+    #             pair = []
+    #         elif c == ']':
+    #             pair2 = stack.pop()
+    #             stack.append(pair) 
+    #             pair = pair2
+    #         elif c == ',':
+    #             pair = [stack.pop()]
+    #         else:
+    #             stack.append(int(c))
+
+    #     return stack
+
+    return calc(snailnums)
 
 
 def main():
