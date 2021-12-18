@@ -94,12 +94,7 @@ def add(a, b):
 
 
 def calc(snailnums):
-    val = reduction(add(snailnums[0], snailnums[1]))
-
-    for snailnum in snailnums[2:]:
-        val = reduction(add(val, snailnum))
-
-    return val
+    return reduce(lambda a,b: reduction(add(a, b)), snailnums)
 
 
 def magnitude(snailnum):
