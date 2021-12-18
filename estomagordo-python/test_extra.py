@@ -27,7 +27,7 @@ def test_add():
 
     result = add(a, b)
 
-    assert([[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]] == result)
+    assert('[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]' == result)
 
 
 def test_calc():
