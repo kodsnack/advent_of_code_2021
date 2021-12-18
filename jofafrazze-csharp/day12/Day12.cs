@@ -9,7 +9,7 @@ namespace aoc
 {
     public class Day12
     {
-        // Today: Find paths through caves, some reenterable
+        // Passage Pathing: Find path through caves, some reenterable
 
         static Dictionary<string, List<string>> nodes;
         static void ReadNodes(string file)
@@ -52,6 +52,6 @@ namespace aoc
         public static Object PartB(string file) => Part(file, false);
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()); } }
+        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()!); } }
     }
 }

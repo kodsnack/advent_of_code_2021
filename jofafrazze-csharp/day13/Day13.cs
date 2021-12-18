@@ -10,7 +10,7 @@ namespace aoc
 {
     public class Day13
     {
-        // Today: Fold paper, do manual OCR 
+        // Transparent Origami: Fold paper, do manual OCR 
 
         static List<(bool useX, int n)> fold;
         static HashSet<Pos> ReadData(string file)
@@ -32,7 +32,7 @@ namespace aoc
         static HashSet<Pos> FoldPositions(HashSet<Pos> pos, bool partA)
         {
             static Pos FoldX(Pos p, int f) => new Pos((p.x > f) ? 2 * f - p.x : p.x, p.y);
-            foreach (var (b, n) in (partA ? new List<(bool, int)>() { fold[0] } : fold))
+            foreach (var (b, n) in partA ? new List<(bool, int)>() { fold[0] } : fold)
                 pos = pos.Flip(!b).Where(p => p.x != n).Select(p => FoldX(p, n)).Flip(!b).ToHashSet();
             return pos;
         }
@@ -48,6 +48,6 @@ namespace aoc
         }
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()); } }
+        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()!); } }
     }
 }

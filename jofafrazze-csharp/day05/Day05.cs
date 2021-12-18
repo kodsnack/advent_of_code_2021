@@ -11,7 +11,7 @@ namespace aoc
     {
         static readonly string day = "day05";
 
-        // Day 05: Count positions with more than one line
+        // Hydrothermal Venture: Count positions with more than one line
 
         static List<(Position p1, Position p2)> ReadPositions(string file)
         {

@@ -8,7 +8,7 @@ namespace aoc
     {
         static readonly string day = "day07";
 
-        // Day 07: Minimize sum of integers
+        // The Treachery of Whales: Minimize sum of integers
 
         public static Object PartA(string file)
         {

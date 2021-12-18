@@ -10,7 +10,7 @@ namespace aoc
     {
         static readonly string day = "day08";
 
-        // Day 08: Decode scrambled seven-segment displays
+        // Seven Segment Search: Decode scrambled seven-segment displays
 
         static List<(List<string>, List<string>)> ReadData(string file)
         {

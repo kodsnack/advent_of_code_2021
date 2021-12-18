@@ -9,7 +9,7 @@ namespace aoc
     {
         static readonly string day = "day06";
 
-        // Day 06: Count individuals in a school of fish growing exponentially
+        // Lanternfish: Count individuals in a school of fish growing exponentially
 
         static long CountFish(List<int> input, int days)
         {
@@ -28,18 +28,8 @@ namespace aoc
             return ages.Sum();
         }
 
-        public static Object PartA(string file)
-        {
-            var input = ReadInput.Ints(day, file);
-            return CountFish(input, 80);
-        }
-
-        public static Object PartB(string file)
-        {
-            var input = ReadInput.Ints(day, file);
-            return CountFish(input, 256);
-        }
-
+        public static Object PartA(string file) => CountFish(ReadInput.Ints(day, file), 80);
+        public static Object PartB(string file) => CountFish(ReadInput.Ints(day, file), 256);
         static void Main() => Aoc.Execute(day, PartA, PartB);
     }
 }

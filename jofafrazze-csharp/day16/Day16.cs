@@ -9,7 +9,7 @@ namespace aoc
 {
     public class Day16
     {
-        // Today: Decode packets, convert between bases 2 and 16
+        // Packet Decoder: Keep track of position in data, convert between bases 2 and 16
 
         static string ReadData(string file)
         {
@@ -94,6 +94,6 @@ namespace aoc
         public static Object PartB(string file) => Part(file, false).Item1;
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day => Aoc.Day(MethodBase.GetCurrentMethod());
+        static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
 }

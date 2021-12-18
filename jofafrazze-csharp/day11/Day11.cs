@@ -9,7 +9,7 @@ namespace aoc
 {
     public class Day11
     {
-        // Today: Handle octupuses that flash in a 10 by 10 grid
+        // Dumbo Octopus: Handle flashes in a 10 by 10 grid
 
         static void FlashPos(Map m, Pos p, HashSet<Pos> visited)
         {
@@ -53,6 +53,6 @@ namespace aoc
         }
 
         static void Main() => Aoc.Execute(Day, PartA, PartB);
-        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()); } }
+        static string Day { get { return Aoc.Day(MethodBase.GetCurrentMethod()!); } }
     }
 }
