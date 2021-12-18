@@ -5,6 +5,90 @@ from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
+def parseint(s):
+    return ord(s)-ord('0')
+
+
+def encodeint(n):
+    return chr(n+ord('0'))
+
+
+def explode(snailnum):
+    n = len(snailnum)
+    brackets = 0
+
+    for i, c in enumerate(snailnum):
+        if c == '[':
+            brackets += 1
+        elif c == ']':
+            brackets -= 1
+        elif c.isdigit() and brackets > 4 and snailnum[i+1] == ',' and snailnum[i+2].isdigit():
+            a = parseint(c)
+            b = parseint(snailnum[i+2])
+            leftat = -1
+            rightat = -1
+
+            for j in range(i-1, -1, -1):
+                if snailnum[j] not in '[],' and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
+                    leftat = j
+                    break
+
+            for j in range(i+4, n):
+                if snailnum[j] not in '[],' and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
+                    rightat = j
+                    break
+
+            leftest = snailnum[:i-1]
+
+            if leftat > -1:
+                leftval = encodeint(parseint(snailnum[leftat]) + a)
+                leftest = snailnum[:leftat] + str(leftval) + snailnum[leftat+1:i-1]
+
+            middle = '0'
+
+            rightest = snailnum[i+4:]
+
+            if rightat > -1:
+                rightval = encodeint(parseint(snailnum[rightat]) + b)
+                rightest = snailnum[i+4:rightat] + str(rightval) + snailnum[rightat+1:]
+
+            return (True, leftest + middle + rightest)
+
+    return (False, snailnum)       
+
+
+def split(snailnum):
+    n = len(snailnum)
+
+    for i, c in enumerate(snailnum[:-1]):
+        if c not in '0123456789[],':
+            val = parseint(c)
+            a = val//2
+            b = val-a
+            return (True, snailnum[:i] + f'[{a},{b}]' + snailnum[i+1:])
+
+    return (False, snailnum)
+
+
+def calc(snailnum):
+    while True:
+        exploded, snailnum = explode(snailnum)
+        
+        if exploded:
+            continue
+
+        didsplit, snailnum = split(snailnum)
+
+        if not didsplit:
+            break
+
+    return snailnum
+    
+
+def add(a, b):
+    return f'[{a},{b}]'
+
+
 def solve(snailnums):
     def parse(snailnum):
         stack = []
@@ -25,122 +109,7 @@ def solve(snailnums):
 
         return stack
 
-    def parseint(s):
-        if s.isdigit():
-            return int(s)
-
-        if s == 'A':
-            return 10
-        if s == 'B':
-            return 11
-        if s == 'C':
-            return 12
-        if s == 'D':
-            return 13
-        if s == 'E':
-            return 14
-        if s == 'F':
-            return 15
-        if s == 'G':
-            return 16
-        if s == 'H':
-            return 17                
-        return 18
-
-    def encodeint(n):
-        if n > 18:
-            print('disaster', n)
-        if n < 10:
-            return str(n)
-        if n == 10:
-            return 'A'
-        if n == 11:
-            return 'B'
-        if n == 12:
-            return 'C'
-        if n == 13:
-            return 'D'
-        if n == 14:
-            return 'E'
-        if n == 15:
-            return 'F'
-        if n == 16:
-            return 'G'
-        if n == 17:
-            return 'H'
-        return 'I'
-
-    def explode(snailnum):
-        n = len(snailnum)
-        brackets = 0
-
-        for i, c in enumerate(snailnum):
-            if c == '[':
-                brackets += 1
-            elif c == ']':
-                brackets -= 1
-            elif c.isdigit() and brackets > 4 and snailnum[i+1] == ',' and snailnum[i+2].isdigit():
-                a = parseint(c)
-                b = parseint(snailnum[i+2])
-                leftat = -1
-                rightat = -1
-
-                for j in range(i-1, -1, -1):
-                    if snailnum[j] not in '[],' and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
-                        leftat = j
-                        break
-
-                for j in range(i+4, n):
-                    if snailnum[j] not in '[],' and (snailnum[j+1] == ',' or snailnum[j-1] == ','):
-                        rightat = j
-                        break
-
-                leftest = snailnum[:i-1]
-
-                if leftat > -1:
-                    leftval = encodeint(parseint(snailnum[leftat]) + a)
-                    leftest = snailnum[:leftat] + str(leftval) + snailnum[leftat+1:i-1]
-
-                middle = '0'
-
-                rightest = snailnum[i+4:]
-
-                if rightat > -1:
-                    rightval = encodeint(parseint(snailnum[rightat]) + b)
-                    rightest = snailnum[i+4:rightat] + str(rightval) + snailnum[rightat+1:]
-
-                return (True, leftest + middle + rightest)
-
-        return (False, snailnum)                
-
-    def split(snailnum):
-        n = len(snailnum)
-
-        for i, c in enumerate(snailnum[:-1]):
-            if c.isalpha():
-                val = parseint(c)
-                a = val//2
-                b = val-a
-                return (True, snailnum[:i] + f'[{a},{b}]' + snailnum[i+1:])
-
-        return (False, snailnum)
-
-    def calc(snailnum):
-        while True:
-            exploded, snailnum = explode(snailnum)
-            
-            if exploded:
-                continue
-
-            didsplit, snailnum = split(snailnum)
-
-            if not didsplit:
-                break
-
-        return snailnum
-
-    def add(a, b):
-        return f'[{a},{b}]'
+    
 
     val = calc(add(snailnums[0], snailnums[1]))
 
