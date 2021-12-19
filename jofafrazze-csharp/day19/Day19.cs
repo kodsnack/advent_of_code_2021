@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using AdventOfCode;
 using Pos = AdventOfCode.GenericPosition3D<int>;
 
@@ -35,10 +28,10 @@ namespace aoc
                 ret.Add(list);
             return ret;
         }
-        static Pos RotateX90(Pos p) => new Pos(p.x, -p.z, p.y);
-        static Pos FlipX(Pos p) => new Pos(-p.x, p.y, -p.z);
-        static Pos Y2X(Pos p) => new Pos(p.y, -p.x, p.z);
-        static Pos Z2X(Pos p) => new Pos(p.z, p.y, -p.x);
+        static Pos RotateX90(Pos p) => new(p.x, -p.z, p.y);
+        static Pos FlipX(Pos p) => new(-p.x, p.y, -p.z);
+        static Pos Y2X(Pos p) => new(p.y, -p.x, p.z);
+        static Pos Z2X(Pos p) => new(p.z, p.y, -p.x);
         static List<List<Pos>> Permutations(List<Pos> pos)
         {
             var ret = new List<List<Pos>>();
@@ -65,29 +58,29 @@ namespace aoc
             var w = ReadData(file);
             beacons = w[0].ToHashSet();
             scanners.Add(new Pos());
-            var todo = w.Skip(1).ToList();
+            var todo = w.Skip(1).Select(a => Permutations(a)).ToList();
             while (todo.Count > 0)
             {
-                var scanner = todo[0];
+                var scannerPerms = todo[0];
                 todo.RemoveAt(0);
                 bool found = false;
-                foreach (var sPerm in Permutations(scanner))
+                foreach (var perm in scannerPerms)
                 {
                     var deltas = new Dictionary<Pos, int>();
-                    foreach (var sp in sPerm)
+                    foreach (var sp in perm)
                         foreach (var wp in beacons)
                             deltas.Inc(wp - sp, 1);
                     (Pos d, int n) = deltas.ToList().OrderBy(a => a.Value).Last();
                     if (n >= 12)
                     {
-                        beacons.UnionWith(sPerm.Select(a => a + d));
+                        beacons.UnionWith(perm.Select(a => a + d));
                         scanners.Add(d);
                         found = true;
                         break;
                     }
                 }
                 if (!found)
-                    todo.Add(scanner);
+                    todo.Add(scannerPerms);
             }
         }
         public static (int n, int dist) Part(string file)
