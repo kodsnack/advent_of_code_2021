@@ -49,12 +49,18 @@ def true_beacons(colorder, inversions, beacons, start):
     return truebeacons
 
 
-def locate(scannera, beaconsa, beaconsb, orientationa=[]):
-    for colordera, inversionsa in ([orientationa] if (orientationa and len(orientationa) == 2) else orientations):
+def locate(scanners, a, b, orientationsfor, locations):
+    orientationa = [orientationsfor[a]] if a in orientationsfor else orientations
+    orientationb = [orientationsfor[b]] if b in orientationsfor else orientations
+    beaconsa = scanners[a]
+    beaconsb = scanners[b]
+    scannera = locations[a]
+
+    for colordera, inversionsa in orientationa:
         truebeacons = true_beacons(colordera, inversionsa, beaconsa, scannera)
 
-        for colorderb, inversionsb in orientations:
-            potentialstarts = set()
+        for colorderb, inversionsb in orientationb:
+            potentialstarts = Counter()
 
             for tbax, tbay, tbaz in truebeacons:
                 for beaconb in beaconsb:
@@ -63,22 +69,27 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
                     for pos in range(3):
                         potstartb[pos] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
-                    potentialstarts.add(tuple(potstartb))
+                    potentialstarts[tuple(potstartb)] += 1
 
-            for bx, by, bz in potentialstarts:
-                matches = set()
+            candidate = potentialstarts.most_common(1)[0]
 
-                for beaconb in beaconsb:
-                    truebeaconb = [bx, by, bz]
+            if candidate[1] < 12:
+                continue
+            
+            bx, by, bz = candidate[0]
+            matches = set()
 
-                    for pos in range(3):
-                        truebeaconb[pos] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+            for beaconb in beaconsb:
+                truebeaconb = [bx, by, bz]
 
-                    if tuple(truebeaconb) in truebeacons:
-                        matches.add(tuple(truebeaconb))
-                        
-                if len(matches) > 11:
-                    return (True, [colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
+                for pos in range(3):
+                    truebeaconb[pos] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+
+                if tuple(truebeaconb) in truebeacons:
+                    matches.add(tuple(truebeaconb))
+                    
+            if len(matches) > 11:
+                return (True, [colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
 
     return (False, [], [], [], set())
 
@@ -89,7 +100,7 @@ def connect_scanners(scanners, n):
     
     while len(locations) < n:
         for i, j in [(i, j) for i in range(n) for j in range(n) if i in locations and j not in locations]:
-            success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], orientationfor[i])
+            success, orientationsi, orientationsj, locationj, _ = locate(scanners, i, j, orientationfor, locations)
             if success:
                 locations[j] = locationj
                 orientationfor[i] = orientationsi
