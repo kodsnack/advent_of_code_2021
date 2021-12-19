@@ -59,7 +59,7 @@ def locate(scanners, a, b, orientationsfor, locations):
         truebeacons = true_beacons(colordera, inversionsa, beaconsa, scannera)
 
         for colorderb, inversionsb in orientationb:
-            potentialstarts = set()
+            potentialstarts = Counter()
 
             for tbax, tbay, tbaz in truebeacons:
                 for beaconb in beaconsb:
@@ -68,22 +68,27 @@ def locate(scanners, a, b, orientationsfor, locations):
                     for pos in range(3):
                         potstartb[pos] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
-                    potentialstarts.add(tuple(potstartb))
+                    potentialstarts[tuple(potstartb)] += 1
 
-            for bx, by, bz in potentialstarts:
-                matches = set()
+            candidate = potentialstarts.most_common(1)[0]
 
-                for beaconb in beaconsb:
-                    truebeaconb = [bx, by, bz]
+            if candidate[1] < 12:
+                continue
+            
+            bx, by, bz = candidate[0]
+            matches = set()
 
-                    for pos in range(3):
-                        truebeaconb[pos] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+            for beaconb in beaconsb:
+                truebeaconb = [bx, by, bz]
 
-                    if tuple(truebeaconb) in truebeacons:
-                        matches.add(tuple(truebeaconb))
-                        
-                if len(matches) > 11:
-                    return (True, [colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
+                for pos in range(3):
+                    truebeaconb[pos] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+
+                if tuple(truebeaconb) in truebeacons:
+                    matches.add(tuple(truebeaconb))
+                    
+            if len(matches) > 11:
+                return (True, [colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
 
     return (False, [], [], [], set())
 
