@@ -79,29 +79,16 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
 
 def connect_scanners(scanners, n):
     locations = {0: (0, 0, 0)}
-    orientationfor = {}
+    orientationfor = defaultdict(list)
     
     while len(locations) < n:
-        for i in range(n):
-            if i not in locations:
-                continue
-            for j in range(n):
-                if j in locations or i == j:
-                    continue
-                if i in orientationfor:
-                    success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
-                    if success:
-                        locations[j] = locationj
-                        orientationfor[j] = orientationsj
-                        if i not in orientationfor:
-                            orientationfor[i] = orientationsi
-                else:
-                    success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j])
-                    if success:
-                        locations[j] = locationj
-                        orientationfor[j] = orientationsj
-                        if i not in orientationfor:
-                            orientationfor[i] = orientationsi
+        for i, j in [(i, j) for i in range(n) for j in range(n) if i in locations and j not in locations]:
+            success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], orientationfor[i])
+            if success:
+                locations[j] = locationj
+                orientationfor[j] = [orientationsj]
+                if i not in orientationfor:
+                    orientationfor[i] = [orientationsi]
 
     return locations, orientationfor
 
@@ -111,7 +98,7 @@ def solve(scanners):
     locations, _ = connect_scanners(scanners, n)
 
     return max(manhattan(a, b) for a, b in combinations(locations.values(), 2))
-    
+
 
 def main():
     scanners = []
