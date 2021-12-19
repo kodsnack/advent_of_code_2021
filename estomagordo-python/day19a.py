@@ -16,7 +16,7 @@ basic = [
 ]
 mods = [
     [-1, 1, 1],
-    [-1, 1, -1],
+    [-1, -1, -1],
     [1, 1, -1],
     [1, -1, 1]
 ]
@@ -70,12 +70,13 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
 
                     if tuple(truebeaconb) in truebeacons:
                         matches += 1
-
+                        
                 if matches > 11:
+                    print('match')
                     return (True, [colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
 
     return (False, [], [], [], -1)
-    
+
 
 def solve(scanners):
     n = len(scanners)
@@ -100,11 +101,13 @@ def solve(scanners):
                     if success:
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
+                        print(locations)
                 else:
                     success, _, orientationsj, locationj, __ = locate(locations[i], scanners[i], scanners[j])
                     if success:
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
+                        print(locations)
 
     return locations
 
