@@ -50,41 +50,65 @@ std::tuple<std::string, std::string> p19(const std::string & input) {
         }
     }
 
-    auto transform = [](const std::array<int,3> & a, const std::array<int,3> & p, int num) -> std::array<int, 3> {
+
+    std::vector<std::tuple<std::array<int,3>,uint16_t>> transformations;
+    {
+        for (uint16_t n = 0; n < 8; n++) {
+            std::array<int, 3> p{0, 1, 2};
+            do {
+                transformations.emplace_back(p, n);
+            } while(std::next_permutation(p.begin(), p.end()));
+        }
+    }
+
+    auto transform = [&transformations](const std::array<int,3> & a, size_t tidx) -> std::array<int, 3> {
+        const auto & [p,num] = transformations[tidx];
         bool n1 = num & 1;
         bool n2 = num & 2;
         bool n3 = num & 4;
         return { n1 ? -a[p[0]] : a[p[0]],n2 ? -a[p[1]] : a[p[1]],n3 ? -a[p[2]] : a[p[2]] };
     };
 
-    std::vector<std::tuple<size_t,size_t,std::array<int,3>,int,std::tuple<int,int,int>>> overlaps;
+    std::vector<size_t> reversetrans(transformations.size());
+
+    for(size_t t1 = 0; t1 < transformations.size(); t1++) {
+        auto a1 = transform({1,2,3}, t1);
+        for(size_t t2 = 0; t2 < transformations.size(); t2++) {
+            auto a2 = transform(a1, t2);
+            if(a2[0] == 1 && a2[1] == 2 && a2[2] == 3) {
+                reversetrans[t1] = t2;
+                //std::cout << t2 << " reverses " << t1 << std::endl;
+            }
+
+        }
+    }
+
+    std::vector<std::tuple<size_t,size_t,size_t,std::tuple<int,int,int>>> overlaps;
 
     for (size_t s1 = 0; s1 < v.size(); s1++){
-        for (size_t s2 = 0; s2 < v.size(); s2++) {
+        for (size_t s2 = s1+1; s2 < v.size(); s2++) {
             if(s1 == s2) continue;
-            std::array<int, 3> p{0, 1, 2};
-            do {
-                for (int n = 0; n < 8; n++) {
-                    std::map<std::tuple<int, int, int>, int> m;
-                    for (size_t i = 0; i < v[s2].size(); i++) {
-                        auto a = transform(v[s2][i], p, n);
-                        //std::cout << a[0] << a[1] << a[2] << '\n';
+            for(size_t tidx = 0; tidx < transformations.size(); tidx++) {
+                std::map<std::tuple<int, int, int>, int> m;
+                for (size_t i = 0; i < v[s2].size(); i++) {
+                    auto a = transform(v[s2][i], tidx);
+                    //std::cout << a[0] << a[1] << a[2] << '\n';
 
-                        for (size_t j = 0; j < v[s1].size(); j++) {
-                            m[{v[s1][j][0] - a[0], v[s1][j][1] - a[1], v[s1][j][2] - a[2]}]++;
-                        }
+                    for (size_t j = 0; j < v[s1].size(); j++) {
+                        m[{v[s1][j][0] - a[0], v[s1][j][1] - a[1], v[s1][j][2] - a[2]}]++;
                     }
-                    for (auto &[t, i]: m) {
-                        if (i >= 12) {
-                            overlaps.emplace_back(s1,s2,p,n,t);
-                            auto [ox,oy,oz] = t;
-                            //std::cout << s1 << s2 << " found overlap i = " << i << ' ' << ox << ' ' << oy << ' ' << oz << std::endl;
-
-                        }
+                }
+                for (auto &[t, i]: m) {
+                    if (i >= 12) {
+                        overlaps.emplace_back(s1,s2,tidx,t);
+                        auto [ox,oy,oz] = t;
+                        auto revoff = transform({-ox,-oy,-oz},reversetrans[tidx]);
+                        overlaps.emplace_back(s2,s1,reversetrans[tidx],std::make_tuple(revoff[0],revoff[1],revoff[2]));
+                        //std::cout << s1 << ' ' << s2 << " found overlap i = " << i << ' ' << ox << ' ' << oy << ' ' << oz << std::endl;
                     }
                 }
 
-            } while (std::next_permutation(p.begin(), p.end()));
+            }
 
         }
     }
@@ -106,19 +130,19 @@ std::tuple<std::string, std::string> p19(const std::string & input) {
                 }
             } else {
                 // find transform
-                bool found = false;
-                for (auto &[to, from, p, n, offset]: overlaps) {
+                //bool found = false;
+                for (auto &[to, from, tidx, offset]: overlaps) {
                     if (seen.count({orig, to})) continue;
                     if (from == s) {
                         //std::cout << "transform " << from << " to " << to << " orig " << orig << std::endl;
                         std::vector<std::array<int, 3>> newvector;
                         auto[ox, oy, oz] = offset;
                         for (auto &beacontmp: l) {
-                            auto beacontrans = transform(beacontmp, p, n);
+                            auto beacontrans = transform(beacontmp, tidx);
                             newvector.push_back({beacontrans[0] + ox, beacontrans[1] + oy, beacontrans[2] + oz});
                         }
                         seen.insert({orig, s});
-                        found = true;
+                        //found = true;
                         q.emplace(to, orig, std::move(newvector));
                     }
                 }
@@ -150,10 +174,10 @@ std::tuple<std::string, std::string> p19(const std::string & input) {
                 scannerpos[scanidx] = pos;
             } else if(!scannerseen[scanidx]) {
                 auto [x,y,z] = pos;
-                for (auto &[to, from, p, n, offset]: overlaps) {
+                for (auto &[to, from, tidx, offset]: overlaps) {
                     if(insys == from) {
                         auto[ox, oy, oz] = offset;
-                        auto tp = transform({x,y,z}, p, n);
+                        auto tp = transform({x,y,z}, tidx);
                         q.emplace(scanidx, to, std::make_tuple(tp[0]+ox,tp[1]+oy,tp[2]+oz));
                     }
                 }
