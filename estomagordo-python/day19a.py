@@ -34,18 +34,24 @@ for b, m in product(basic, mods):
 
 orientations = list(product(permutations(range(3)), product([1, -1], repeat=3)))
 
-def locate(scannera, beaconsa, beaconsb, orientationa=[]):    
-    ax, ay, az = scannera
 
-    for colordera, inversionsa in (orientationa if orientationa else orientations):
-        truebeacons = set()
+def true_beacons(colorder, inversions, beacons, start):
+    truebeacons = set()
         
-        for beacona in beaconsa:
-            truebeacona = [ax, ay, az]
+    for beacon in beacons:
+        truebeacon = list(start)
 
-            for pos in range(3):
-                truebeacona[pos] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
-            truebeacons.add(tuple(truebeacona))
+        for pos in range(3):
+            truebeacon[pos] += beacon[colorder[pos]] * inversions[colorder[pos]]
+
+        truebeacons.add(tuple(truebeacon))
+
+    return truebeacons
+
+
+def locate(scannera, beaconsa, beaconsb, orientationa=[]):
+    for colordera, inversionsa in ([orientationa] if (orientationa and len(orientationa) == 2) else orientations):
+        truebeacons = true_beacons(colordera, inversionsa, beaconsa, scannera)
 
         for colorderb, inversionsb in orientations:
             potentialstarts = set()
@@ -86,9 +92,8 @@ def connect_scanners(scanners, n):
             success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], orientationfor[i])
             if success:
                 locations[j] = locationj
-                orientationfor[j] = [orientationsj]
-                if i not in orientationfor:
-                    orientationfor[i] = [orientationsi]
+                orientationfor[i] = orientationsi
+                orientationfor[j] = orientationsj             
 
     return locations, orientationfor
 
@@ -96,7 +101,7 @@ def connect_scanners(scanners, n):
 def solve(scanners):
     n = len(scanners)
     locations, orientationfor = connect_scanners(scanners, n)
-            
+    print(locations, orientationfor)        
     allbeacs = set()
 
     for i in range(n):
