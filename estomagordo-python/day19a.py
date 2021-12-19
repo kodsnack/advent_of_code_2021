@@ -88,11 +88,11 @@ def solve(scanners):
     locations = {0: (0, 0, 0)}
     orientationfor = {}
 
-    _, orientations0, orientations1, location1, __ = locate([0, 0, 0], scanners[0], scanners[1])
+    # _, orientations0, orientations1, location1, __ = locate([0, 0, 0], scanners[0], scanners[1])
 
-    locations[1] = location1
-    orientationfor[0] = orientations0
-    orientationfor[1] = orientations1
+    # locations[1] = location1
+    # orientationfor[0] = orientations0
+    # orientationfor[1] = orientations1
     
     while len(locations) < n:
         successinrun = False
@@ -104,23 +104,31 @@ def solve(scanners):
                 if j in locations or i == j:
                     continue
                 if i in orientationfor:
-                    success, _, orientationsj, locationj, __ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
+                    # print(i, j, locations, orientationfor[i])
+                    success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
                     if success:
+                        print(len(locations))
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
                         successinrun = True
-                        print(locations, orientationfor)
+                        if i not in orientationfor:
+                            orientationfor[i] = orientationsi
+                        # print(locations, orientationfor)
                 else:
-                    success, _, orientationsj, locationj, __ = locate(locations[i], scanners[i], scanners[j])
+                    success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j])
                     if success:
+                        print(len(locations))
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
                         successinrun = True
-                        print(locations, orientationfor)
+                        if i not in orientationfor:
+                            orientationfor[i] = orientationsi
+                        # print(locations, orientationfor)
 
         if not successinrun:
-            break
-
+            return
+    print('stuff')
+    print(locations, orientationfor)
     allbeacs = set()
 
     for i in range(n):
