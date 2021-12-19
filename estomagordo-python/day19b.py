@@ -4,7 +4,6 @@ from heapq import heappop, heappush
 from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
-# orientations = list(product(permutations(range(3)), product([False, True], repeat=3)))
 orientations = []
 basic = [
     [[0, 1, 2], [1, 1, 1]],
@@ -33,8 +32,6 @@ for b, m in product(basic, mods):
     orientations.append((tuple(o), tuple(signs)))
 
 orientations = list(product(permutations(range(3)), product([1, -1], repeat=3)))
-# print(orientations)
-print(len(orientations), len(set(orientations)))
 
 def locate(scannera, beaconsa, beaconsb, orientationa=[]):    
     ax, ay, az = scannera
@@ -47,7 +44,6 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
 
             for pos in range(3):
                 truebeacona[pos] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
-                # truebeacona[colordera[pos]] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
 
             truebeacons.add(tuple(truebeacona))
 
@@ -60,7 +56,6 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
 
                     for pos in range(3):
                         potstartb[pos] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
-                        # potstartb[colorderb[pos]] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
                     potentialstarts.add(tuple(potstartb))
 
@@ -72,7 +67,6 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
 
                     for pos in range(3):
                         truebeaconb[pos] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
-                        # truebeaconb[colorderb[pos]] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
                     if tuple(truebeaconb) in truebeacons:
                         matches.add(tuple(truebeaconb))
@@ -87,12 +81,6 @@ def solve(scanners):
     n = len(scanners)
     locations = {0: (0, 0, 0)}
     orientationfor = {}
-
-    # _, orientations0, orientations1, location1, __ = locate([0, 0, 0], scanners[0], scanners[1])
-
-    # locations[1] = location1
-    # orientationfor[0] = orientations0
-    # orientationfor[1] = orientations1
     
     while len(locations) < n:
         successinrun = False
@@ -104,7 +92,6 @@ def solve(scanners):
                 if j in locations or i == j:
                     continue
                 if i in orientationfor:
-                    # print(i, j, locations, orientationfor[i])
                     success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
                     if success:
                         print(len(locations))
@@ -113,7 +100,6 @@ def solve(scanners):
                         successinrun = True
                         if i not in orientationfor:
                             orientationfor[i] = orientationsi
-                        # print(locations, orientationfor)
                 else:
                     success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j])
                     if success:
@@ -123,12 +109,10 @@ def solve(scanners):
                         successinrun = True
                         if i not in orientationfor:
                             orientationfor[i] = orientationsi
-                        # print(locations, orientationfor)
 
         if not successinrun:
             return
-    print('stuff')
-    print(locations, orientationfor)
+            
     longest = 0
 
     for i in range(n):
