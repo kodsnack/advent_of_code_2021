@@ -32,6 +32,9 @@ for b, m in product(basic, mods):
 
     orientations.append((tuple(o), tuple(signs)))
 
+orientations = list(product(permutations(range(3)), product([1, -1], repeat=3)))
+# print(orientations)
+print(len(orientations), len(set(orientations)))
 
 def locate(scannera, beaconsa, beaconsb, orientationa=[]):    
     ax, ay, az = scannera
