@@ -77,14 +77,11 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
     return (False, [], [], [], set())
 
 
-def solve(scanners):
-    n = len(scanners)
+def connect_scanners(scanners, n):
     locations = {0: (0, 0, 0)}
     orientationfor = {}
     
     while len(locations) < n:
-        successinrun = False
-
         for i in range(n):
             if i not in locations:
                 continue
@@ -94,36 +91,27 @@ def solve(scanners):
                 if i in orientationfor:
                     success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
                     if success:
-                        print(len(locations))
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
-                        successinrun = True
                         if i not in orientationfor:
                             orientationfor[i] = orientationsi
                 else:
                     success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j])
                     if success:
-                        print(len(locations))
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
-                        successinrun = True
                         if i not in orientationfor:
                             orientationfor[i] = orientationsi
 
-        if not successinrun:
-            return
-            
-    longest = 0
+    return locations, orientationfor
 
-    for i in range(n):
-       for j in range(i+1,n):
-           x1, y1, z1 = locations[i]
-           x2, y2, z2 = locations[j]
-           d = abs(x1-x2) + abs(y1-y2) + abs(z1-z2)
 
-           longest = max(longest, d)
+def solve(scanners):
+    n = len(scanners)
+    locations, _ = connect_scanners(scanners, n)
 
-    return longest
+    return max(manhattan(a, b) for a, b in combinations(locations.values(), 2))
+    
 
 def main():
     scanners = []
@@ -143,7 +131,6 @@ def main():
                 scanner.append(nums)
 
     scanners.append(scanner)
-
             
     return solve(scanners)
 

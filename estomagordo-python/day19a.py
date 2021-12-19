@@ -77,14 +77,11 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
     return (False, [], [], [], set())
 
 
-def solve(scanners):
-    n = len(scanners)
+def connect_scanners(scanners, n):
     locations = {0: (0, 0, 0)}
     orientationfor = {}
     
     while len(locations) < n:
-        successinrun = False
-
         for i in range(n):
             if i not in locations:
                 continue
@@ -94,24 +91,24 @@ def solve(scanners):
                 if i in orientationfor:
                     success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
                     if success:
-                        print(len(locations))
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
-                        successinrun = True
                         if i not in orientationfor:
                             orientationfor[i] = orientationsi
                 else:
                     success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j])
                     if success:
-                        print(len(locations))
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
-                        successinrun = True
                         if i not in orientationfor:
                             orientationfor[i] = orientationsi
 
-        if not successinrun:
-            return
+    return locations, orientationfor
+
+
+def solve(scanners):
+    n = len(scanners)
+    locations, orientationfor = connect_scanners(scanners, n)
             
     allbeacs = set()
 
@@ -145,7 +142,6 @@ def main():
                 scanner.append(nums)
 
     scanners.append(scanner)
-
             
     return solve(scanners)
 
