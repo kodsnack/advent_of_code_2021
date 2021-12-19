@@ -98,11 +98,11 @@ def solve(scanners):
     while len(locations) < n:
         successinrun = False
 
-        for i in range(n-1):
+        for i in range(n):
             if i not in locations:
                 continue
-            for j in range(i+1, n):
-                if j in locations:
+            for j in range(n):
+                if j in locations or i == j:
                     continue
                 if i in orientationfor:
                     success, _, orientationsj, locationj, __ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
