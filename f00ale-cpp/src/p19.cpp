@@ -54,10 +54,13 @@ std::tuple<std::string, std::string> p19(const std::string & input) {
     std::vector<std::tuple<std::array<int,3>,uint16_t>> transformations;
     {
         for (uint16_t n = 0; n < 8; n++) {
-            std::array<int, 3> p{0, 1, 2};
-            do {
-                transformations.emplace_back(p, n);
-            } while(std::next_permutation(p.begin(), p.end()));
+            transformations.push_back({{0,1,2},n});
+            transformations.push_back({{1,2,0},n});
+            transformations.push_back({{2,0,1},n});
+
+            transformations.push_back({{0,2,1},n});
+            transformations.push_back({{2,1,0},n});
+            transformations.push_back({{1,0,2},n});
         }
     }
 
@@ -85,26 +88,33 @@ std::tuple<std::string, std::string> p19(const std::string & input) {
 
     std::vector<std::tuple<size_t,size_t,size_t,std::tuple<int,int,int>>> overlaps;
 
+    const auto NTRANS = transformations.size();
+    std::vector<std::tuple<int, int, int>> m;
     for (size_t s1 = 0; s1 < v.size(); s1++){
         for (size_t s2 = s1+1; s2 < v.size(); s2++) {
-            if(s1 == s2) continue;
-            for(size_t tidx = 0; tidx < transformations.size(); tidx++) {
-                std::map<std::tuple<int, int, int>, int> m;
+            for(size_t tidx = 0; tidx < NTRANS; tidx++) {
+                m.clear();
                 for (size_t i = 0; i < v[s2].size(); i++) {
                     auto a = transform(v[s2][i], tidx);
                     //std::cout << a[0] << a[1] << a[2] << '\n';
 
                     for (size_t j = 0; j < v[s1].size(); j++) {
-                        m[{v[s1][j][0] - a[0], v[s1][j][1] - a[1], v[s1][j][2] - a[2]}]++;
+                        m.emplace_back(v[s1][j][0] - a[0], v[s1][j][1] - a[1], v[s1][j][2] - a[2]);
                     }
                 }
-                for (auto &[t, i]: m) {
-                    if (i >= 12) {
+                std::sort(m.begin(),m.end());
+                auto last = m.front();
+                int cnt = 0;
+                for(auto & t : m) {
+                    if(t == last) cnt++;
+                    else { cnt = 1; last = t; }
+                    if (cnt >= 12) {
                         overlaps.emplace_back(s1,s2,tidx,t);
                         auto [ox,oy,oz] = t;
                         auto revoff = transform({-ox,-oy,-oz},reversetrans[tidx]);
                         overlaps.emplace_back(s2,s1,reversetrans[tidx],std::make_tuple(revoff[0],revoff[1],revoff[2]));
-                        //std::cout << s1 << ' ' << s2 << " found overlap i = " << i << ' ' << ox << ' ' << oy << ' ' << oz << std::endl;
+                        //std::cout << s1 << ' ' << s2 << " found overlap i = " << cnt << ' ' << ox << ' ' << oy << ' ' << oz << std::endl;
+                        break;
                     }
                 }
 
