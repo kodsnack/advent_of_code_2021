@@ -46,7 +46,8 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
             truebeacona = [ax, ay, az]
 
             for pos in range(3):
-                truebeacona[colordera[pos]] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
+                truebeacona[pos] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
+                # truebeacona[colordera[pos]] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
 
             truebeacons.add(tuple(truebeacona))
 
@@ -58,7 +59,8 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
                     potstartb = [tbax, tbay, tbaz]
 
                     for pos in range(3):
-                        potstartb[colorderb[pos]] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+                        potstartb[pos] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+                        # potstartb[colorderb[pos]] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
                     potentialstarts.add(tuple(potstartb))
 
@@ -69,7 +71,8 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
                     truebeaconb = [bx, by, bz]
 
                     for pos in range(3):
-                        truebeaconb[colorderb[pos]] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+                        truebeaconb[pos] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+                        # truebeaconb[colorderb[pos]] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
                     if tuple(truebeaconb) in truebeacons:
                         matches += 1
@@ -93,6 +96,8 @@ def solve(scanners):
     orientationfor[1] = orientations1
     
     while len(locations) < n:
+        successinrun = False
+
         for i in range(n-1):
             if i not in locations:
                 continue
@@ -104,13 +109,18 @@ def solve(scanners):
                     if success:
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
+                        successinrun = True
                         print(locations, orientationfor)
                 else:
                     success, _, orientationsj, locationj, __ = locate(locations[i], scanners[i], scanners[j])
                     if success:
                         locations[j] = locationj
                         orientationfor[j] = orientationsj
+                        successinrun = True
                         print(locations, orientationfor)
+
+        if not successinrun:
+            break
 
     return locations
 
