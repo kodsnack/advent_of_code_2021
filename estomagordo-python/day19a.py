@@ -65,7 +65,7 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
                     potentialstarts.add(tuple(potstartb))
 
             for bx, by, bz in potentialstarts:
-                matches = 0
+                matches = set()
 
                 for beaconb in beaconsb:
                     truebeaconb = [bx, by, bz]
@@ -75,13 +75,13 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
                         # truebeaconb[colorderb[pos]] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
                     if tuple(truebeaconb) in truebeacons:
-                        matches += 1
+                        matches.add(tuple(truebeaconb))
                         
-                if matches > 11:
+                if len(matches) > 11:
                     print('match', len(potentialstarts))
                     return (True, [colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
 
-    return (False, [], [], [], -1)
+    return (False, [], [], [], set())
 
 
 def solve(scanners):
@@ -122,7 +122,16 @@ def solve(scanners):
         if not successinrun:
             break
 
-    return locations
+    allbeacs = set()
+
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                continue
+
+            allbeacs |= locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])[-1]
+
+    return len(allbeacs)
 
 
 def main():
