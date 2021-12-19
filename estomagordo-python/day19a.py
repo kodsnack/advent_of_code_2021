@@ -35,13 +35,13 @@ for b, m in product(basic, mods):
 
 def locate(scannera, beaconsa, beaconsb, orientationa=[]):
     best = 0
-    sx, sy, sz = scannera
+    ax, ay, az = scannera
 
     for colordera, inversionsa in (orientationa if orientationa else orientations):
         truebeacons = set()
         
         for beacona in beaconsa:
-            truebeacona = [sx, sy, sz]
+            truebeacona = [ax, ay, az]
 
             for pos in range(3):
                 truebeacona[colordera[pos]] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
@@ -49,18 +49,30 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
             truebeacons.add(tuple(truebeacona))
 
         for colorderb, inversionsb in orientations:
-            matches = 0
+            potentialstarts = set()
 
-            for beaconb in beaconsb:
-                truebeaconb = [sx, sy, sz]
+            for tbax, tbay, tbaz in truebeacons:
+                for beaconb in beaconsb:
+                    potstartb = [tbax, tbay, tbaz]
 
-                for pos in range(3):
-                    truebeaconb[colorderb[pos]] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+                    for pos in range(3):
+                        potstartb[colorderb[pos]] -= beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
 
-                if tuple(truebeaconb) in truebeacons:
-                    matches += 1
+                    potentialstarts.add(tuple(potstartb))
 
-            best = max(best, matches)
+            for bx, by, bz in potentialstarts:
+                matches = 0
+
+                for beaconb in beaconsb:
+                    truebeaconb = [bx, by, bz]
+
+                    for pos in range(3):
+                        truebeaconb[colorderb[pos]] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+
+                    if tuple(truebeaconb) in truebeacons:
+                        matches += 1
+
+                best = max(best, matches)
 
     return best
 
