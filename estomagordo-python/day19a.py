@@ -101,7 +101,6 @@ def connect_scanners(scanners, n):
 def solve(scanners):
     n = len(scanners)
     locations, orientationfor = connect_scanners(scanners, n)
-    print(locations, orientationfor)        
     allbeacs = set()
 
     for i in range(n):

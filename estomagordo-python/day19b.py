@@ -33,21 +33,32 @@ for b, m in product(basic, mods):
 
 orientations = list(product(permutations(range(3)), product([1, -1], repeat=3)))
 
-def locate(scannera, beaconsa, beaconsb, orientationa=[]):    
-    ax, ay, az = scannera
 
-    for colordera, inversionsa in (orientationa if orientationa else orientations):
-        truebeacons = set()
+def true_beacons(colorder, inversions, beacons, start):
+    truebeacons = set()
         
-        for beacona in beaconsa:
-            truebeacona = [ax, ay, az]
+    for beacon in beacons:
+        truebeacon = list(start)
 
-            for pos in range(3):
-                truebeacona[pos] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
+        for pos in range(3):
+            truebeacon[pos] += beacon[colorder[pos]] * inversions[colorder[pos]]
 
-            truebeacons.add(tuple(truebeacona))
+        truebeacons.add(tuple(truebeacon))
 
-        for colorderb, inversionsb in orientations:
+    return truebeacons
+
+
+def locate(scanners, a, b, orientationsfor, locations):
+    orientationa = [orientationsfor[a]] if a in orientationsfor else orientations
+    orientationb = [orientationsfor[b]] if b in orientationsfor else orientations
+    beaconsa = scanners[a]
+    beaconsb = scanners[b]
+    scannera = locations[a]
+
+    for colordera, inversionsa in orientationa:
+        truebeacons = true_beacons(colordera, inversionsa, beaconsa, scannera)
+
+        for colorderb, inversionsb in orientationb:
             potentialstarts = set()
 
             for tbax, tbay, tbaz in truebeacons:
@@ -83,12 +94,11 @@ def connect_scanners(scanners, n):
     
     while len(locations) < n:
         for i, j in [(i, j) for i in range(n) for j in range(n) if i in locations and j not in locations]:
-            success, orientationsi, orientationsj, locationj, _ = locate(locations[i], scanners[i], scanners[j], orientationfor[i])
+            success, orientationsi, orientationsj, locationj, _ = locate(scanners, i, j, orientationfor, locations)
             if success:
                 locations[j] = locationj
-                orientationfor[j] = [orientationsj]
-                if i not in orientationfor:
-                    orientationfor[i] = [orientationsi]
+                orientationfor[i] = orientationsi
+                orientationfor[j] = orientationsj             
 
     return locations, orientationfor
 
