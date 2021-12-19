@@ -33,8 +33,7 @@ for b, m in product(basic, mods):
     orientations.append((tuple(o), tuple(signs)))
 
 
-def locate(scannera, beaconsa, beaconsb, orientationa=[]):
-    best = 0
+def locate(scannera, beaconsa, beaconsb, orientationa=[]):    
     ax, ay, az = scannera
 
     for colordera, inversionsa in (orientationa if orientationa else orientations):
@@ -72,10 +71,8 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
                     if tuple(truebeaconb) in truebeacons:
                         matches += 1
 
-                best = max(best, matches)
-
-    return best
-
+                if matches > 11:
+                    return ([colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
 
 
 def overlaps(scannera, truebeaconsa, beaconsa, beaconsb):
@@ -97,7 +94,15 @@ def overlaps(scannera, truebeaconsa, beaconsa, beaconsb):
                         truex = beaconjj[p[0]]
 
 def solve(scanners):
-    return locate([0, 0, 0], scanners[0], scanners[1])
+    locations = {0: (0, 0, 0)}
+    orientationfor = {}
+
+    orientations0, orientations1, location1, count = locate([0, 0, 0], scanners[0], scanners[1])
+
+    orientationfor[0] = orientations0
+    orientationfor[1] = orientations1
+    
+    return locate([0, 0, 0], scanners[0], scanners[1], [orientations0])
     n = len(scanners)
     locations = {0: (0, 0, 0)}
     
