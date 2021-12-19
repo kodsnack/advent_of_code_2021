@@ -4,6 +4,67 @@ from heapq import heappop, heappush
 from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
+# orientations = list(product(permutations(range(3)), product([False, True], repeat=3)))
+orientations = []
+basic = [
+    [[0, 1, 2], [1, 1, 1]],
+    [[0, 1, 2], [-1, -1, 1]],
+    [[1, 0, 2], [1, -1, 1]],
+    [[1, 0, 2], [-1, 1, 1]],
+    [[2, 1, 0], [1, 1, -1]],
+    [[2, 1, 0], [-1, 1, 1]]
+]
+mods = [
+    [-1, 1, 1],
+    [-1, 1, -1],
+    [1, 1, -1],
+    [1, -1, 1]
+]
+
+for b, m in product(basic, mods):
+    o, signs = b
+    signs[1] *= m[1]
+    signs[2] *= m[2]
+    
+    if m[0] == 1:
+        o = [o[0], o[2], o[1]]
+        signs = [signs[0], signs[2], signs[1]]
+
+    orientations.append((tuple(o), tuple(signs)))
+
+
+def locate(scannera, beaconsa, beaconsb, orientationa=[]):
+    best = 0
+    sx, sy, sz = scannera
+
+    for colordera, inversionsa in (orientationa if orientationa else orientations):
+        truebeacons = set()
+        
+        for beacona in beaconsa:
+            truebeacona = [sx, sy, sz]
+
+            for pos in range(3):
+                truebeacona[colordera[pos]] += beacona[colordera[pos]] * inversionsa[colordera[pos]]
+
+            truebeacons.add(tuple(truebeacona))
+
+        for colorderb, inversionsb in orientations:
+            matches = 0
+
+            for beaconb in beaconsb:
+                truebeaconb = [sx, sy, sz]
+
+                for pos in range(3):
+                    truebeaconb[colorderb[pos]] += beaconb[colorderb[pos]] * inversionsb[colorderb[pos]]
+
+                if tuple(truebeaconb) in truebeacons:
+                    matches += 1
+
+            best = max(best, matches)
+
+    return best
+
+
 
 def overlaps(scannera, truebeaconsa, beaconsa, beaconsb):
     best = [-1]
@@ -21,9 +82,10 @@ def overlaps(scannera, truebeaconsa, beaconsa, beaconsb):
                     count = 0
 
                     for jj, beaconjj in enumerate(beaconsb):
-                        truex = 
+                        truex = beaconjj[p[0]]
 
 def solve(scanners):
+    return locate([0, 0, 0], scanners[0], scanners[1])
     n = len(scanners)
     locations = {0: (0, 0, 0)}
     
