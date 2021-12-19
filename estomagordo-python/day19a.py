@@ -72,7 +72,9 @@ def locate(scannera, beaconsa, beaconsb, orientationa=[]):
                         matches += 1
 
                 if matches > 11:
-                    return ([colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
+                    return (True, [colordera, inversionsa], [colorderb, inversionsb], [bx, by, bz], matches)
+
+    return (False, [], [], [], -1)
 
 
 def overlaps(scannera, truebeaconsa, beaconsa, beaconsb):
@@ -94,13 +96,35 @@ def overlaps(scannera, truebeaconsa, beaconsa, beaconsb):
                         truex = beaconjj[p[0]]
 
 def solve(scanners):
+    n = len(scanners)
     locations = {0: (0, 0, 0)}
     orientationfor = {}
 
-    orientations0, orientations1, location1, count = locate([0, 0, 0], scanners[0], scanners[1])
+    _, orientations0, orientations1, location1, __ = locate([0, 0, 0], scanners[0], scanners[1])
 
+    locations[1] = location1
     orientationfor[0] = orientations0
     orientationfor[1] = orientations1
+    
+    while len(locations) < n:
+        for i in range(n-1):
+            if i not in locations:
+                continue
+            for j in range(i+1, n):
+                if j in locations:
+                    continue
+                if i in orientationfor:
+                    success, _, orientationsj, locationj, __ = locate(locations[i], scanners[i], scanners[j], [orientationfor[i]])
+                    if success:
+                        locations[j] = locationj
+                        orientationfor[j] = orientationsj
+                else:
+                    success, _, orientationsj, locationj, __ = locate(locations[i], scanners[i], scanners[j])
+                    if success:
+                        locations[j] = locationj
+                        orientationfor[j] = orientationsj
+
+    return locations
     
     return locate([0, 0, 0], scanners[0], scanners[1], [orientations0])
     n = len(scanners)
