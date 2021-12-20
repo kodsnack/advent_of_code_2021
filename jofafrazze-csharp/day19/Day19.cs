@@ -17,10 +17,9 @@ namespace aoc
                 var v = s.Split(',');
                 if (s.Contains(','))
                     list.Add(new Pos(int.Parse(v[0]), int.Parse(v[1]), int.Parse(v[2])));
-                else
+                else if (list.Count > 0)
                 {
-                    if (list.Count > 0)
-                        ret.Add(list);
+                    ret.Add(list);
                     list = new List<Pos>();
                 }
             }
@@ -49,15 +48,11 @@ namespace aoc
             return ret;
         }
 
-        static HashSet<Pos> beacons = new HashSet<Pos>();
-        static HashSet<Pos> scanners = new HashSet<Pos>();
-        static string fileUsed = "";
-        static void CreateWorld(string file)
+        public static (Object, Object) DoPuzzle(string file)
         {
-            fileUsed = file;
             var w = ReadData(file);
-            beacons = w[0].ToHashSet();
-            scanners.Add(new Pos());
+            var beacons = w[0].ToHashSet();
+            var scanners = new HashSet<Pos>() { new Pos() };
             var todo = w.Skip(1).Select(a => Permutations(a)).ToList();
             while (todo.Count > 0)
             {
@@ -82,19 +77,10 @@ namespace aoc
                 if (!found)
                     todo.Add(scannerPerms);
             }
-        }
-        public static (int n, int dist) Part(string file)
-        {
-            if (beacons.Count == 0 || file != fileUsed)
-                CreateWorld(file);
             int max = scanners.SelectMany(w => scanners, (a, b) => a.ManhattanDistance(b)).Max();
             return (beacons.Count, max);
         }
-
-        public static Object PartA(string file) => Part(file).n;
-        public static Object PartB(string file) => Part(file).dist;
-
-        static void Main() => Aoc.Execute(Day, PartA, PartB);
+        static void Main() => Aoc.Execute(Day, DoPuzzle);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
 }

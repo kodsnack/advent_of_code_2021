@@ -232,12 +232,16 @@ namespace test
     public class TestDay19
     {
         [Fact]
-        public void ExampleA() => Assert.Equal(79, aoc.Day19.PartA(Input.example));
+        public void Example() => Assert.Equal((79, 3621), aoc.Day19.DoPuzzle(Input.example));
         [Fact]
-        public void ExampleB() => Assert.Equal(3621, aoc.Day19.PartB(Input.example));
+        public void Test() => Assert.Equal((318, 12166), aoc.Day19.DoPuzzle(Input.actual));
+    }
+
+    public class TestDay20
+    {
         [Fact]
-        public void TestA() => Assert.Equal(318, aoc.Day19.PartA(Input.actual));
+        public void Example() => Assert.Equal((35, 3351), aoc.Day20.DoPuzzle(Input.example));
         [Fact]
-        public void TestB() => Assert.Equal(12166, aoc.Day19.PartB(Input.actual));
+        public void Test() => Assert.Equal((5349, 15806), aoc.Day20.DoPuzzle(Input.actual));
     }
 }
