@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using AdventOfCode;
-using Pos = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
 {
@@ -17,28 +16,23 @@ namespace aoc
         }
         static int Enhance(Map m, int iter)
         {
-            m.Expand(iter, '.');
-            //m.Print();
+            char fill = '.';
             for (int i = 0; i < iter; i++)
             {
+                m.Expand(1, fill);
+                fill = (fill == '.') ? key[0] : key[511];
                 var m2 = new Map(m);
-                char GetNum(ref Map t, Pos w)
-                {
-                    w.x = Math.Max(Math.Min(w.x, t.width - 1), 0);
-                    w.y = Math.Max(Math.Min(w.y, t.height - 1), 0);
-                    return t[w] == '#' ? '1' : '0';
-                }
+                int GetNum(ref Map t, int x, int y) =>
+                    t.data[Utils.Modulo(x, t.width), Utils.Modulo(y, t.height)] == '#' ? 1 : 0;
                 foreach (var p in m.Positions())
                 {
-                    string s = "";
-                    for (int y = -1; y <= 1; y++)
-                        for (int x = -1; x <= 1; x++)
-                            s += GetNum(ref m, p + new Pos(x, y));
-                    int k = Convert.ToInt32(s, 2);
+                    int k = 0;
+                    for (int dy = -1; dy <= 1; dy++)
+                        for (int dx = -1; dx <= 1; dx++)
+                            k = k << 1 | GetNum(ref m, p.x + dx, p.y + dy);
                     m2[p] = key[k];
                 }
                 m = m2;
-                //m.Print();
             }
             return m.Positions().Where(a => m[a] == '#').Count();
         }
@@ -49,7 +43,6 @@ namespace aoc
             int b = Enhance(m, 50);
             return (a, b);
         }
-
         static void Main() => Aoc.Execute(Day, DoPuzzle);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
