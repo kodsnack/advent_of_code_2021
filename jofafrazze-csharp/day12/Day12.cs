@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using AdventOfCode;
 
 namespace aoc
 {
@@ -11,7 +11,7 @@ namespace aoc
     {
         // Passage Pathing: Find path through caves, some reenterable
 
-        static Dictionary<string, List<string>> nodes;
+        static Dictionary<string, List<string>> nodes = new Dictionary<string, List<string>>();
         static void ReadNodes(string file)
         {
             nodes = new Dictionary<string, List<string>>();

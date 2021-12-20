@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using AdventOfCode;
 using Pos = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
@@ -27,7 +27,7 @@ namespace aoc
         {
             HashSet<Pos> visited = new HashSet<Pos>();
             foreach (Pos p in m.Positions())
-                m[p] = (char) (m[p] + 1);
+                m[p] = (char)(m[p] + 1);
             var flashed = m.Positions().Where(x => m[x] > '9').ToList();
             foreach (Pos p in flashed)
                 if (!visited.Contains(p))

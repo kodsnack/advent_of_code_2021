@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using AdventOfCode;
 
 namespace aoc
 {
@@ -88,7 +88,7 @@ namespace aoc
         {
             int offs = 0;
             verSum = 0;
-            return (GetPacket(ReadData(file), ref offs, 0, log), verSum); 
+            return (GetPacket(ReadData(file), ref offs, 0, log), verSum);
         }
         public static Object PartA(string file) => Part(file, false).Item2;
         public static Object PartB(string file) => Part(file, false).Item1;

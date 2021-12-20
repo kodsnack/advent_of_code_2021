@@ -1,7 +1,7 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdventOfCode;
 
 namespace aoc
 {

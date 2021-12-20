@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using AdventOfCode;
+﻿using AdventOfCode;
+using System.Reflection;
 using Pos = AdventOfCode.GenericPosition3D<int>;
 
 namespace aoc

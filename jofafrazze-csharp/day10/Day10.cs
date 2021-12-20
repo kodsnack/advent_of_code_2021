@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using AdventOfCode;
 
 namespace aoc
 {
@@ -33,7 +33,7 @@ namespace aoc
         {
             var z = ReadInput.Strings(Day, file);
             var stacks = z.Select(s => Score(s)).Where(x => x.v == 0).Select(x => x.t).ToList();
-            static long f(Stack<char> t) => 
+            static long f(Stack<char> t) =>
                 t.Select(c => " )]}>".IndexOf(c)).Aggregate(0L, (a, x) => 5 * a + x);
             var w = stacks.Select(x => f(x)).OrderBy(x => x).ToList();
             return w[w.Count / 2];
