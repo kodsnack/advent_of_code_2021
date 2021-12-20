@@ -8,12 +8,6 @@ namespace aoc
         // Trench Map: Evolve infinite map ("image enhancement")
 
         static string key = "";
-        static Map ReadData(string file)
-        {
-            var ls = File.ReadAllLines(ReadInput.GetPath(Day, file));
-            key = ls[0];
-            return Map.Build(ls.Skip(2).ToList());
-        }
         static int Enhance(Map m, int iter)
         {
             char fill = '.';
@@ -38,7 +32,9 @@ namespace aoc
         }
         public static (Object a, Object b) DoPuzzle(string file)
         {
-            var m = ReadData(file);
+            var ls = File.ReadAllLines(ReadInput.GetPath(Day, file));
+            key = ls[0];
+            var m = Map.Build(ls.Skip(2).ToList());
             int a = Enhance(m, 2);
             int b = Enhance(m, 50);
             return (a, b);
