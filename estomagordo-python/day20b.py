@@ -55,19 +55,10 @@ def solve(enhancement, image, steps=2):
 
         return new_image
 
-    def c():
-        count = 0
-
-        for line in image:
-            count += line.count('#')
-
-        return count
-
-
     for step in range(steps): 
         image = enhance(image, step)
     
-    return c()
+    return sum(row.count('#') for row in image)
 
 
 def main():
