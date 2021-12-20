@@ -11,21 +11,13 @@ using Pos = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
 {
-    public class DayXX
+    public class Day21
     {
         // Today: 
 
-        static string key = "";
-        static Map ReadData(string file)
-        {
-            var ls = File.ReadAllLines(ReadInput.GetPath(Day, file));
-            key = ls[0];
-            return Map.Build(ls.Skip(2).ToList());
-        }
         public static (Object a, Object b) DoPuzzle(string file)
         {
-            var z = ReadData(file);
-            //var z = ReadInput.Ints(Day, file);
+            var z = ReadInput.Ints(Day, file);
             //Console.WriteLine("A is {0}", a);
             return (0, 0);
         }

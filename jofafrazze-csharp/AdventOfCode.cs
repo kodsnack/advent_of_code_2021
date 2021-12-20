@@ -404,6 +404,13 @@ namespace AdventOfCode
             CoordsRC.directions4.Select(x => p + x).ToList();
         public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
             CoordsRC.directions8.Select(x => p + x).ToList();
+
+        public static readonly List<GenericPosition2D<int>> d8 = new List<GenericPosition2D<int>>()
+        {
+            goUpLeft, goUp, goUpRight, goLeft, goRight, goDownLeft, goDown, goDownRight
+        };
+        public static List<GenericPosition2D<int>> N8(GenericPosition2D<int> p) =>
+            CoordsRC.d8.Select(x => p + x).ToList();
     }
 
     public static class CoordsXY
@@ -862,15 +869,15 @@ namespace AdventOfCode
     }
     public static class Aoc
     {
+        static Object FixOutput(Object x)
+        {
+            string xStr = x.ToString();
+            if (xStr != "0")
+                TextCopy.ClipboardService.SetText(xStr);
+            return (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
+        }
         public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
         {
-            static Object FixOutput(Object x)
-            {
-                string xStr = x.ToString();
-                if (xStr != "0")
-                    TextCopy.ClipboardService.SetText(xStr);
-                return (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
-            }
             Console.WriteLine("AoC 2021 - " + day + ":");
             var w = System.Diagnostics.Stopwatch.StartNew();
             string file = example ? "example.txt" : "input.txt";
@@ -878,6 +885,19 @@ namespace AdventOfCode
             Console.WriteLine("Part A - Result is: {0}", a);
             Object b = FixOutput(PartB(file));
             Console.WriteLine("Part B - Result is: {0}", b);
+            w.Stop();
+            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
+        }
+        public static void Execute(string day, Func<string, (Object, Object)> Puzzle, bool example = false)
+        {
+            Console.WriteLine("AoC 2021 - " + day + ":");
+            var w = System.Diagnostics.Stopwatch.StartNew();
+            string file = example ? "example.txt" : "input.txt";
+            (var a, var b) = Puzzle(file);
+            a = FixOutput(a);
+            b = FixOutput(b);
+            Console.WriteLine("Puzzle A: {0}", a);
+            Console.WriteLine("Puzzle B: {0}", b);
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }
