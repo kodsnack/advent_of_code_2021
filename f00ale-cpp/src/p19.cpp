@@ -50,6 +50,31 @@ std::tuple<std::string, std::string> p19(const std::string & input) {
         }
     }
 
+    std::vector<std::vector<int>> dists;
+    std::vector<std::tuple<size_t, size_t>> candidates;
+    for(auto & s : v) {
+        dists.emplace_back();
+        for(size_t i = 0; i < s.size(); i++) {
+            auto [x1,y1,z1] = s[i];
+            for(size_t j = i+1; j < s.size(); j++) {
+                auto [x2,y2,z2] = s[j];
+                dists.back().push_back(std::abs(x1-x2)+std::abs(y1-y2)+std::abs(z1-z2));
+            }
+        }
+        std::sort(dists.back().begin(), dists.back().end());
+    }
+
+    for(size_t i = 0; i < dists.size(); i++) {
+        for(size_t j = i+1; j < dists.size(); j++) {
+            std::vector<int> common;
+            std::set_intersection(dists[i].begin(), dists[i].end(), dists[j].begin(), dists[j].end(), std::back_inserter(common));
+            if(common.size() >= 66) { // 66 = 12 over 2
+                candidates.emplace_back(i,j);
+                //std::cout << i << ' ' << j << ':' << common.size() << '\n';
+            }
+        }
+    }
+
 
     std::vector<std::tuple<std::array<int,3>,uint16_t>> transformations;
     {
@@ -90,8 +115,8 @@ std::tuple<std::string, std::string> p19(const std::string & input) {
 
     const auto NTRANS = transformations.size();
     std::vector<std::tuple<int, int, int>> m;
-    for (size_t s1 = 0; s1 < v.size(); s1++){
-        for (size_t s2 = s1+1; s2 < v.size(); s2++) {
+    {
+        for(auto [s1,s2] : candidates) {
             for(size_t tidx = 0; tidx < NTRANS; tidx++) {
                 m.clear();
                 for (size_t i = 0; i < v[s2].size(); i++) {
