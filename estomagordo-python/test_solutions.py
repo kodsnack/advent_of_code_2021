@@ -38,6 +38,8 @@ import day19a
 import day19b
 import day20a
 import day20b
+import day21a
+import day21b
 
 def test_1a():
     result = day1a.main()
@@ -243,3 +245,13 @@ def test_20a():
 def test_20b():
     result = day20b.main()
     assert(16728 == result)
+
+
+def test_21a():
+    result = day21a.main()
+    assert(855624 == result)
+
+
+def test_21b():
+    result = day21b.main()
+    assert(187451244607486 == result)
