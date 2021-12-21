@@ -9,12 +9,10 @@ def solve(a, b):
     rolls = 0
     size = 10
     moves = 3
-    dsize = 3
-    rolls = Counter()
-    seen = {}    
+    dsize = 3    
+    seen = {}
 
-    for p in product(range(1,dsize+1), repeat=moves):
-        rolls[sum(p)] += 1
+    rolls = Counter(sum(p) for p in product(range(1, dsize+1), repeat=moves))
 
     def count(a, b, ascore, bscore, arolling):
         if ascore > 20:
