@@ -5,10 +5,7 @@ from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def solve(lines):
-    a = 4
-    b = 10
-
+def solve(a, b):
     d = 1
     dsize = 100
     rolls = 0
@@ -57,13 +54,13 @@ def solve(lines):
 
 
 def main():
-    lines = []
+    players = []
 
     with open('21.txt') as f:
         for line in f.readlines():
-            lines.append(line)
+            players.append(ints(line)[1])
             
-    return solve(lines)
+    return solve(players[0], players[1])
 
 
 if __name__ == '__main__':

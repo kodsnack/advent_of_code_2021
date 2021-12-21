@@ -5,26 +5,18 @@ from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
-def solve(lines):
-    a = 4
-    b = 10
-
-    d = 1
-    dsize = 100
+def solve(a, b):
     rolls = 0
-    scora = 0 
-    scorb = 0
-    arolling = True
-    goal = 1000
     size = 10
     moves = 3
+    dsize = 3
     rolls = Counter()
     seen = {}    
 
-    for p in product(range(1,4), repeat=3):
+    for p in product(range(1,dsize+1), repeat=moves):
         rolls[sum(p)] += 1
 
-    def solve(a, b, ascore, bscore, arolling):
+    def count(a, b, ascore, bscore, arolling):
         if ascore > 20:
             return (1, 0)
         if bscore > 20:
@@ -43,7 +35,7 @@ def solve(lines):
                 newa = a + score
                 if newa > size:
                     newa -= size
-                outa, outb = solve(newa, b, ascore+newa, bscore, False)
+                outa, outb = count(newa, b, ascore+newa, bscore, False)
                 awins += times * outa
                 bwins += times * outb
         else:
@@ -51,7 +43,7 @@ def solve(lines):
                 newb = b + score
                 if newb > size:
                     newb -= size
-                outa, outb = solve(a, newb, ascore, bscore+newb, True)
+                outa, outb = count(a, newb, ascore, bscore+newb, True)
                 awins += times * outa
                 bwins += times * outb
 
@@ -59,21 +51,18 @@ def solve(lines):
 
         return (awins, bwins)
 
-    return max(solve(a, b, 0, 0, True))
+    return max(count(a, b, 0, 0, True))
+
 
 def main():
-    lines = []
+    players = []
 
     with open('21.txt') as f:
         for line in f.readlines():
-            lines.append(line)
+            players.append(ints(line)[1])
             
-    return solve(lines)
+    return solve(players[0], players[1])
 
 
 if __name__ == '__main__':
     print(main())
-
-# (0, 5297901363)
-# 444356092776315
-# 341960390180808
