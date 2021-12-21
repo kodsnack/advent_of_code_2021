@@ -44,7 +44,7 @@ add_library(aoc21_problems OBJECT
         src/p18.cpp
         src/p19.cpp
         src/p20.cpp
-#        src/p21.cpp
+        src/p21.cpp
 #        src/p22.cpp
 #        src/p23.cpp
 #        src/p24.cpp
