@@ -7,7 +7,7 @@ from helpers import chunks, chunks_with_overlap, columns, digits, distance, dist
 
 def solve(lines):
     a = 4
-    b = 8
+    b = 10
 
     d = 1
     dsize = 100
@@ -51,7 +51,7 @@ def solve(lines):
                 newb = b + score
                 if newb > size:
                     newb -= size
-                outa, outb = solve(a, newb, ascore, bscore+newb, False)
+                outa, outb = solve(a, newb, ascore, bscore+newb, True)
                 awins += times * outa
                 bwins += times * outb
 
@@ -73,3 +73,7 @@ def main():
 
 if __name__ == '__main__':
     print(main())
+
+# (0, 5297901363)
+# 444356092776315
+# 341960390180808
