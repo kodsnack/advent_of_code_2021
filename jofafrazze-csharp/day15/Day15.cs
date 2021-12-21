@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using AdventOfCode;
 using Pos = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
@@ -13,7 +13,7 @@ namespace aoc
 
         class RiskComparer : IComparer<(Pos p, int r)>
         {
-            public int Compare((Pos p, int r) a, (Pos p, int r)b) => 
+            public int Compare((Pos p, int r) a, (Pos p, int r) b) =>
                 (a.r == b.r) ? ((a.p == b.p) ? 0 : -1) : (a.r < b.r) ? -1 : 1;
         }
 

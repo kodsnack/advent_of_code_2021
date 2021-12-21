@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace aoc
 {
-    public class DayXX
+    public class Day23
     {
         // Today: 
 

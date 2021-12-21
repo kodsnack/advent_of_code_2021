@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using AdventOfCode;
+﻿using AdventOfCode;
+using System.Reflection;
 
 namespace aoc
 {

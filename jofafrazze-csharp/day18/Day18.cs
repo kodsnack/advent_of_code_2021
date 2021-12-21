@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using AdventOfCode;
+﻿using AdventOfCode;
+using System.Reflection;
 using Node = AdventOfCode.Tree.BinNode<int>;
 
 namespace aoc
@@ -140,7 +140,7 @@ namespace aoc
         {
             if (n.t >= 0)
                 return n.t;
-            else 
+            else
                 return Magnitude(n.left!) * 3 + Magnitude(n.right!) * 2;
         }
 
