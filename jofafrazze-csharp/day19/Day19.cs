@@ -33,10 +33,9 @@ namespace aoc
         static Pos Z2X(Pos p) => new(p.z, p.y, -p.x);
         static List<List<Pos>> Permutations(List<Pos> pos)
         {
-            var ret = new List<List<Pos>>();
-            ret.Add(pos);
-            ret.Add(pos.Select(a => Y2X(a)).ToList());
-            ret.Add(pos.Select(a => Z2X(a)).ToList());
+            var y2x = pos.Select(a => Y2X(a)).ToList();
+            var z2x = pos.Select(a => Z2X(a)).ToList();
+            var ret = new List<List<Pos>>() { pos, y2x, z2x };
             foreach (var l in new List<List<Pos>>(ret))
                 ret.Add(l.Select(a => FlipX(a)).ToList());
             foreach (var l in new List<List<Pos>>(ret))
