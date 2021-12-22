@@ -23,10 +23,7 @@ def intersection(a, b):
 
 
 def size(lox, hix, loy, hiy, loz, hiz):
-    def d(n):
-        return n
-        return -50 if n < -50 else 50 if n > 50 else n
-    return (d(hix)+1-d(lox))*(d(hiy)+1-d(loy))*(d(hiz)+1-d(loz))
+    return (hix+1-lox)*(hiy+1-loy)*(hiz+1-loz)
 
 
 def expand_steps(steps):
@@ -43,18 +40,11 @@ def expand_steps(steps):
 
             if loxi == hixi:
                 continue
-
-            if on:
-                if prevon:
-                    additional.append((False, (loxi, hixi, loyi, hiyi, lozi, hizi)))
-                else:
-                    additional.append((True, (loxi, hixi, loyi, hiyi, lozi, hizi)))
-
-            if not on:
-                if prevon:
-                    additional.append((False, (loxi, hixi, loyi, hiyi, lozi, hizi)))
-                else:
-                    additional.append((True, (loxi, hixi, loyi, hiyi, lozi, hizi)))
+            
+            if prevon:
+                additional.append((False, (loxi, hixi, loyi, hiyi, lozi, hizi)))
+            else:
+                additional.append((True, (loxi, hixi, loyi, hiyi, lozi, hizi)))
         
         newsteps += additional
 

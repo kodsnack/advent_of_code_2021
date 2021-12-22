@@ -22,7 +22,6 @@ def solve(steps):
     return len(cubes)
 
 
-
 def main():
     steps = []
 
