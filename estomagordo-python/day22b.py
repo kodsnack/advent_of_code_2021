@@ -22,7 +22,8 @@ def intersection(a, b):
         return (max(loxa, loxb), min(hixa, hixb), max(loya, loyb), min(hiya, hiyb), max(loza, lozb), min(hiza, hizb))
 
 
-def size(lox, hix, loy, hiy, loz, hiz):
+def size(dims):
+    lox, hix, loy, hiy, loz, hiz = dims
     return (hix+1-lox)*(hiy+1-loy)*(hiz+1-loz)
 
 
@@ -40,7 +41,7 @@ def expand_steps(steps):
 
             if loxi == hixi:
                 continue
-            
+
             if prevon:
                 additional.append((False, (loxi, hixi, loyi, hiyi, lozi, hizi)))
             else:
@@ -52,46 +53,8 @@ def expand_steps(steps):
 
 
 def solve(steps):
-    count = 0
-
     expanded = expand_steps(steps)
-
-    for on, dims in expanded:
-        lox, hix, loy, hiy, loz, hiz = dims
-        s = size(lox, hix, loy, hiy, loz, hiz)        
-
-        if on:
-            count += s
-        else:
-            count -= s
-
-    return count
-
-    # for i, step in enumerate(steps):
-    #     on, dims = step
-    #     lox, hix, loy, hiy, loz, hiz = dims
-        
-    #     if on:
-    #         count += size(lox, hix, loy, hiy, loz, hiz)
-
-    #         for j in range(i):
-    #             onb, dimsb = steps[j]
-
-    #             if not onb:
-    #                 continue
-
-    #             loxb, hixb, loyb, hiyb, lozb, hizb = dimsb
-    #             loxo, hixo, loyo, hiyo, lozo, hizo = intersection(dims, dimsb)
-    #             count -= size(loxo, hixo, loyo, hiyo, lozo, hizo)
-    #     else:
-
-
-
-
-        
-
-    
-
+    return sum(size(dims) if on else -size(dims) for on, dims in expanded)
 
 
 def main():
@@ -108,7 +71,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 2758514936282235 example correct
-# 1345283857688714 my example
-# 1345188828823698 my new example
