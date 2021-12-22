@@ -216,4 +216,48 @@ namespace test
         [Fact]
         public void TestB() => Assert.Equal(2555, aoc.Day17.PartB(Input.actual));
     }
+
+    public class TestDay18
+    {
+        [Fact]
+        public void ExampleA() => Assert.Equal(4140, aoc.Day18.PartA(Input.example));
+        [Fact]
+        public void TestA() => Assert.Equal(3494, aoc.Day18.PartA(Input.actual));
+        [Fact]
+        public void ExampleB() => Assert.Equal(3993, aoc.Day18.PartB(Input.example));
+        [Fact]
+        public void TestB() => Assert.Equal(4712, aoc.Day18.PartB(Input.actual));
+    }
+
+    public class TestDay19
+    {
+        [Fact]
+        public void Example() => Assert.Equal((79, 3621), aoc.Day19.DoPuzzle(Input.example));
+        [Fact]
+        public void Test() => Assert.Equal((318, 12166), aoc.Day19.DoPuzzle(Input.actual));
+    }
+
+    public class TestDay20
+    {
+        [Fact]
+        public void Example() => Assert.Equal((35, 3351), aoc.Day20.DoPuzzle(Input.example));
+        [Fact]
+        public void Test() => Assert.Equal((5349, 15806), aoc.Day20.DoPuzzle(Input.actual));
+    }
+
+    public class TestDay21
+    {
+        [Fact]
+        public void Example() => Assert.Equal((739785, 444356092776315), aoc.Day21.DoPuzzle(Input.example));
+        [Fact]
+        public void Test() => Assert.Equal((797160, 27464148626406), aoc.Day21.DoPuzzle(Input.actual));
+    }
+
+    public class TestDay22
+    {
+        [Fact]
+        public void Example() => Assert.Equal((474140, 2758514936282235), aoc.Day22.DoPuzzle(Input.example));
+        [Fact]
+        public void Test() => Assert.Equal((589411, 1130514303649907), aoc.Day22.DoPuzzle(Input.actual));
+    }
 }

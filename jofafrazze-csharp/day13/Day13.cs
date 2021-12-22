@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using AdventOfCode;
 using Pos = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
@@ -12,7 +12,7 @@ namespace aoc
     {
         // Transparent Origami: Fold paper, do manual OCR 
 
-        static List<(bool useX, int n)> fold;
+        static List<(bool useX, int n)> fold = new List<(bool, int)>();
         static HashSet<Pos> ReadData(string file)
         {
             var ps = new HashSet<Pos>();

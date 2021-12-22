@@ -1,7 +1,7 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdventOfCode;
 using Pos = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
@@ -27,7 +27,7 @@ namespace aoc
             return GetLows(m).Select(p => m[p] - '0' + 1).Sum();
         }
 
-        static bool AllNeighs9(Map m, Pos p) => 
+        static bool AllNeighs9(Map m, Pos p) =>
             CoordsXY.Neighbours4(p).Select(n => !m.HasPosition(n) || m[n] == '9').Aggregate((a, x) => a && x);
 
         static int GetArea(Map m, Pos p)

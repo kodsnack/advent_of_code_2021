@@ -1,5 +1,5 @@
-﻿using System;
-using AdventOfCode;
+﻿using AdventOfCode;
+using System;
 
 namespace aoc
 {

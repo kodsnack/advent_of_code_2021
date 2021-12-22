@@ -6,9 +6,9 @@ from helpers import chunks, chunks_with_overlap, columns, digits, distance, dist
 
 
 def solve(x1, x2, y1, y2):
-    xmove = lambda dx, dy: (-1, 0) if dx > 0 else (1, 0) if dx < 0 else (0, 0)
+    xmove = lambda dx, _: (-1, 0) if dx > 0 else (1, 0) if dx < 0 else (0, 0)
     xwin = lambda x, _: x >= x1
-    xlose = lambda x, dx, _, __: x > x2
+    xlose = lambda x, _, __, ___: x > x2
 
     ymove = lambda _, __: (0, -1)
     ywin = lambda _, y: y <= y2

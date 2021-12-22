@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AdventOfCode;
 using Position = AdventOfCode.GenericPosition2D<int>;
 
 namespace aoc
@@ -17,7 +17,7 @@ namespace aoc
         {
             StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             var list = new List<(Position p1, Position p2)>();
-            string line;
+            string? line;
             static Position ReadPos(string s)
             {
                 var ls = s.Split(',').Select(int.Parse).ToList();

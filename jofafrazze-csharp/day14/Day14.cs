@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using AdventOfCode;
 
 namespace aoc
 {
@@ -11,7 +11,7 @@ namespace aoc
     {
         // Extended Polymerization: Each generation grows exponentially
 
-        static Dictionary<string, char> rules;
+        static Dictionary<string, char> rules = new Dictionary<string, char>();
         static string ReadData(string file)
         {
             rules = new Dictionary<string, char>();

@@ -1,5 +1,5 @@
-﻿using System;
-using AdventOfCode;
+﻿using AdventOfCode;
+using System;
 
 namespace aoc
 {
@@ -14,7 +14,7 @@ namespace aoc
             var input = ReadInput.Ints(day, file);
             int ans = 0;
             for (int i = 1; i < input.Count; i++)
-                if (input[i] > input[i-1])
+                if (input[i] > input[i - 1])
                     ans++;
             return ans;
         }
@@ -23,8 +23,8 @@ namespace aoc
         {
             var v = ReadInput.Ints(day, file);
             int ans = 0;
-            for (int i = 1; i < v.Count-2; i++)
-                if (v[i] + v[i+1] + v[i+2] > v[i-1] + v[i] + v[i+1])
+            for (int i = 1; i < v.Count - 2; i++)
+                if (v[i] + v[i + 1] + v[i + 2] > v[i - 1] + v[i] + v[i + 1])
                     ans++;
             return ans;
         }

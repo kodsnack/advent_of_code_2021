@@ -1,8 +1,8 @@
-﻿using System;
+﻿using AdventOfCode;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AdventOfCode;
 
 namespace aoc
 {
@@ -17,7 +17,7 @@ namespace aoc
             StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             var list = new List<List<int>>();
             var bingo = new List<int>();
-            string line;
+            string? line;
             reader.ReadLine();
             reader.ReadLine();
             while ((line = reader.ReadLine()) != null)
@@ -37,7 +37,7 @@ namespace aoc
         {
             StreamReader reader = File.OpenText(ReadInput.GetPath(day, file));
             List<int> list = new List<int>();
-            string line = reader.ReadLine();
+            string line = reader.ReadLine()!;
             list.AddRange(line.Split(',').Select(int.Parse).ToList());
             return list;
         }

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AdventOfCode
 {
-    public struct GenericPosition2D<T> : IComparable<GenericPosition2D<T>>
+    public struct GenericPosition2D<T> : IComparable<GenericPosition2D<T>> where T : notnull
     {
         public T x;
         public T y;
@@ -28,9 +28,11 @@ namespace AdventOfCode
             else
                 return Comparer<T>.Default.Compare(x, p.x);
         }
-        public override bool Equals(Object obj)
+        public override bool Equals(Object? obj)
         {
-            return obj is GenericPosition2D<T> && Equals((GenericPosition2D<T>)obj);
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+                return false;
+            return obj is GenericPosition2D<T> d && Equals(d);
         }
         public bool Equals(GenericPosition2D<T> p)
         {
@@ -38,12 +40,9 @@ namespace AdventOfCode
         }
         public override int GetHashCode()
         {
-            var hashCode = 1502939027;
-            hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + x.GetHashCode();
-            hashCode = hashCode * -1521134295 + y.GetHashCode();
-            return hashCode;
+            return HashCode.Combine(x, y);
         }
+
         public static bool operator ==(GenericPosition2D<T> p1, GenericPosition2D<T> p2) { return p1.Equals(p2); }
         public static bool operator !=(GenericPosition2D<T> p1, GenericPosition2D<T> p2) { return !p1.Equals(p2); }
         public static bool operator <(GenericPosition2D<T> p1, GenericPosition2D<T> p2) { return p1.CompareTo(p2) < 0; }
@@ -99,8 +98,8 @@ namespace AdventOfCode
         public T ManhattanDistance(GenericPosition2D<T> p = new GenericPosition2D<T>())
         {
             return Extensions.Add(
-                Extensions.Abs(Extensions.Subtract(x, p.x)), 
-                Extensions.Abs(Extensions.Subtract(y, p.y))
+                Extensions.Abs(Extensions.Subtract(x, p.x!)),
+                Extensions.Abs(Extensions.Subtract(y, p.y!))
                 );
         }
         public GenericPosition2D<T> SwitchXY()
@@ -116,23 +115,23 @@ namespace AdventOfCode
             if (n == 1)
             {
                 r.x = p.y;
-                r.y = Extensions.Subtract(default(T), p.x);
+                r.y = Extensions.Subtract(default!, p.x);
             }
             else if (n == 2)
             {
-                r.x = Extensions.Subtract(default(T), p.x);
-                r.y = Extensions.Subtract(default(T), p.y);
+                r.x = Extensions.Subtract(default!, p.x);
+                r.y = Extensions.Subtract(default!, p.y);
             }
             else if (n == 3)
             {
-                r.x = Extensions.Subtract(default(T), p.y);
+                r.x = Extensions.Subtract(default!, p.y);
                 r.y = p.x;
             }
             return r + center;
         }
     }
 
-    public struct GenericPosition3D<T> : IComparable<GenericPosition3D<T>>
+    public struct GenericPosition3D<T> : IComparable<GenericPosition3D<T>> where T : notnull
     {
         public T x;
         public T y;
@@ -159,26 +158,25 @@ namespace AdventOfCode
             else
                 return Comparer<T>.Default.Compare(x, p.x);
         }
-        public override bool Equals(Object obj)
+        public override bool Equals(Object? obj)
         {
-            return obj is GenericPosition3D<T> && Equals((GenericPosition3D<T>)obj);
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+                return false;
+            else
+                return obj is GenericPosition3D<T> d && Equals(d);
         }
         public bool Equals(GenericPosition3D<T> p)
         {
-            return 
+            return
                 EqualityComparer<T>.Default.Equals(x, p.x) &&
                 EqualityComparer<T>.Default.Equals(y, p.y) &&
                 EqualityComparer<T>.Default.Equals(z, p.z);
         }
         public override int GetHashCode()
         {
-            var hashCode = 1502939027;
-            hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + x.GetHashCode();
-            hashCode = hashCode * -1521134295 + y.GetHashCode();
-            hashCode = hashCode * -1521134295 + z.GetHashCode();
-            return hashCode;
+            return HashCode.Combine(x, y, z);
         }
+
         public static bool operator ==(GenericPosition3D<T> p1, GenericPosition3D<T> p2) { return p1.Equals(p2); }
         public static bool operator !=(GenericPosition3D<T> p1, GenericPosition3D<T> p2) { return !p1.Equals(p2); }
         public static bool operator <(GenericPosition3D<T> p1, GenericPosition3D<T> p2) { return p1.CompareTo(p2) < 0; }
@@ -240,9 +238,9 @@ namespace AdventOfCode
         public T ManhattanDistance(GenericPosition3D<T> p = new GenericPosition3D<T>())
         {
             return Extensions.Add(
-                Extensions.Abs(Extensions.Subtract(x, p.x)),
-                Extensions.Abs(Extensions.Subtract(y, p.y)), 
-                Extensions.Abs(Extensions.Subtract(z, p.z))
+                Extensions.Abs(Extensions.Subtract(x, p.x!)),
+                Extensions.Abs(Extensions.Subtract(y, p.y!)),
+                Extensions.Abs(Extensions.Subtract(z, p.z!))
                 );
         }
     }
@@ -352,18 +350,21 @@ namespace AdventOfCode
             Console.WriteLine(PrintToString());
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            return Equals(obj as Map);
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+                return false;
+            else
+                return obj is Map d && Equals(d);
         }
 
-        public bool Equals(Map other)
+        public bool Equals(Map? other)
         {
-            return other != null &&
+            return !(other is null) &&
                    width == other.width &&
                    height == other.height &&
                    data.Cast<char>().SequenceEqual(other.data.Cast<char>());
-                   //EqualityComparer<char[,]>.Default.Equals(data, other.data);
+            //EqualityComparer<char[,]>.Default.Equals(data, other.data);
         }
 
         public override int GetHashCode()
@@ -404,6 +405,13 @@ namespace AdventOfCode
             CoordsRC.directions4.Select(x => p + x).ToList();
         public static List<GenericPosition2D<int>> Neighbours8(GenericPosition2D<int> p) =>
             CoordsRC.directions8.Select(x => p + x).ToList();
+
+        public static readonly List<GenericPosition2D<int>> d8 = new List<GenericPosition2D<int>>()
+        {
+            goUpLeft, goUp, goUpRight, goLeft, goRight, goDownLeft, goDown, goDownRight
+        };
+        public static List<GenericPosition2D<int>> N8(GenericPosition2D<int> p) =>
+            CoordsRC.d8.Select(x => p + x).ToList();
     }
 
     public static class CoordsXY
@@ -506,7 +514,7 @@ namespace AdventOfCode
 
         public static long ModInverse(long a, long m)
         {
-            (long g, long x, long y) = EGCD(a, m);
+            (long g, long x, _) = EGCD(a, m);
             if (g != 1)
                 throw new ArgumentOutOfRangeException();
             return x % m;
@@ -583,38 +591,38 @@ namespace AdventOfCode
 
     public static class Extensions
     {
-        public static T Add<T>(T number1, T number2)
+        public static T Add<T>(T number1, T number2) where T : notnull
         {
             dynamic a = number1;
             dynamic b = number2;
             return a + b;
         }
-        public static T Add<T>(T number1, T number2, T number3)
+        public static T Add<T>(T number1, T number2, T number3) where T : notnull
         {
             dynamic a = number1;
             dynamic b = number2;
             dynamic c = number3;
             return a + b + c;
         }
-        public static T Subtract<T>(T number1, T number2)
+        public static T Subtract<T>(T number1, T number2) where T : notnull
         {
             dynamic a = number1;
             dynamic b = number2;
             return a - b;
         }
-        public static T Multiply<T>(T number1, T number2)
+        public static T Multiply<T>(T number1, T number2) where T : notnull
         {
             dynamic a = number1;
             dynamic b = number2;
             return a * b;
         }
-        public static T Divide<T>(T number1, T number2)
+        public static T Divide<T>(T number1, T number2) where T : notnull
         {
             dynamic a = number1;
             dynamic b = number2;
             return a / b;
         }
-        public static T Abs<T>(T number)
+        public static T Abs<T>(T number) where T : notnull
         {
             dynamic a = number;
             return Math.Abs(a);
@@ -627,21 +635,23 @@ namespace AdventOfCode
                 elements.Skip(i + 1).Combinations(k - 1).Select(c => (new[] { e }).Concat(c)));
         }
 
-        public static IEnumerable<GenericPosition2D<T>> Flip<T>(this IEnumerable<GenericPosition2D<T>> elements, bool enable)
+        public static IEnumerable<GenericPosition2D<T>> Flip<T>(this IEnumerable<GenericPosition2D<T>> elements, bool enable) where T : notnull
         {
             return enable ? elements.Select(p => p.SwitchXY()) : elements;
         }
 
-        public static void Inc<T, U>(this Dictionary<T, U> dictionary, T key, U value)
+        public static void Inc<T, U>(this Dictionary<T, U> dictionary, T key, U value) where T : notnull where U : notnull
         {
-            dictionary[key] = Add(dictionary.GetValueOrDefault(key, default), value);
+#pragma warning disable CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
+            dictionary[key] = Add(dictionary.GetValueOrDefault(key, default!), value!)!;
+#pragma warning restore CS8714 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'notnull' constraint.
         }
 
-        public static Dictionary<T, int> Counter<T>(this IEnumerable<T> elements)
+        public static Dictionary<T, int> Counter<T>(this IEnumerable<T> elements) where T : notnull
         {
             return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => x.Count());
         }
-        public static Dictionary<T, long> CounterLong<T>(this IEnumerable<T> elements)
+        public static Dictionary<T, long> CounterLong<T>(this IEnumerable<T> elements) where T : notnull
         {
             return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => (long)x.Count());
         }
@@ -685,28 +695,28 @@ namespace AdventOfCode
 
     public struct Range<T> where T : IComparable<T>
     {
-        public T lo { get; set; }
-        public T hi { get; set; }
+        public T Lo { get; set; }
+        public T Hi { get; set; }
 
-        public override string ToString() => string.Format("[{0} - {1}]", lo, hi);
-        public bool IsValid() => lo.CompareTo(hi) <= 0;
-        public bool Contains(T value) => (lo.CompareTo(value) <= 0) && (value.CompareTo(hi) <= 0);
+        public override string ToString() => string.Format("[{0} - {1}]", Lo, Hi);
+        public bool IsValid() => Lo.CompareTo(Hi) <= 0;
+        public bool Contains(T value) => (Lo.CompareTo(value) <= 0) && (value.CompareTo(Hi) <= 0);
         public bool IsInside(Range<T> range) =>
-            IsValid() && range.IsValid() && range.Contains(lo) && range.Contains(hi);
+            IsValid() && range.IsValid() && range.Contains(Lo) && range.Contains(Hi);
         public bool Contains(Range<T> range) =>
-            IsValid() && range.IsValid() && this.Contains(range.lo) && this.Contains(range.hi);
+            IsValid() && range.IsValid() && this.Contains(range.Lo) && this.Contains(range.Hi);
     }
 
     public static class CircularLinkedList
     {
         public static LinkedListNode<T> NextOrFirst<T>(this LinkedListNode<T> current)
         {
-            return current.Next ?? current.List.First;
+            return current.Next! ?? current.List!.First!;
         }
 
         public static LinkedListNode<T> PreviousOrLast<T>(this LinkedListNode<T> current)
         {
-            return current.Previous ?? current.List.Last;
+            return current.Previous! ?? current.List!.Last!;
         }
     }
 
@@ -716,7 +726,7 @@ namespace AdventOfCode
         {
             public T t;
             public HashSet<Node<T>> edges;
-            public Node(T tp = default(T))
+            public Node(T tp = default!)
             {
                 t = tp;
                 edges = new HashSet<Node<T>>();
@@ -790,14 +800,28 @@ namespace AdventOfCode
     {
         public class Node<T>
         {
-            public Node<T> parent;
+            public Node<T>? parent;
             public T t;
             public HashSet<Node<T>> children;
-            public Node(T v = default(T), Node<T> p = default(Node<T>))
+            public Node(T v = default!, Node<T>? p = default)
             {
                 t = v;
                 parent = p;
                 children = new HashSet<Node<T>>();
+            }
+        };
+        public class BinNode<T>
+        {
+            public BinNode<T>? parent;
+            public T t;
+            public BinNode<T>? left;
+            public BinNode<T>? right;
+            public BinNode(T v, BinNode<T>? p)
+            {
+                t = v;
+                parent = p;
+                left = null;
+                right = null;
             }
         };
     }
@@ -806,7 +830,7 @@ namespace AdventOfCode
     {
         public static string GetPath(string nsname, string file)
         {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\..\" + nsname + "\\" + file);
+            return Path.Combine(AppDomain.CurrentDomain!.BaseDirectory!, @"..\..\..\..\" + nsname + "\\" + file);
         }
 
         public static List<int> Ints(string day, string file, char delimiter = ',')
@@ -848,15 +872,15 @@ namespace AdventOfCode
     }
     public static class Aoc
     {
+        static Object FixOutput(Object x)
+        {
+            string xStr = x.ToString() ?? "null";
+            if (xStr != "0")
+                TextCopy.ClipboardService.SetText(xStr);
+            return (x is string && xStr.Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
+        }
         public static void Execute(string day, Func<string, Object> PartA, Func<string, Object> PartB, bool example = false)
         {
-            static Object FixOutput(Object x)
-            {
-                string xStr = x.ToString();
-                if (xStr != "0")
-                    TextCopy.ClipboardService.SetText(xStr);
-                return (x is string && x.ToString().Contains(Environment.NewLine)) ? Environment.NewLine + x : x;
-            }
             Console.WriteLine("AoC 2021 - " + day + ":");
             var w = System.Diagnostics.Stopwatch.StartNew();
             string file = example ? "example.txt" : "input.txt";
@@ -867,10 +891,23 @@ namespace AdventOfCode
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }
+        public static void Execute(string day, Func<string, (Object, Object)> Puzzle, bool example = false)
+        {
+            Console.WriteLine("AoC 2021 - " + day + ":");
+            var w = System.Diagnostics.Stopwatch.StartNew();
+            string file = example ? "example.txt" : "input.txt";
+            (var a, var b) = Puzzle(file);
+            a = FixOutput(a);
+            b = FixOutput(b);
+            Console.WriteLine("Puzzle A: {0}", a);
+            Console.WriteLine("Puzzle B: {0}", b);
+            w.Stop();
+            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
+        }
 
         public static string Day(System.Reflection.MethodBase mb)
         {
-            return mb.ReflectedType.FullName.Split('.').Last().ToLower();
+            return (mb == null) ? "null" : mb!.ReflectedType!.FullName!.Split('.').Last().ToLower();
         }
     }
 }
