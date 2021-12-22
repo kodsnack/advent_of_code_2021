@@ -1,4 +1,5 @@
 from day18a import explode, reduction, add, calc, magnitude
+from day22b import intersection
 
 
 def test_explode():
@@ -98,3 +99,21 @@ def test_magnitude():
     assert(791 == result4)
     assert(1137 == result5)
     assert(3488 == result6)
+
+
+def test_intersection():
+    empty = (0, 0, 0, 0, 0, 0)
+    a = (10, 12, 10, 12, 10, 12)
+    b = (11, 13, 11, 13, 11, 13)
+    c = (9, 11, 9, 11, 9, 11)
+    d = (10, 10, 10, 10, 10, 10)
+
+    ab = intersection(a, b)
+    ba = intersection(b, a)
+    cd = intersection(c, d)
+    bd = intersection(b, d)
+
+    assert(ab == ba)
+    assert((11, 12, 11, 12, 11, 12) == ab)
+    assert(d == cd)
+    assert(empty == bd)
