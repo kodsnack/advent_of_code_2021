@@ -77,18 +77,11 @@ def solve(lines):
     paths = get_paths(open)    
     
     blocking = {(1, 3), (1, 5), (1, 7), (1, 9)}
-    goala = [(2, 3), (3, 3), (4, 3), (5, 3)]
-    goalb = [(2, 5), (3, 5), (4, 5), (5, 5)]
-    goalc = [(2, 7), (3, 7), (4, 7), (5, 7)]
-    goald = [(2, 9), (3, 9), (4, 9), (5, 9)]
-    goals = [goala, goalb, goalc, goald]
 
     a.sort()
     b.sort()
     c.sort()
     d.sort()
-
-    exampleoptimalpassing = {3000,3010,3050,3080,3088,3688,4288,4328,9328,9378,9438,9508,10108,10113,19113,19153,30153,34153,34157,34161,41161,41169,44169}
 
     def tuplify(apos, bpos, cpos, dpos):
         return (tuple(apos), tuple(bpos), tuple(cpos), tuple(dpos))
@@ -106,22 +99,9 @@ def solve(lines):
         
     states = [[heuristic(a, b, c, d), 0, a, b, c, d]]
     seen = {(tuple(a), tuple(b), tuple(c), tuple(d)): 0}
-    # enseen = Counter([0])
-    enset = {0}
-    expto = set()
 
     while True:
-        h, energy, apos, bpos, cpos, dpos, = heappop(states)     
-        # if energy in exampleoptimalpassing and energy not in enseen:            
-        #     print(energy, len(seen))
-        #     if energy == 19153:
-        #         for val in exampleoptimalpassing:
-        #             print(val, enseen[val])
-        # enseen[energy] += 1        
-        
-        if energy not in enset:
-            print(h, energy, len(seen))
-            enset.add(energy)
+        h, energy, apos, bpos, cpos, dpos, = heappop(states)
         
         allpos = [apos, bpos, cpos, dpos]
         occupied = set(apos) | set(bpos) | set(cpos) | set(dpos)
@@ -130,7 +110,6 @@ def solve(lines):
             return energy
 
         def explore(pos, i, j, y, x, steps):
-            # expto.add((y, x))
             dpos = sorted(pos[:j] + [(y, x)] + pos[j+1:])
             dapos, dbpos, dcpos, ddpos = allpos[:i] + [dpos] + allpos[i+1:]
             t = tuplify(dapos, dbpos, dcpos, ddpos)
@@ -147,7 +126,6 @@ def solve(lines):
                     return False
 
             return True
-
 
         for i, pos in enumerate(allpos):
             rightcol = 3 + 2*i
@@ -228,7 +206,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 58535 too high
-
-# 37247 1906 5015594
