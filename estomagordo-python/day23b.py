@@ -120,7 +120,7 @@ def solve(lines):
         # enseen[energy] += 1        
         
         if energy not in enset:
-            print(h, energy, len(seen), sorted(expto))
+            print(h, energy, len(seen))
             enset.add(energy)
         
         allpos = [apos, bpos, cpos, dpos]
@@ -130,7 +130,7 @@ def solve(lines):
             return energy
 
         def explore(pos, i, j, y, x, steps):
-            expto.add((y, x))
+            # expto.add((y, x))
             dpos = sorted(pos[:j] + [(y, x)] + pos[j+1:])
             dapos, dbpos, dcpos, ddpos = allpos[:i] + [dpos] + allpos[i+1:]
             t = tuplify(dapos, dbpos, dcpos, ddpos)
@@ -178,17 +178,13 @@ def solve(lines):
 
                     if x == rightcol and not hasotherbelow:
                         continue
-                            
-                    for gy, gx in paths[(y, x)]:
-                        if gx == x:
-                            continue
-                        if gy > 1:
-                            continue
-                        if (gy, gx) in blocking:
+
+                    for gx in range(1, 12):
+                        if (1, gx) in blocking:
                             continue
 
-                        if cango(y, x, gy, gx):
-                            explore(pos, i, j, gy, gx, len(paths[(y, x)][(gy, gx)]))
+                        if cango(y, x, 1, gx):
+                            explore(pos, i, j, 1, gx, len(paths[(y, x)][(1, gx)]))
                 else:
                     hasotheratgoal = False
 
