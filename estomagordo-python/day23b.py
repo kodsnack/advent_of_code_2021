@@ -136,7 +136,7 @@ def solve(lines):
                     if not hasbelow:
                         dy = y
                         
-                        while isfree(dy+1, x, apos, bpos, cpos, dpos) and dy < 4:
+                        while isfree(dy+1, x, apos, bpos, cpos, dpos) and dy < 5:
                             dy += 1
 
                         if dy > y:
