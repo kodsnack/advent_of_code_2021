@@ -18,14 +18,14 @@ std::tuple<std::string, std::string> p23(const std::string & input) {
         }
     }
 
-    static constexpr std::array<size_t, 27> xvals{
+    static constexpr std::array<int, 27> xvals{
         0,1,2,3,4,5,6,7,8,9,10,
         2, 4, 6, 8,
         2, 4, 6, 8,
         2, 4, 6, 8,
         2,4,6,8};
 
-    auto canmove = [](const std::string & s, char c, size_t from, size_t to) -> int {
+    auto canmove = [](const std::string & s, char c, int from, int to) -> int {
         if(c == '.') return 0;
         if(s[to] != '.') return 0;
         if(from == to) return 0;
@@ -36,7 +36,7 @@ std::tuple<std::string, std::string> p23(const std::string & input) {
         if(to > 10) {
             // if moving to pit - pit must be empty or only occupied by correct
             auto tt = to+4;
-            while(tt < s.size()) {
+            while(tt < static_cast<int>(s.size())) {
                 if(s[tt] != c) return 0;
                 tt+=4;
             }
@@ -69,14 +69,6 @@ std::tuple<std::string, std::string> p23(const std::string & input) {
         return steps;
     };
 
-    auto printstate = [](const std::string & s) {
-        std::cout << "#############\n";
-        std::cout << "#" << s.substr(0,11) << "#\n";
-        std::cout << "###" << s[11] << '#' << s[12] << '#' << s[13] << '#' << s[14] << "###\n";
-        std::cout << "  #" << s[15] << '#' << s[16] << '#' << s[17] << '#' << s[18] << "#\n";
-        std::cout << "  #########\n";
-    };
-
 
     for(auto p : {1,2}) {
         using type = std::tuple<int, std::string>;
@@ -104,9 +96,11 @@ std::tuple<std::string, std::string> p23(const std::string & input) {
             }
 
             for (size_t i = 0; i < st.size(); i++) {
+                if(i == 2 || i == 4 || i == 6 || i == 8) continue;
                 auto c = st[i];
                 if (c != '.') {
                     for (size_t j = 0; j < st.size(); j++) {
+                        if(i == j || j == 2 || j == 4 || j == 6 || j == 8) continue;
                         if (auto steps = canmove(st, c, i, j); steps > 0) {
                             auto newscore = steps;
                             if (c > 'A') newscore *= 10;
