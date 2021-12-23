@@ -30,22 +30,23 @@ def heuristic(apos, bpos, cpos, dpos):
 
 
 def bfs(open, start):
-    d = defaultdict(int)
-    d[start] = 0
-    frontier = [(0, start)]
+    d = {}
+    d[start] = []
+    frontier = [[start]]
 
-    for distance, node in frontier:
+    for path in frontier:
+        node = path[-1]
         y, x = node
 
         for dy, dx in neighs(y, x):
             if (dy, dx) in open and (dy, dx) not in d:
-                d[(dy, dx)] = distance+1
-                frontier.append((distance+1, (dy, dx)))
+                d[(dy, dx)] = path + [(dy, dx)]
+                frontier.append(path + [(dy, dx)])
 
     return d
 
 
-def get_distances(open):    
+def get_paths(open):    
     return {a: bfs(open, a) for a in open}
 
 
@@ -73,7 +74,7 @@ def solve(lines):
             if lines[y][x] not in ' #':
                 open.add((y, x))
 
-    distances = get_distances(open)
+    paths = get_paths(open)    
     
     blocking = {(1, 3), (1, 5), (1, 7), (1, 9)}
     goala = [(2, 3), (3, 3), (4, 3), (5, 3)]
@@ -122,6 +123,7 @@ def solve(lines):
             enset.add(energy)
         
         allpos = [apos, bpos, cpos, dpos]
+        occupied = set(apos) | set(bpos) | set(cpos) | set(dpos)
 
         if h == energy:
             return energy
@@ -137,6 +139,14 @@ def solve(lines):
                 dh = heuristic(dapos, dbpos, dcpos, ddpos)
                 heappush(states, [dh+neweng, neweng, dapos, dbpos, dcpos, ddpos])
 
+        def cango(y1, x1, y2, x2):
+            for dy, dx in paths[(y1, x1)][(y2, x2)][1:]:
+                if (dy, dx) in occupied:
+                    return False
+
+            return True
+
+
         for i, pos in enumerate(allpos):
             rightcol = 3 + 2*i
             otherrightcols = {3 + 2*k for k in range(4)} - {rightcol}
@@ -144,104 +154,152 @@ def solve(lines):
             for j, yx in enumerate(pos):
                 y, x = yx
 
-                if x == rightcol:
-                    hasbelow = False
-                    for dy in range(y+1, 6):
-                        if hasbelow:
-                            break
-                        for posindex in range(4):
-                            if posindex == i:
-                                continue
-                            if any(p == (dy, x) for p in allpos[posindex]):
-                                hasbelow = True
-                                break
+                if y > 1:
+                    cangoup = True
+                    hasotherbelow = False
+                    hasclearturn = isfree(1, x-1, apos, bpos, cpos, dpos) or isfree(1, x+1, apos, bpos, cpos, dpos)
 
-                    if not hasbelow:
-                        dy = y
-                        
-                        while isfree(dy+1, x, apos, bpos, cpos, dpos) and dy < 5:
-                            dy += 1
-
-                        if dy > y:
-                            explore(pos, i, j, dy, x, distances[(y, x)][(dy, x)])
-
+                    if not hasclearturn:
                         continue
 
-                    canmoveup = True
+                    for gy in range(1, y):
+                        if not isfree(gy, x, apos, bpos, cpos, dpos):
+                            cangoup = False
 
-                    for dy in range(1, y):
-                        if not isfree(dy, x, apos, bpos, cpos, dpos):
-                            canmoveup = False
-                            break
-
-                    if not isfree(1, x-1, apos, bpos, cpos, dpos) and not isfree(1, x+1, apos, bpos, cpos, dpos):
-                        canmoveup = False
-
-                    if not canmoveup:
+                    if not cangoup:
                         continue
-
-                    right = [dx for dx in range(x+1, 12)]
-                    left = [dx for dx in range(x-1, 0, -1)]
                     
-                    for direction in (right, left):
-                        for dx in direction:
-                            if not isfree(1, dx, apos, bpos, cpos, dpos):
+                    for gy in range(y+1, 6):
+                        for gpos in [allpos[k] for k in range(len(allpos)) if k != i]:
+                            if (gy, x) in gpos:
+                                hasotherbelow = True
                                 break
 
-                            if dx not in otherrightcols:
-                                explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
-                else:
-                    hasbelow = False
-                    
-                    for dy in range(2, 6):
-                        if hasbelow:
-                            break
-                        for posindex in range(4):
-                            if posindex == i:
-                                continue
-                            if any(p == (dy, rightcol) for p in allpos[posindex]):
-                                hasbelow = True
-                                break
-
-                    if y == 1:
-                        direction = [dx for dx in range(x+1, rightcol+1)] if x < rightcol else [dx for dx in range(x-1, rightcol-1, -1)]
-                        valid = True
-
-                        for dx in direction:
-                            if not isfree(y, dx, apos, bpos, cpos, dpos):
-                                valid = False
-                                break
-
-                        if not valid:
-                            continue
-
-                        for dy in range(2, 6):
-                            if not isfree(dy, rightcol, apos, bpos, cpos, dpos):
-                                break
+                    if x == rightcol and not hasotherbelow:
+                        continue
                             
-                            if not hasbelow:
-                                explore(pos, i, j, dy, rightcol, distances[(y, x)][(dy, rightcol)])
-                    else:
-                        canmoveup = True
-
-                        for dy in range(1, y):
-                            if not isfree(dy, x, apos, bpos, cpos, dpos):
-                                canmoveup = False
-                                break
-
-                        if not canmoveup:
+                    for gy, gx in paths[(y, x)]:
+                        if gx == x:
+                            continue
+                        if gy > 1:
                             continue
 
-                        right = [dx for dx in range(x+1, 12)]
-                        left = [dx for dx in range(x-1, 0, -1)]
-                        
-                        for direction in (right, left):
-                            for dx in direction:
-                                if not isfree(1, dx, apos, bpos, cpos, dpos):
-                                    break
+                        if cango(y, x, gy, gx):
+                            explore(pos, i, j, gy, gx, len(paths[(y, x)][(gy, gx)]))
+                else:
+                    hasotheratgoal = False
 
-                                if dx not in otherrightcols:
-                                    explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
+                    for gy in range(2, 6):
+                        for gpos in [allpos[k] for k in range(len(allpos)) if k != i]:
+                            if (gy, rightcol) in gpos:
+                                hasotheratgoal = True
+                                break
+
+                    if hasotheratgoal:
+                        continue
+
+                    for gy in range(5, 1, -1):
+                        if cango(y, x, gy, rightcol):
+                            explore(pos, i, j, gy, gx, len(paths[(y, x)][(gy, gx)]))
+
+                # if x == rightcol:
+                #     hasbelow = False
+                #     for dy in range(y+1, 6):
+                #         if hasbelow:
+                #             break
+                #         for posindex in range(4):
+                #             if posindex == i:
+                #                 continue
+                #             if any(p == (dy, x) for p in allpos[posindex]):
+                #                 hasbelow = True
+                #                 break
+
+                #     if not hasbelow:
+                #         dy = y
+                        
+                #         while isfree(dy+1, x, apos, bpos, cpos, dpos) and dy < 5:
+                #             dy += 1
+
+                #         if dy > y:
+                #             explore(pos, i, j, dy, x, distances[(y, x)][(dy, x)])
+
+                #         continue
+
+                #     canmoveup = True
+
+                #     for dy in range(1, y):
+                #         if not isfree(dy, x, apos, bpos, cpos, dpos):
+                #             canmoveup = False
+                #             break
+
+                #     if not isfree(1, x-1, apos, bpos, cpos, dpos) and not isfree(1, x+1, apos, bpos, cpos, dpos):
+                #         canmoveup = False
+
+                #     if not canmoveup:
+                #         continue
+
+                #     right = [dx for dx in range(x+1, 12)]
+                #     left = [dx for dx in range(x-1, 0, -1)]
+                    
+                #     for direction in (right, left):
+                #         for dx in direction:
+                #             if not isfree(1, dx, apos, bpos, cpos, dpos):
+                #                 break
+
+                #             if dx not in otherrightcols:
+                #                 explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
+                # else:
+                #     hasbelow = False
+                    
+                #     for dy in range(2, 6):
+                #         if hasbelow:
+                #             break
+                #         for posindex in range(4):
+                #             if posindex == i:
+                #                 continue
+                #             if any(p == (dy, rightcol) for p in allpos[posindex]):
+                #                 hasbelow = True
+                #                 break
+
+                #     if y == 1:
+                #         direction = [dx for dx in range(x+1, rightcol+1)] if x < rightcol else [dx for dx in range(x-1, rightcol-1, -1)]
+                #         valid = True
+
+                #         for dx in direction:
+                #             if not isfree(y, dx, apos, bpos, cpos, dpos):
+                #                 valid = False
+                #                 break
+
+                #         if not valid:
+                #             continue
+
+                #         for dy in range(2, 6):
+                #             if not isfree(dy, rightcol, apos, bpos, cpos, dpos):
+                #                 break
+                            
+                #             if not hasbelow:
+                #                 explore(pos, i, j, dy, rightcol, distances[(y, x)][(dy, rightcol)])
+                #     else:
+                #         canmoveup = True
+
+                #         for dy in range(1, y):
+                #             if not isfree(dy, x, apos, bpos, cpos, dpos):
+                #                 canmoveup = False
+                #                 break
+
+                #         if not canmoveup:
+                #             continue
+
+                #         right = [dx for dx in range(x+1, 12)]
+                #         left = [dx for dx in range(x-1, 0, -1)]
+                        
+                #         for direction in (right, left):
+                #             for dx in direction:
+                #                 if not isfree(1, dx, apos, bpos, cpos, dpos):
+                #                     break
+
+                #                 if dx not in otherrightcols:
+                #                     explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
 
 
 def main():
