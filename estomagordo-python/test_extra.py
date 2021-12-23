@@ -1,5 +1,6 @@
 from day18a import explode, reduction, add, calc, magnitude
 from day22b import intersection
+from day23b import heuristic, scorepos
 
 
 def test_explode():
@@ -117,3 +118,28 @@ def test_intersection():
     assert((11, 12, 11, 12, 11, 12) == ab)
     assert(d == cd)
     assert(empty == bd)
+
+
+def test_heuristic():
+    goala = [(2, 3), (3, 3), (4, 3), (5, 3)]
+    goalb = [(2, 5), (3, 5), (4, 5), (5, 5)]
+    goalc = [(2, 7), (3, 7), (4, 7), (5, 7)]
+    goald = [(2, 9), (3, 9), (4, 9), (5, 9)]
+
+    startexa = [(3, 9), (4, 7), (5, 3), (5, 9)]
+    startexb = [(2, 3), (2, 7), (3, 7), (4, 5)]
+    startexc = [(2, 5), (3, 5), (4, 9), (5, 7)]
+    startexd = [(2, 9), (3, 3), (4, 3), (5, 5)]
+
+    assert(len([x for x in startexa if x in startexb]) == 0)
+    assert(len([x for x in startexa if x in startexc]) == 0)
+    assert(len([x for x in startexa if x in startexd]) == 0)
+    assert(len([x for x in startexb if x in startexc]) == 0)
+    assert(len([x for x in startexb if x in startexd]) == 0)
+    assert(len([x for x in startexc if x in startexd]) == 0)
+
+    assert(0 == heuristic(goala, goalb, goalc, goald))
+    assert(36001 == heuristic(startexa, startexb, startexc, startexd))
+    assert(3000 == heuristic(goala, goalb, goalc, [(1, 11), (3,9), (4, 9), (5, 9)]))
+
+# def test_scorepos():
