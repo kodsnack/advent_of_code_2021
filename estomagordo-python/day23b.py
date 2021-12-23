@@ -86,7 +86,7 @@ def solve(lines):
     enset = {0}
 
     while True:
-        h, energy, apos, bpos, cpos, dpos = heappop(states)     
+        h, energy, apos, bpos, cpos, dpos, = heappop(states)     
         # if energy in exampleoptimalpassing and energy not in enseen:            
         #     print(energy, len(seen))
         #     if energy == 19153:
@@ -102,6 +102,45 @@ def solve(lines):
 
         if h == energy:
             return energy
+
+        for i, pos in enumerate(allpos):
+            rightcol = 3 + 2*i
+
+            for j, yx in enumerate(pos):
+                y, x = yx
+
+                if x == rightcol:
+                    hasbelow = False
+                    for dy in range(y+1, 6):
+                        if hasbelow:
+                            break
+                        for posindex in range(4):
+                            if posindex == i:
+                                continue
+                            if any(p == (dy, x) for p in allpos[posindex]):
+                                hasbelow = True
+                                break
+
+                    canmoveup = True
+
+                    for dy in range(1, y):
+                        if not isfree(dy, x, apos, bpos, cpos, dpos):
+                            canmoveup = False
+                            break
+
+                    if not isfree(1, x-1, apos, bpos, cpos, dpos) and not isfree(1, x+1, apos, bpos, cpos, dpos):
+                        canmoveup = False
+
+                    for dx in range(x+1, 12):
+                        if not isfree(1, dx, apos, bpos, cpos, dpos):
+                            break
+                        dpos = sorted(pos[:j] + [(1, dx)] + pos[j+1:])
+                        dapos, dbpos, dcpos, ddpos = allpos[:i] + dpos + allpos[i+1:]
+                        t = tuplify(dapos, dbpos, dcpos, ddpos)
+                        if t not in seen or seen[t] > energy+10**i:
+                            seen[t] = energy+10**i
+                            dh = heuristic(dapos, dbpos, dcpos, ddpos)
+                            heappush(states, [dh+energy+1, energy+10**i, dapos, dbpos, dcpos, ddpos])
 
         blocker = False
 
