@@ -184,7 +184,7 @@ def solve(lines):
                             continue
 
                         if cango(y, x, 1, gx):
-                            explore(pos, i, j, 1, gx, len(paths[(y, x)][(1, gx)]))
+                            explore(pos, i, j, 1, gx, len(paths[(y, x)][(1, gx)])-1)
                 else:
                     hasotheratgoal = False
 
@@ -199,7 +199,7 @@ def solve(lines):
 
                     for gy in range(5, 1, -1):
                         if cango(y, x, gy, rightcol):
-                            explore(pos, i, j, gy, rightcol, len(paths[(y, x)][(gy, rightcol)]))
+                            explore(pos, i, j, gy, rightcol, len(paths[(y, x)][(gy, rightcol)])-1)
                             break
 
 
