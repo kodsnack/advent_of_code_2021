@@ -5,27 +5,28 @@ from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
+def scorepos(j, pos):
+    score = 0
+
+    for i, yx in enumerate(pos):
+        y, x = yx
+
+        if x == 3 + j*2:
+            score += abs(y-(i+2)) * 10**j
+        else:
+            score += (y-1 + abs(x-(3 + j*2)) + i + 1) * 10**j
+
+    return score
+
+
 def heuristic(apos, bpos, cpos, dpos):
-        count = 0
-        allpos = [apos, bpos, cpos, dpos]
+    count = 0
+    allpos = [apos, bpos, cpos, dpos]
 
-        def scorepos(j, pos):
-            score = 0
+    for j, pos in enumerate(allpos):
+        count += min(scorepos(j, p) for p in permutations(pos))            
 
-            for i, yx in enumerate(pos):
-                y, x = yx
-
-                if x == 3 + j*2:
-                    score += abs(y-(i+2)) * 10**j
-                else:
-                    score += (y-1 + abs(x-(3 + j*2)) + i + 1) * 10**j
-
-            return score
-
-        for j, pos in enumerate(allpos):
-            count += min(scorepos(j, p) for p in permutations(pos))            
-
-        return count
+    return count
 
 
 def solve(lines):

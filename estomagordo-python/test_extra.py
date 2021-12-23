@@ -1,6 +1,6 @@
 from day18a import explode, reduction, add, calc, magnitude
 from day22b import intersection
-from day23b import heuristic
+from day23b import heuristic, scorepos
 
 
 def test_explode():
@@ -139,4 +139,7 @@ def test_heuristic():
     assert(len([x for x in startexc if x in startexd]) == 0)
 
     assert(0 == heuristic(goala, goalb, goalc, goald))
-    assert(35901 == heuristic(startexa, startexb, startexc, startexd))
+    assert(36001 == heuristic(startexa, startexb, startexc, startexd))
+
+
+# def test_scorepos():
