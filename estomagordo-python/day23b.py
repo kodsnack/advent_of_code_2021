@@ -105,17 +105,18 @@ def solve(lines):
 
         def explore(pos, i, j, y, x, steps):
             dpos = sorted(pos[:j] + [(y, x)] + pos[j+1:])
-            dapos, dbpos, dcpos, ddpos = allpos[:i] + dpos + allpos[i+1:]
+            dapos, dbpos, dcpos, ddpos = allpos[:i] + [dpos] + allpos[i+1:]
             t = tuplify(dapos, dbpos, dcpos, ddpos)
-            neweng = energy + steps*10**i
+            neweng = energy + steps*(10**i)
             
             if t not in seen or seen[t] > neweng:
                 seen[t] = neweng
                 dh = heuristic(dapos, dbpos, dcpos, ddpos)
-                heappush(states, [dh+energy+1, neweng, dapos, dbpos, dcpos, ddpos])
+                heappush(states, [dh+neweng, neweng, dapos, dbpos, dcpos, ddpos])
 
         for i, pos in enumerate(allpos):
             rightcol = 3 + 2*i
+            otherrightcols = {3 + 2*k for k in range(4)} - {rightcol}
 
             for j, yx in enumerate(pos):
                 y, x = yx
@@ -141,6 +142,8 @@ def solve(lines):
                         if dy > y:
                             explore(pos, i, j, dy, x, dy-y)
 
+                        continue
+
                     canmoveup = True
 
                     for dy in range(1, y):
@@ -162,8 +165,21 @@ def solve(lines):
                             if not isfree(1, dx, apos, bpos, cpos, dpos):
                                 break
 
-                            explore(pos, i, j, 1, dx, abs(dx-x) + (y-1))
+                            if dx not in otherrightcols:
+                                explore(pos, i, j, 1, dx, abs(dx-x) + (y-1))
                 else:
+                    hasbelow = False
+                    
+                    for dy in range(2, 6):
+                        if hasbelow:
+                            break
+                        for posindex in range(4):
+                            if posindex == i:
+                                continue
+                            if any(p == (dy, rightcol) for p in allpos[posindex]):
+                                hasbelow = True
+                                break
+
                     if y == 1:
                         direction = [dx for dx in range(x+1, rightcol+1)] if x < rightcol else [dx for dx in range(x-1, rightcol-1, -1)]
                         valid = True
@@ -179,8 +195,9 @@ def solve(lines):
                         for dy in range(2, 6):
                             if not isfree(dy, rightcol, apos, bpos, cpos, dpos):
                                 break
-
-                            explore(pos, i, j, dy, rightcol, dy-1 + abs(rightcol-x))
+                            
+                            if not hasbelow:
+                                explore(pos, i, j, dy, rightcol, dy-1 + abs(rightcol-x))
                     else:
                         canmoveup = True
 
@@ -200,7 +217,8 @@ def solve(lines):
                                 if not isfree(1, dx, apos, bpos, cpos, dpos):
                                     break
 
-                                explore(pos, i, j, 1, dx, (y-1) + abs(dx-rightcol))
+                                if dx not in otherrightcols:
+                                    explore(pos, i, j, 1, dx, (y-1) + abs(dx-x))
 
         # blocker = False
 
@@ -453,3 +471,5 @@ if __name__ == '__main__':
     print(main())
 
 # 58535 too high
+
+# 37247 1906 5015594
