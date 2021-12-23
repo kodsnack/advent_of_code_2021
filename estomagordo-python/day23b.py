@@ -40,11 +40,6 @@ def solve(lines):
     c.sort()
     d.sort()
 
-    states = [[0, a, b, c, d]]
-    seen = {(tuple(a), tuple(b), tuple(c), tuple(d)): 0}
-    # enseen = Counter([0])
-    enset = {0}
-
     exampleoptimalpassing = {3000,3010,3050,3080,3088,3688,4288,4328,9328,9378,9438,9508,10108,10113,19113,19153,30153,34153,34157,34161,41161,41169,44169}
 
     def tuplify(apos, bpos, cpos, dpos):
@@ -61,8 +56,28 @@ def solve(lines):
             return False
         return (y, x) not in dpos
 
+    def heuristic(apos, bpos, cpos, dpos):
+        count = 0
+        allpos = [apos, bpos, cpos, dpos]
+
+        for j, pos in enumerate(allpos):
+            for i, yx in enumerate(pos):
+                y, x = yx
+
+                if x == 3 + j*2:
+                    count += abs(y-(i+2))
+                else:
+                    count += y-1 + abs(x-(3 + j*2)) + i + 1
+
+        return count
+        
+    states = [[heuristic(a, b, c, d), 0, a, b, c, d]]
+    seen = {(tuple(a), tuple(b), tuple(c), tuple(d)): 0}
+    # enseen = Counter([0])
+    enset = {0}
+
     while True:
-        energy, apos, bpos, cpos, dpos = heappop(states)     
+        h, energy, apos, bpos, cpos, dpos = heappop(states)     
         # if energy in exampleoptimalpassing and energy not in enseen:            
         #     print(energy, len(seen))
         #     if energy == 19153:
@@ -76,7 +91,7 @@ def solve(lines):
         
         allpos = [apos, bpos, cpos, dpos]
 
-        if apos == goala and bpos == goalb and cpos == goalc and dpos == goald:
+        if h == 0:
             return energy
 
         blocker = False
@@ -91,7 +106,8 @@ def solve(lines):
                         t = tuplify(dapos, bpos, cpos, dpos)
                         if t not in seen or seen[t] > energy+1:
                             seen[t] = energy+1
-                            heappush(states, [energy+1, dapos, list(bpos), list(cpos), list(dpos)])
+                            dh = heuristic(dapos, bpos, cpos, dpos)
+                            heappush(states, [dh, energy+1, dapos, list(bpos), list(cpos), list(dpos)])
                 if x == 3 and isfree(2, 3, apos, bpos, cpos, dpos):
                     containsothers = False
                     
@@ -109,7 +125,8 @@ def solve(lines):
                     t = tuplify(dapos, bpos, cpos, dpos)
                     if t not in seen or seen[t] > energy+1:
                         seen[t] = energy+1
-                        heappush(states, [energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
+                        dh = heuristic(dapos, bpos, cpos, dpos)
+                        heappush(states, [dh, energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
         for i, yx in enumerate(bpos):
             y, x = yx
             if (y, x) in blocking:
@@ -120,7 +137,8 @@ def solve(lines):
                         t = tuplify(apos, dbpos, cpos, dpos)
                         if t not in seen or seen[t] > energy+10:
                             seen[t] = energy+10
-                            heappush(states, [energy+10, list(apos), dbpos, list(cpos), list(dpos)])
+                            dh = heuristic(apos, dbpos, cpos, dpos)
+                            heappush(states, [dh, energy+10, list(apos), dbpos, list(cpos), list(dpos)])
                 if x == 5 and isfree(2, 5, apos, bpos, cpos, dpos):
                     containsothers = False
                     
@@ -138,7 +156,8 @@ def solve(lines):
                     t = tuplify(apos, dbpos, cpos, dpos)
                     if t not in seen or seen[t] > energy+10:
                         seen[t] = energy+10
-                        heappush(states, [energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
+                        dh = heuristic(apos, dbpos, cpos, dpos)
+                        heappush(states, [dh, energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
         for i, yx in enumerate(cpos):
             y, x = yx
             if (y, x) in blocking:
@@ -149,7 +168,8 @@ def solve(lines):
                         t = tuplify(apos, bpos, dcpos, dpos)
                         if t not in seen or seen[t] > energy+100:
                             seen[t] = energy+100
-                            heappush(states, [energy+100, list(apos), list(bpos), dcpos, list(dpos)])
+                            dh = heuristic(apos, bpos, dcpos, dpos)
+                            heappush(states, [dh, energy+100, list(apos), list(bpos), dcpos, list(dpos)])
                 if x == 7 and isfree(2, 7, apos, bpos, cpos, dpos):
                     containsothers = False
                     
@@ -167,7 +187,8 @@ def solve(lines):
                     t = tuplify(apos, bpos, dcpos, dpos)
                     if t not in seen or seen[t] > energy+100:
                         seen[t] = energy+100
-                        heappush(states, [energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
+                        dh = heuristic(apos, bpos, dcpos, dpos)
+                        heappush(states, [dh, energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
         for i, yx in enumerate(dpos):
             y, x = yx
             if (y, x) in blocking:
@@ -178,7 +199,8 @@ def solve(lines):
                         t = tuplify(apos, bpos, cpos, ddpos)
                         if t not in seen or seen[t] > energy+1000:
                             seen[t] = energy+1000
-                            heappush(states, [energy+1000, list(apos), list(bpos), list(cpos), ddpos])
+                            dh = heuristic(apos, bpos, cpos, ddpos)
+                            heappush(states, [dh, energy+1000, list(apos), list(bpos), list(cpos), ddpos])
                 if x == 9 and isfree(2, 9, apos, bpos, cpos, dpos):
                     containsothers = False
                     
@@ -196,7 +218,8 @@ def solve(lines):
                     t = tuplify(apos, bpos, cpos, ddpos)
                     if t not in seen or seen[t] > energy+1000:
                         seen[t] = energy+1000
-                        heappush(states, [energy+1000, list(apos), list(bpos), list(cpos), list(ddpos)])
+                        dh = heuristic(apos, bpos, cpos, ddpos)
+                        heappush(states, [dh, energy+1000, list(apos), list(bpos), list(cpos), list(ddpos)])
 
         if blocker:
             continue
@@ -222,7 +245,8 @@ def solve(lines):
                     t = tuplify(dapos, bpos, cpos, dpos)
                     if t not in seen or seen[t] > energy+1:
                         seen[t] = energy+1
-                        heappush(states, [energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
+                        dh = heuristic(dapos, bpos, cpos, dpos)
+                        heappush(states, [dh, energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
         if bpos != goalb:
             for i in range(4):
                 for dy, dx in neighs(bpos[i][0], bpos[i][1]):
@@ -244,7 +268,8 @@ def solve(lines):
                     t = tuplify(apos, dbpos, cpos, dpos)
                     if t not in seen or seen[t] > energy+10:
                         seen[t] = energy+10
-                        heappush(states, [energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
+                        dh = heuristic(apos, dbpos, cpos, dpos)
+                        heappush(states, [dh, energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
         if cpos != goalc:
             for i in range(4):
                 for dy, dx in neighs(cpos[i][0], cpos[i][1]):
@@ -266,7 +291,8 @@ def solve(lines):
                     t = tuplify(apos, bpos, dcpos, dpos)
                     if t not in seen or seen[t] > energy+100:
                         seen[t] = energy+100
-                        heappush(states, [energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
+                        dh = heuristic(apos, bpos, dcpos, dpos)
+                        heappush(states, [dh, energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
         if dpos != goald:
             for i in range(4):
                 for dy, dx in neighs(dpos[i][0], dpos[i][1]):                    
@@ -288,7 +314,8 @@ def solve(lines):
                     t = tuplify(apos, bpos, cpos, ddpos)
                     if t not in seen or seen[t] > energy+1000:
                         seen[t] = energy+1000
-                        heappush(states, [energy+1000, list(apos), list(bpos), list(cpos), list(ddpos)])
+                        dh = heuristic(apos, bpos, cpos, ddpos)
+                        heappush(states, [dh, energy+1000, list(apos), list(bpos), list(cpos), list(ddpos)])
 
 
 def main():
