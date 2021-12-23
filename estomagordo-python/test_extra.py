@@ -140,6 +140,6 @@ def test_heuristic():
 
     assert(0 == heuristic(goala, goalb, goalc, goald))
     assert(36001 == heuristic(startexa, startexb, startexc, startexd))
-
+    assert(3000 == heuristic(goala, goalb, goalc, [(1, 11), (3,9), (4, 9), (5, 9)]))
 
 # def test_scorepos():

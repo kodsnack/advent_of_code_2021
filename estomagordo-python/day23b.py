@@ -240,15 +240,15 @@ def solve(lines):
                         continue
                     if any((dy, dx) in pos for pos in allpos):
                         continue
-                    if dy < apos[i][0] and dx == 3:
-                        belowhas = False
-                        for down in range(1, 4):
-                            for pos in (bpos, cpos, dpos):
-                                if (apos[i][0]+down, dx) in pos:
-                                    belowhas = True
-                        if not belowhas:
-                            continue
-                    if dy > apos[i][0] and dy == 2 and dx != 3:
+                    belowhas = False
+                    for down in range(1, 4):
+                        for pos in (apos, bpos, cpos):
+                            if (dpos[i][0]+down, dx) in pos:
+                                belowhas = True     
+                                break            
+                    if dy < apos[i][0] and dx == 3 and not belowhas:
+                        continue
+                    if dy > apos[i][0] and dy == 2 and (dx != 3 or belowhas):
                         continue
                     dapos = sorted(apos[:i] + [(dy, dx)] + apos[i+1:])
                     t = tuplify(dapos, bpos, cpos, dpos)
@@ -257,21 +257,21 @@ def solve(lines):
                         dh = heuristic(dapos, bpos, cpos, dpos)
                         heappush(states, [dh+energy+1, energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
         if bpos != goalb:
-            for i in range(len(apos)):
+            for i in range(len(bpos)):
                 for dy, dx in neighs(bpos[i][0], bpos[i][1]):
                     if (dy, dx) not in open:
                         continue
                     if any((dy, dx) in pos for pos in allpos):
                         continue
-                    if dy < bpos[i][0] and dx == 5:
-                        belowhas = False
-                        for down in range(1, 4):
-                            for pos in (apos, cpos, dpos):
-                                if (bpos[i][0]+down, dx) in pos:
-                                    belowhas = True
-                        if not belowhas:
-                            continue
-                    if dy > bpos[i][0] and dy == 2 and dx != 5:
+                    belowhas = False
+                    for down in range(1, 4):
+                        for pos in (apos, bpos, cpos):
+                            if (dpos[i][0]+down, dx) in pos:
+                                belowhas = True     
+                                break            
+                    if dy < bpos[i][0] and dx == 5 and not belowhas:
+                        continue
+                    if dy > bpos[i][0] and dy == 2 and (dx != 5 or belowhas):
                         continue
                     dbpos = sorted(bpos[:i] + [(dy, dx)] + bpos[i+1:])
                     t = tuplify(apos, dbpos, cpos, dpos)
@@ -280,21 +280,21 @@ def solve(lines):
                         dh = heuristic(apos, dbpos, cpos, dpos)
                         heappush(states, [dh+energy+10, energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
         if cpos != goalc:
-            for i in range(len(apos)):
+            for i in range(len(cpos)):
                 for dy, dx in neighs(cpos[i][0], cpos[i][1]):
                     if (dy, dx) not in open:
                         continue
                     if any((dy, dx) in pos for pos in allpos):
                         continue
-                    if dy < cpos[i][0] and dx == 7:
-                        belowhas = False
-                        for down in range(1, 4):
-                            for pos in (apos, bpos, dpos):
-                                if (cpos[i][0]+down, dx) in pos:
-                                    belowhas = True
-                        if not belowhas:
-                            continue
-                    if dy > cpos[i][0] and dy == 2 and dx != 7:
+                    belowhas = False
+                    for down in range(1, 4):
+                        for pos in (apos, bpos, cpos):
+                            if (dpos[i][0]+down, dx) in pos:
+                                belowhas = True     
+                                break            
+                    if dy < cpos[i][0] and dx == 7 and not belowhas:
+                        continue
+                    if dy > cpos[i][0] and dy == 2 and (dx != 7 or belowhas):
                         continue
                     dcpos = sorted(cpos[:i] + [(dy, dx)] + cpos[i+1:])
                     t = tuplify(apos, bpos, dcpos, dpos)
@@ -303,21 +303,21 @@ def solve(lines):
                         dh = heuristic(apos, bpos, dcpos, dpos)
                         heappush(states, [dh+energy+100, energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
         if dpos != goald:
-            for i in range(len(apos)):
+            for i in range(len(dpos)):
                 for dy, dx in neighs(dpos[i][0], dpos[i][1]):                    
                     if (dy, dx) not in open:
                         continue
                     if any((dy, dx) in pos for pos in allpos):
-                        continue                                        
-                    if dy < dpos[i][0] and dx == 9:
-                        belowhas = False
-                        for down in range(1, 4):
-                            for pos in (apos, bpos, cpos):
-                                if (dpos[i][0]+down, dx) in pos:
-                                    belowhas = True
-                        if not belowhas:
-                            continue
-                    if dy > dpos[i][0] and dy == 2 and dx != 9:
+                        continue                   
+                    belowhas = False
+                    for down in range(1, 4):
+                        for pos in (apos, bpos, cpos):
+                            if (dpos[i][0]+down, dx) in pos:
+                                belowhas = True     
+                                break            
+                    if dy < dpos[i][0] and dx == 9 and not belowhas:
+                        continue
+                    if dy > dpos[i][0] and dy == 2 and (dx != 9 or belowhas):
                         continue
                     ddpos = sorted(dpos[:i] + [(dy, dx)] + dpos[i+1:])
                     t = tuplify(apos, bpos, cpos, ddpos)
