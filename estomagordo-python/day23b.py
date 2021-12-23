@@ -108,6 +108,7 @@ def solve(lines):
     seen = {(tuple(a), tuple(b), tuple(c), tuple(d)): 0}
     # enseen = Counter([0])
     enset = {0}
+    expto = set()
 
     while True:
         h, energy, apos, bpos, cpos, dpos, = heappop(states)     
@@ -119,7 +120,7 @@ def solve(lines):
         # enseen[energy] += 1        
         
         if energy not in enset:
-            print(h, energy, len(seen))
+            print(h, energy, len(seen), sorted(expto))
             enset.add(energy)
         
         allpos = [apos, bpos, cpos, dpos]
@@ -129,6 +130,7 @@ def solve(lines):
             return energy
 
         def explore(pos, i, j, y, x, steps):
+            expto.add((y, x))
             dpos = sorted(pos[:j] + [(y, x)] + pos[j+1:])
             dapos, dbpos, dcpos, ddpos = allpos[:i] + [dpos] + allpos[i+1:]
             t = tuplify(dapos, dbpos, dcpos, ddpos)
@@ -149,7 +151,6 @@ def solve(lines):
 
         for i, pos in enumerate(allpos):
             rightcol = 3 + 2*i
-            otherrightcols = {3 + 2*k for k in range(4)} - {rightcol}
 
             for j, yx in enumerate(pos):
                 y, x = yx
@@ -183,6 +184,8 @@ def solve(lines):
                             continue
                         if gy > 1:
                             continue
+                        if (gy, gx) in blocking:
+                            continue
 
                         if cango(y, x, gy, gx):
                             explore(pos, i, j, gy, gx, len(paths[(y, x)][(gy, gx)]))
@@ -200,106 +203,8 @@ def solve(lines):
 
                     for gy in range(5, 1, -1):
                         if cango(y, x, gy, rightcol):
-                            explore(pos, i, j, gy, gx, len(paths[(y, x)][(gy, gx)]))
-
-                # if x == rightcol:
-                #     hasbelow = False
-                #     for dy in range(y+1, 6):
-                #         if hasbelow:
-                #             break
-                #         for posindex in range(4):
-                #             if posindex == i:
-                #                 continue
-                #             if any(p == (dy, x) for p in allpos[posindex]):
-                #                 hasbelow = True
-                #                 break
-
-                #     if not hasbelow:
-                #         dy = y
-                        
-                #         while isfree(dy+1, x, apos, bpos, cpos, dpos) and dy < 5:
-                #             dy += 1
-
-                #         if dy > y:
-                #             explore(pos, i, j, dy, x, distances[(y, x)][(dy, x)])
-
-                #         continue
-
-                #     canmoveup = True
-
-                #     for dy in range(1, y):
-                #         if not isfree(dy, x, apos, bpos, cpos, dpos):
-                #             canmoveup = False
-                #             break
-
-                #     if not isfree(1, x-1, apos, bpos, cpos, dpos) and not isfree(1, x+1, apos, bpos, cpos, dpos):
-                #         canmoveup = False
-
-                #     if not canmoveup:
-                #         continue
-
-                #     right = [dx for dx in range(x+1, 12)]
-                #     left = [dx for dx in range(x-1, 0, -1)]
-                    
-                #     for direction in (right, left):
-                #         for dx in direction:
-                #             if not isfree(1, dx, apos, bpos, cpos, dpos):
-                #                 break
-
-                #             if dx not in otherrightcols:
-                #                 explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
-                # else:
-                #     hasbelow = False
-                    
-                #     for dy in range(2, 6):
-                #         if hasbelow:
-                #             break
-                #         for posindex in range(4):
-                #             if posindex == i:
-                #                 continue
-                #             if any(p == (dy, rightcol) for p in allpos[posindex]):
-                #                 hasbelow = True
-                #                 break
-
-                #     if y == 1:
-                #         direction = [dx for dx in range(x+1, rightcol+1)] if x < rightcol else [dx for dx in range(x-1, rightcol-1, -1)]
-                #         valid = True
-
-                #         for dx in direction:
-                #             if not isfree(y, dx, apos, bpos, cpos, dpos):
-                #                 valid = False
-                #                 break
-
-                #         if not valid:
-                #             continue
-
-                #         for dy in range(2, 6):
-                #             if not isfree(dy, rightcol, apos, bpos, cpos, dpos):
-                #                 break
-                            
-                #             if not hasbelow:
-                #                 explore(pos, i, j, dy, rightcol, distances[(y, x)][(dy, rightcol)])
-                #     else:
-                #         canmoveup = True
-
-                #         for dy in range(1, y):
-                #             if not isfree(dy, x, apos, bpos, cpos, dpos):
-                #                 canmoveup = False
-                #                 break
-
-                #         if not canmoveup:
-                #             continue
-
-                #         right = [dx for dx in range(x+1, 12)]
-                #         left = [dx for dx in range(x-1, 0, -1)]
-                        
-                #         for direction in (right, left):
-                #             for dx in direction:
-                #                 if not isfree(1, dx, apos, bpos, cpos, dpos):
-                #                     break
-
-                #                 if dx not in otherrightcols:
-                #                     explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
+                            explore(pos, i, j, gy, rightcol, len(paths[(y, x)][(gy, rightcol)]))
+                            break
 
 
 def main():
