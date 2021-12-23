@@ -42,7 +42,10 @@ def solve(lines):
 
     states = [[0, a, b, c, d]]
     seen = {(tuple(a), tuple(b), tuple(c), tuple(d)): 0}
-    enseen = {0}
+    # enseen = Counter([0])
+    enset = {0}
+
+    exampleoptimalpassing = {3000,3010,3050,3080,3088,3688,4288,4328,9328,9378,9438,9508,10108,10113,19113,19153,30153,34153,34157,34161,41161,41169,44169}
 
     def tuplify(apos, bpos, cpos, dpos):
         return (tuple(apos), tuple(bpos), tuple(cpos), tuple(dpos))
@@ -60,9 +63,17 @@ def solve(lines):
 
     while True:
         energy, apos, bpos, cpos, dpos = heappop(states)     
-        if energy not in enseen:
-            enseen.add(energy)           
+        # if energy in exampleoptimalpassing and energy not in enseen:            
+        #     print(energy, len(seen))
+        #     if energy == 19153:
+        #         for val in exampleoptimalpassing:
+        #             print(val, enseen[val])
+        # enseen[energy] += 1        
+        
+        if energy not in enset:
             print(energy, len(seen))
+            enset.add(energy)
+        
         allpos = [apos, bpos, cpos, dpos]
 
         if apos == goala and bpos == goalb and cpos == goalc and dpos == goald:
@@ -70,7 +81,7 @@ def solve(lines):
 
         blocker = False
 
-        for i, yx in  enumerate(apos):
+        for i, yx in enumerate(apos):
             y, x = yx
             if (y, x) in blocking:
                 blocker = True
@@ -99,7 +110,7 @@ def solve(lines):
                     if t not in seen or seen[t] > energy+1:
                         seen[t] = energy+1
                         heappush(states, [energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
-        for i, yx in  enumerate(bpos):
+        for i, yx in enumerate(bpos):
             y, x = yx
             if (y, x) in blocking:
                 blocker = True
@@ -128,7 +139,7 @@ def solve(lines):
                     if t not in seen or seen[t] > energy+10:
                         seen[t] = energy+10
                         heappush(states, [energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
-        for i, yx in  enumerate(cpos):
+        for i, yx in enumerate(cpos):
             y, x = yx
             if (y, x) in blocking:
                 blocker = True
@@ -151,13 +162,13 @@ def solve(lines):
                     if containsothers:
                         continue
 
-                    dcpos = sorted(cpos[:i] + [(2, 3)] + cpos[i+1:])
+                    dcpos = sorted(cpos[:i] + [(2, 7)] + cpos[i+1:])
                     
                     t = tuplify(apos, bpos, dcpos, dpos)
                     if t not in seen or seen[t] > energy+100:
                         seen[t] = energy+100
                         heappush(states, [energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
-        for i, yx in  enumerate(dpos):
+        for i, yx in enumerate(dpos):
             y, x = yx
             if (y, x) in blocking:
                 blocker = True
@@ -180,7 +191,7 @@ def solve(lines):
                     if containsothers:
                         continue
 
-                    ddpos = sorted(dpos[:i] + [(2, 3)] + dpos[i+1:])
+                    ddpos = sorted(dpos[:i] + [(2, 9)] + dpos[i+1:])
                     
                     t = tuplify(apos, bpos, cpos, ddpos)
                     if t not in seen or seen[t] > energy+1000:
@@ -198,7 +209,13 @@ def solve(lines):
                     if any((dy, dx) in pos for pos in allpos):
                         continue
                     if dy < apos[i][0] and dx == 3:
-                        continue
+                        belowhas = False
+                        for down in range(1, 4):
+                            for pos in (bpos, cpos, dpos):
+                                if (apos[i][0]+down, dx) in pos:
+                                    belowhas = True
+                        if not belowhas:
+                            continue
                     if dy > apos[i][0] and dy == 2 and dx != 3:
                         continue
                     dapos = sorted(apos[:i] + [(dy, dx)] + apos[i+1:])
@@ -214,7 +231,13 @@ def solve(lines):
                     if any((dy, dx) in pos for pos in allpos):
                         continue
                     if dy < bpos[i][0] and dx == 5:
-                        continue
+                        belowhas = False
+                        for down in range(1, 4):
+                            for pos in (apos, cpos, dpos):
+                                if (bpos[i][0]+down, dx) in pos:
+                                    belowhas = True
+                        if not belowhas:
+                            continue
                     if dy > bpos[i][0] and dy == 2 and dx != 5:
                         continue
                     dbpos = sorted(bpos[:i] + [(dy, dx)] + bpos[i+1:])
@@ -230,7 +253,13 @@ def solve(lines):
                     if any((dy, dx) in pos for pos in allpos):
                         continue
                     if dy < cpos[i][0] and dx == 7:
-                        continue
+                        belowhas = False
+                        for down in range(1, 4):
+                            for pos in (apos, bpos, dpos):
+                                if (cpos[i][0]+down, dx) in pos:
+                                    belowhas = True
+                        if not belowhas:
+                            continue
                     if dy > cpos[i][0] and dy == 2 and dx != 7:
                         continue
                     dcpos = sorted(cpos[:i] + [(dy, dx)] + cpos[i+1:])
@@ -240,13 +269,19 @@ def solve(lines):
                         heappush(states, [energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
         if dpos != goald:
             for i in range(4):
-                for dy, dx in neighs(dpos[i][0], dpos[i][1]):
+                for dy, dx in neighs(dpos[i][0], dpos[i][1]):                    
                     if (dy, dx) not in open:
                         continue
                     if any((dy, dx) in pos for pos in allpos):
-                        continue
+                        continue                                        
                     if dy < dpos[i][0] and dx == 9:
-                        continue
+                        belowhas = False
+                        for down in range(1, 4):
+                            for pos in (apos, bpos, cpos):
+                                if (dpos[i][0]+down, dx) in pos:
+                                    belowhas = True
+                        if not belowhas:
+                            continue
                     if dy > dpos[i][0] and dy == 2 and dx != 9:
                         continue
                     ddpos = sorted(dpos[:i] + [(dy, dx)] + dpos[i+1:])
