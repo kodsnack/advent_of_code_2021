@@ -29,6 +29,26 @@ def heuristic(apos, bpos, cpos, dpos):
     return count
 
 
+def bfs(open, start):
+    d = defaultdict(int)
+    d[start] = 0
+    frontier = [(0, start)]
+
+    for distance, node in frontier:
+        y, x = node
+
+        for dy, dx in neighs(y, x):
+            if (dy, dx) in open and (dy, dx) not in d:
+                d[(dy, dx)] = distance+1
+                frontier.append((distance+1, (dy, dx)))
+
+    return d
+
+
+def get_distances(open):    
+    return {a: bfs(open, a) for a in open}
+
+
 def solve(lines):
     height = len(lines)
     width = len(lines[0])
@@ -50,9 +70,11 @@ def solve(lines):
                 c.append((y, x))
             if lines[y][x] == 'D':
                 d.append((y, x))
-            if lines[y][x] != '#':
+            if lines[y][x] not in ' #':
                 open.add((y, x))
 
+    distances = get_distances(open)
+    
     blocking = {(1, 3), (1, 5), (1, 7), (1, 9)}
     goala = [(2, 3), (3, 3), (4, 3), (5, 3)]
     goalb = [(2, 5), (3, 5), (4, 5), (5, 5)]
@@ -219,229 +241,6 @@ def solve(lines):
 
                                 if dx not in otherrightcols:
                                     explore(pos, i, j, 1, dx, (y-1) + abs(dx-x))
-
-        # blocker = False
-
-        # for i, yx in enumerate(apos):
-        #     y, x = yx
-        #     if (y, x) in blocking:
-        #         blocker = True
-        #         for deltax in (-1, 1):
-        #             if isfree(y, x+deltax, apos, bpos, cpos, dpos):
-        #                 dapos = sorted(apos[:i] + [(y, x+deltax)] + apos[i+1:])
-        #                 t = tuplify(dapos, bpos, cpos, dpos)
-        #                 if t not in seen or seen[t] > energy+1:
-        #                     seen[t] = energy+1
-        #                     dh = heuristic(dapos, bpos, cpos, dpos)
-        #                     heappush(states, [dh+energy+1, energy+1, dapos, list(bpos), list(cpos), list(dpos)])
-        #         if x == 3 and isfree(2, 3, apos, bpos, cpos, dpos):
-        #             containsothers = False
-                    
-        #             for pos in (bpos, cpos, dpos):
-        #                 for dy, dx in pos:
-        #                     if (dy, dx) in ((3, 3), (4, 3), (5, 3)):
-        #                         containsothers = True
-        #                         break
-
-        #             if containsothers:
-        #                 continue
-
-        #             dapos = sorted(apos[:i] + [(2, 3)] + apos[i+1:])
-
-        #             t = tuplify(dapos, bpos, cpos, dpos)
-        #             if t not in seen or seen[t] > energy+1:
-        #                 seen[t] = energy+1
-        #                 dh = heuristic(dapos, bpos, cpos, dpos)
-        #                 heappush(states, [dh+energy+1, energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
-        # for i, yx in enumerate(bpos):
-        #     y, x = yx
-        #     if (y, x) in blocking:
-        #         blocker = True
-        #         for deltax in (-1, 1):
-        #             if isfree(y, x+deltax, apos, bpos, cpos, dpos):
-        #                 dbpos = sorted(bpos[:i] + [(y, x+deltax)] + bpos[i+1:])
-        #                 t = tuplify(apos, dbpos, cpos, dpos)
-        #                 if t not in seen or seen[t] > energy+10:
-        #                     seen[t] = energy+10
-        #                     dh = heuristic(apos, dbpos, cpos, dpos)
-        #                     heappush(states, [dh+energy+10, energy+10, list(apos), dbpos, list(cpos), list(dpos)])
-        #         if x == 5 and isfree(2, 5, apos, bpos, cpos, dpos):
-        #             containsothers = False
-                    
-        #             for pos in (apos, cpos, dpos):
-        #                 for dy, dx in pos:
-        #                     if (dy, dx) in ((3, 5), (4, 5), (5, 5)):
-        #                         containsothers = True
-        #                         break
-
-        #             if containsothers:
-        #                 continue
-
-        #             dbpos = sorted(bpos[:i] + [(2, 5)] + bpos[i+1:])
-
-        #             t = tuplify(apos, dbpos, cpos, dpos)
-        #             if t not in seen or seen[t] > energy+10:
-        #                 seen[t] = energy+10
-        #                 dh = heuristic(apos, dbpos, cpos, dpos)
-        #                 heappush(states, [dh+energy+10, energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
-        # for i, yx in enumerate(cpos):
-        #     y, x = yx
-        #     if (y, x) in blocking:
-        #         blocker = True
-        #         for deltax in (-1, 1):
-        #             if isfree(y, x+deltax, apos, bpos, cpos, dpos):
-        #                 dcpos = sorted(cpos[:i] + [(y, x+deltax)] + cpos[i+1:])
-        #                 t = tuplify(apos, bpos, dcpos, dpos)
-        #                 if t not in seen or seen[t] > energy+100:
-        #                     seen[t] = energy+100
-        #                     dh = heuristic(apos, bpos, dcpos, dpos)
-        #                     heappush(states, [dh+energy+100, energy+100, list(apos), list(bpos), dcpos, list(dpos)])
-        #         if x == 7 and isfree(2, 7, apos, bpos, cpos, dpos):
-        #             containsothers = False
-                    
-        #             for pos in (apos, bpos, dpos):
-        #                 for dy, dx in pos:
-        #                     if (dy, dx) in ((3, 7), (4, 7), (5, 7)):
-        #                         containsothers = True
-        #                         break
-
-        #             if containsothers:
-        #                 continue
-
-        #             dcpos = sorted(cpos[:i] + [(2, 7)] + cpos[i+1:])
-                    
-        #             t = tuplify(apos, bpos, dcpos, dpos)
-        #             if t not in seen or seen[t] > energy+100:
-        #                 seen[t] = energy+100
-        #                 dh = heuristic(apos, bpos, dcpos, dpos)
-        #                 heappush(states, [dh+energy+100, energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
-        # for i, yx in enumerate(dpos):
-        #     y, x = yx
-        #     if (y, x) in blocking:
-        #         blocker = True
-        #         for deltax in (-1, 1):
-        #             if isfree(y, x+deltax, apos, bpos, cpos, dpos):
-        #                 ddpos = sorted(dpos[:i] + [(y, x+deltax)] + dpos[i+1:])
-        #                 t = tuplify(apos, bpos, cpos, ddpos)
-        #                 if t not in seen or seen[t] > energy+1000:
-        #                     seen[t] = energy+1000
-        #                     dh = heuristic(apos, bpos, cpos, ddpos)
-        #                     heappush(states, [dh+energy+1000, energy+1000, list(apos), list(bpos), list(cpos), ddpos])
-        #         if x == 9 and isfree(2, 9, apos, bpos, cpos, dpos):
-        #             containsothers = False
-                    
-        #             for pos in (apos, bpos, cpos):
-        #                 for dy, dx in pos:
-        #                     if (dy, dx) in ((3, 9), (4, 9), (5, 9)):
-        #                         containsothers = True
-        #                         break
-
-        #             if containsothers:
-        #                 continue
-
-        #             ddpos = sorted(dpos[:i] + [(2, 9)] + dpos[i+1:])
-                    
-        #             t = tuplify(apos, bpos, cpos, ddpos)
-        #             if t not in seen or seen[t] > energy+1000:
-        #                 seen[t] = energy+1000
-        #                 dh = heuristic(apos, bpos, cpos, ddpos)
-        #                 heappush(states, [dh+energy+1000, energy+1000, list(apos), list(bpos), list(cpos), list(ddpos)])
-
-        # if blocker:
-        #     continue
-
-        # if apos != goala:
-        #     for i in range(len(apos)):
-        #         for dy, dx in neighs(apos[i][0], apos[i][1]):
-        #             if (dy, dx) not in open:
-        #                 continue
-        #             if any((dy, dx) in pos for pos in allpos):
-        #                 continue
-        #             belowhas = False
-        #             for down in range(1, 4):
-        #                 for pos in (apos, bpos, cpos):
-        #                     if (dpos[i][0]+down, dx) in pos:
-        #                         belowhas = True     
-        #                         break            
-        #             if dy < apos[i][0] and dx == 3 and not belowhas:
-        #                 continue
-        #             if dy > apos[i][0] and dy == 2 and (dx != 3 or belowhas):
-        #                 continue
-        #             dapos = sorted(apos[:i] + [(dy, dx)] + apos[i+1:])
-        #             t = tuplify(dapos, bpos, cpos, dpos)
-        #             if t not in seen or seen[t] > energy+1:
-        #                 seen[t] = energy+1
-        #                 dh = heuristic(dapos, bpos, cpos, dpos)
-        #                 heappush(states, [dh+energy+1, energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
-        # if bpos != goalb:
-        #     for i in range(len(bpos)):
-        #         for dy, dx in neighs(bpos[i][0], bpos[i][1]):
-        #             if (dy, dx) not in open:
-        #                 continue
-        #             if any((dy, dx) in pos for pos in allpos):
-        #                 continue
-        #             belowhas = False
-        #             for down in range(1, 4):
-        #                 for pos in (apos, bpos, cpos):
-        #                     if (dpos[i][0]+down, dx) in pos:
-        #                         belowhas = True     
-        #                         break            
-        #             if dy < bpos[i][0] and dx == 5 and not belowhas:
-        #                 continue
-        #             if dy > bpos[i][0] and dy == 2 and (dx != 5 or belowhas):
-        #                 continue
-        #             dbpos = sorted(bpos[:i] + [(dy, dx)] + bpos[i+1:])
-        #             t = tuplify(apos, dbpos, cpos, dpos)
-        #             if t not in seen or seen[t] > energy+10:
-        #                 seen[t] = energy+10
-        #                 dh = heuristic(apos, dbpos, cpos, dpos)
-        #                 heappush(states, [dh+energy+10, energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
-        # if cpos != goalc:
-        #     for i in range(len(cpos)):
-        #         for dy, dx in neighs(cpos[i][0], cpos[i][1]):
-        #             if (dy, dx) not in open:
-        #                 continue
-        #             if any((dy, dx) in pos for pos in allpos):
-        #                 continue
-        #             belowhas = False
-        #             for down in range(1, 4):
-        #                 for pos in (apos, bpos, cpos):
-        #                     if (dpos[i][0]+down, dx) in pos:
-        #                         belowhas = True     
-        #                         break            
-        #             if dy < cpos[i][0] and dx == 7 and not belowhas:
-        #                 continue
-        #             if dy > cpos[i][0] and dy == 2 and (dx != 7 or belowhas):
-        #                 continue
-        #             dcpos = sorted(cpos[:i] + [(dy, dx)] + cpos[i+1:])
-        #             t = tuplify(apos, bpos, dcpos, dpos)
-        #             if t not in seen or seen[t] > energy+100:
-        #                 seen[t] = energy+100
-        #                 dh = heuristic(apos, bpos, dcpos, dpos)
-        #                 heappush(states, [dh+energy+100, energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
-        # if dpos != goald:
-        #     for i in range(len(dpos)):
-        #         for dy, dx in neighs(dpos[i][0], dpos[i][1]):                    
-        #             if (dy, dx) not in open:
-        #                 continue
-        #             if any((dy, dx) in pos for pos in allpos):
-        #                 continue                   
-        #             belowhas = False
-        #             for down in range(1, 4):
-        #                 for pos in (apos, bpos, cpos):
-        #                     if (dpos[i][0]+down, dx) in pos:
-        #                         belowhas = True     
-        #                         break            
-        #             if dy < dpos[i][0] and dx == 9 and not belowhas:
-        #                 continue
-        #             if dy > dpos[i][0] and dy == 2 and (dx != 9 or belowhas):
-        #                 continue
-        #             ddpos = sorted(dpos[:i] + [(dy, dx)] + dpos[i+1:])
-        #             t = tuplify(apos, bpos, cpos, ddpos)
-        #             if t not in seen or seen[t] > energy+1000:
-        #                 seen[t] = energy+1000
-        #                 dh = heuristic(apos, bpos, cpos, ddpos)
-        #                 heappush(states, [dh+energy+1000, energy+1000, list(apos), list(bpos), list(cpos), list(ddpos)])
 
 
 def main():
