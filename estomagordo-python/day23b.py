@@ -86,7 +86,7 @@ def solve(lines):
         # enseen[energy] += 1        
         
         if energy not in enset:
-            print(energy, len(seen))
+            print(h, energy, len(seen))
             enset.add(energy)
         
         allpos = [apos, bpos, cpos, dpos]
@@ -225,7 +225,7 @@ def solve(lines):
             continue
 
         if apos != goala:
-            for i in range(4):
+            for i in range(len(apos)):
                 for dy, dx in neighs(apos[i][0], apos[i][1]):
                     if (dy, dx) not in open:
                         continue
@@ -248,7 +248,7 @@ def solve(lines):
                         dh = heuristic(dapos, bpos, cpos, dpos)
                         heappush(states, [dh, energy+1, list(dapos), list(bpos), list(cpos), list(dpos)])
         if bpos != goalb:
-            for i in range(4):
+            for i in range(len(apos)):
                 for dy, dx in neighs(bpos[i][0], bpos[i][1]):
                     if (dy, dx) not in open:
                         continue
@@ -271,7 +271,7 @@ def solve(lines):
                         dh = heuristic(apos, dbpos, cpos, dpos)
                         heappush(states, [dh, energy+10, list(apos), list(dbpos), list(cpos), list(dpos)])
         if cpos != goalc:
-            for i in range(4):
+            for i in range(len(apos)):
                 for dy, dx in neighs(cpos[i][0], cpos[i][1]):
                     if (dy, dx) not in open:
                         continue
@@ -294,7 +294,7 @@ def solve(lines):
                         dh = heuristic(apos, bpos, dcpos, dpos)
                         heappush(states, [dh, energy+100, list(apos), list(bpos), list(dcpos), list(dpos)])
         if dpos != goald:
-            for i in range(4):
+            for i in range(len(apos)):
                 for dy, dx in neighs(dpos[i][0], dpos[i][1]):                    
                     if (dy, dx) not in open:
                         continue
@@ -334,12 +334,14 @@ def main():
             row += ' ' * (width-len(row))
             lines.append(row)
 
-            if len(lines) == 3:
-                lines.append(extra1)
-                lines.append(extra2)
+            # if len(lines) == 3:
+            #     lines.append(extra1)
+            #     lines.append(extra2)
             
     return solve(lines)
 
 
 if __name__ == '__main__':
     print(main())
+
+# 58535 too high
