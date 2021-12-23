@@ -80,6 +80,7 @@ def solve(lines):
     goalb = [(2, 5), (3, 5), (4, 5), (5, 5)]
     goalc = [(2, 7), (3, 7), (4, 7), (5, 7)]
     goald = [(2, 9), (3, 9), (4, 9), (5, 9)]
+    goals = [goala, goalb, goalc, goald]
 
     a.sort()
     b.sort()
@@ -162,7 +163,7 @@ def solve(lines):
                             dy += 1
 
                         if dy > y:
-                            explore(pos, i, j, dy, x, dy-y)
+                            explore(pos, i, j, dy, x, distances[(y, x)][(dy, x)])
 
                         continue
 
@@ -188,7 +189,7 @@ def solve(lines):
                                 break
 
                             if dx not in otherrightcols:
-                                explore(pos, i, j, 1, dx, abs(dx-x) + (y-1))
+                                explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
                 else:
                     hasbelow = False
                     
@@ -219,7 +220,7 @@ def solve(lines):
                                 break
                             
                             if not hasbelow:
-                                explore(pos, i, j, dy, rightcol, dy-1 + abs(rightcol-x))
+                                explore(pos, i, j, dy, rightcol, distances[(y, x)][(dy, rightcol)])
                     else:
                         canmoveup = True
 
@@ -240,7 +241,7 @@ def solve(lines):
                                     break
 
                                 if dx not in otherrightcols:
-                                    explore(pos, i, j, 1, dx, (y-1) + abs(dx-x))
+                                    explore(pos, i, j, 1, dx, distances[(y, x)][(1, dx)])
 
 
 def main():
