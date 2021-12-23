@@ -5,6 +5,29 @@ from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
 
 
+def heuristic(apos, bpos, cpos, dpos):
+        count = 0
+        allpos = [apos, bpos, cpos, dpos]
+
+        def scorepos(j, pos):
+            score = 0
+
+            for i, yx in enumerate(pos):
+                y, x = yx
+
+                if x == 3 + j*2:
+                    score += abs(y-(i+2)) * 10**j
+                else:
+                    score += (y-1 + abs(x-(3 + j*2)) + i + 1) * 10**j
+
+            return score
+
+        for j, pos in enumerate(allpos):
+            count += min(scorepos(j, p) for p in permutations(pos))            
+
+        return count
+
+
 def solve(lines):
     height = len(lines)
     width = len(lines[0])
@@ -55,21 +78,6 @@ def solve(lines):
         if (y, x) in cpos:
             return False
         return (y, x) not in dpos
-
-    def heuristic(apos, bpos, cpos, dpos):
-        count = 0
-        allpos = [apos, bpos, cpos, dpos]
-
-        for j, pos in enumerate(allpos):
-            for i, yx in enumerate(pos):
-                y, x = yx
-
-                if x == 3 + j*2:
-                    count += abs(y-(i+2))
-                else:
-                    count += y-1 + abs(x-(3 + j*2)) + i + 1
-
-        return count
         
     states = [[heuristic(a, b, c, d), 0, a, b, c, d]]
     seen = {(tuple(a), tuple(b), tuple(c), tuple(d)): 0}
@@ -334,9 +342,9 @@ def main():
             row += ' ' * (width-len(row))
             lines.append(row)
 
-            # if len(lines) == 3:
-            #     lines.append(extra1)
-            #     lines.append(extra2)
+            if len(lines) == 3:
+                lines.append(extra1)
+                lines.append(extra2)
             
     return solve(lines)
 
