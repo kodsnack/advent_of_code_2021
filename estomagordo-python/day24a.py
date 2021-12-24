@@ -86,7 +86,7 @@ def solve(instructions):
     goalcount = 0
     lastreached = -1
 
-    def helper(i, x, y, z):
+    def helper(i, x, y, z, word):
         nonlocal count, goalcount, lastreached
         
         t = (i, x, y, z)
@@ -105,26 +105,15 @@ def solve(instructions):
             for w in range(9, 0, -1):
                 _, __, dz = calcfor(w, x, y, z, programettes[i][1:])
                 if dz == 0:
+                    print(word + str(w))
                     goalcount += 1
-                    return str(w)
-                return ''
-
-        retlen = -1
-        retval = ''
+            return
         
         for w in range(1, 10):
             dx, dy, dz = calcfor(w, x, y, z, programettes[i][1:])
-            s = str(w) + helper(i+1, dx, dy, dz)
-            l = len(s)
-            
-            if (l > retlen) or (l == retlen and s > retval):
-                retlen = l
-                retval = s
+            helper(i+1, dx, dy, dz, word+str(w))
 
-        seen[t] = retval
-        return retval
-
-    return helper(0, 0, 0, 0)
+    return helper(0, 0, 0, 0, '')
 
 
 
