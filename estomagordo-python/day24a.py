@@ -116,25 +116,25 @@ def solve(instructions):
 
     return sorted(found)
 
-    outcomes = {}
+    # outcomes = {}
 
-    for i, chunk in enumerate(chunks(instructions, 18)):
-        print(i, len(outcomes))
-        chunkout = defaultdict(int)
+    # for i, chunk in enumerate(chunks(instructions, 18)):
+    #     print(i, len(outcomes))
+    #     chunkout = defaultdict(int)
 
-        if i == 0:
-            for w in range(1, 10):                
-                retx, rety, retz = calcfor(w, 0, 0, 0, chunk)
-                chunkout[(w, 0, 0, 0)] = (retx, rety, retz)
-        else:
-            for x, y, z in outcomes.values():
-                for w in range(1, 10):
-                    retx, rety, retz = calcfor(w, x, y, z, chunk)
-                    chunkout[(retx, rety, retz)] = (retx, rety, retz)
+    #     if i == 0:
+    #         for w in range(1, 10):                
+    #             retx, rety, retz = calcfor(w, 0, 0, 0, chunk)
+    #             chunkout[(w, 0, 0, 0)] = (retx, rety, retz)
+    #     else:
+    #         for x, y, z in outcomes.values():
+    #             for w in range(1, 10):
+    #                 retx, rety, retz = calcfor(w, x, y, z, chunk)
+    #                 chunkout[(retx, rety, retz)] = (retx, rety, retz)
 
-        outcomes = chunkout
+    #     outcomes = chunkout
     
-    return max(oc[0] for oc in outcomes if oc[-1] == 0)
+    # return max(oc[0] for oc in outcomes if oc[-1] == 0)
 
     # res = ''
     
@@ -156,9 +156,9 @@ def solve(instructions):
     #         if not res:
     #             print(num)
 
-    while lo < hi:
-        mid = (lo+hi)//2
-
+    # while lo < hi:
+    #     mid = (lo+hi)//2
+    for mid in (11912814611156, 21912814611157, 31912814611158, 41912814611159):
         if '0' in str(mid):
             print('zeroes', mid)    
             s = str(mid)
