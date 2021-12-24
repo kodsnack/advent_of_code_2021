@@ -9,11 +9,11 @@ def isnum(s):
     return s.isdigit() or (s[0] == '-' and s[1:].isdigit())
 
 def solve(instructions):
-    def isvalid(mid):
+    def isvalid(mid, inst):
         pos = 0
         values = defaultdict(int)
 
-        for i, ins in enumerate(instructions):
+        for i, ins in enumerate(inst):
             command = ins[0]
 
             if command == 'inp':
@@ -39,9 +39,75 @@ def solve(instructions):
             if command == 'eql':
                 a, b = ins[1:]
                 val = int(b) if isnum(b) else values[b]
-                values[a] = 1 if a == val else 0
+                values[a] = 1 if values[a] == val else 0
         
         return values['z'] == 0
+
+    # seen = {}
+
+    def calcfor(w, x, y, z, chunk):
+        values = {'w': w, 'x': x, 'y': y, 'z': z}
+
+        # t = (w, x, y, z, chunk)
+
+        # if t in seen:
+        #     return seen[]
+
+        for ins in chunk:
+            command = ins[0]
+            
+            if command == 'add':
+                a, b = ins[1:]
+                val = int(b) if isnum(b) else values[b]
+                values[a] += val
+            if command == 'mul':
+                a, b = ins[1:]
+                val = int(b) if isnum(b) else values[b]
+                values[a] *= val
+            if command == 'div':
+                a, b = ins[1:]
+                val = int(b) if isnum(b) else values[b]
+                values[a] //= val
+            if command == 'mod':
+                a, b = ins[1:]
+                val = int(b) if isnum(b) else values[b]
+                values[a] %= val
+            if command == 'eql':
+                a, b = ins[1:]
+                val = int(b) if isnum(b) else values[b]
+                values[a] = 1 if (values[a] == val) else 0
+        
+        return (values['x'], values['y'], values['z'])
+
+    outcomes = []
+
+    for i, chunk in enumerate(chunks(instructions, 18)):
+        print(i, len(outcomes))
+        chunkout = set()
+
+        if i == 0:
+            for w in range(1, 10):                
+                retx, rety, retz = calcfor(w, 0, 0, 0, chunk)
+                chunkout.add((str(w), retx, rety, retz))
+        else:
+            for sw, x, y, z in outcomes:
+                for w in range(1, 10):
+                    retx, rety, retz = calcfor(w, x, y, z, chunk)
+                    chunkout.add((sw + str(w), retx, rety, retz))
+
+        outcomes = chunkout
+    
+    return max(oc[0] for oc in outcomes if oc[-1] == 0)
+
+    # res = ''
+    
+    # for chunk in chunks(instructions, 18):
+    #     for val in range(9, 0, -1):
+    #         if isvalid(val, chunk):
+    #             res += str(val)
+    #             break
+
+    # return ''.join(res)
     
     largest = 0
     lo = 11111111111111
@@ -66,13 +132,15 @@ def solve(instructions):
 
             mid = int(s)
 
-        if isvalid(mid):
+        if isvalid(mid, instructions):
             largest = max(largest, mid)
             print('best', mid)
             lo = mid+1
         else:
             print('fails', mid)
             hi = mid-1
+
+    return largest
 
 
 def main():
