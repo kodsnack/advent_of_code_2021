@@ -79,6 +79,36 @@ def solve(instructions):
         
         return (values['x'], values['y'], values['z'])
 
+    programettes = list(chunks(instructions, 18))
+    n = len(programettes)
+    seen = set()
+
+    def helper(i, x, y, z):
+        if i == n-1:
+            for w in range(9, 0, -1):
+                _, __, dz = calcfor(w, x, y, z, programettes[i][1:])
+                if dz == 0:
+                    return str(w)
+                return ''
+
+        retlen = -1
+        retval = ''
+        
+        for w in range(1, 10):
+            dx, dy, dz = calcfor(w, x, y, z, programettes[i][1:])
+            s = str(w) + helper(i+1, dx, dy, dz)
+            l = len(s)
+            
+            if (l > retlen) or (l == retlen and s > retval):
+                retlen = l
+                retval = s
+
+        return retval
+
+    return helper(0, 0, 0, 0)
+
+
+
     outcomes = {}
 
     for i, chunk in enumerate(chunks(instructions, 18)):
@@ -88,13 +118,12 @@ def solve(instructions):
         if i == 0:
             for w in range(1, 10):                
                 retx, rety, retz = calcfor(w, 0, 0, 0, chunk)
-                chunkout[(retx, rety, retz)] = str(w)
+                chunkout[(w, 0, 0, 0)] = (retx, rety, retz)
         else:
-            for x, y, z in outcomes.keys():
-                val = outcomes[(x, y, z)]
+            for x, y, z in outcomes.values():
                 for w in range(1, 10):
                     retx, rety, retz = calcfor(w, x, y, z, chunk)
-                    chunkout[(retx, rety, retz)] = val + str(w)
+                    chunkout[(retx, rety, retz)] = (retx, rety, retz)
 
         outcomes = chunkout
     
