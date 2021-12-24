@@ -106,7 +106,7 @@ def solve(instructions):
                     goalcount += 1
             return
         
-        for w in range(1, 10):
+        for w in range(9, 0, -1):
             dx, dy, dz = calcfor(w, x, y, z, programettes[i][1:])
             if (i+1, dx, dy, dz) not in seen:
                 seen.add((i+1, dx, dy, dz))
