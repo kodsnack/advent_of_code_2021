@@ -1,5 +1,5 @@
 from collections import Counter, defaultdict, deque
-from functools import reduce
+from functools import lru_cache, reduce
 from heapq import heappop, heappush
 from itertools import combinations, permutations, product
 from helpers import chunks, chunks_with_overlap, columns, digits, distance, distance_sq, eight_neighs, eight_neighs_bounded, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded
@@ -44,7 +44,7 @@ def solve(instructions):
         return values['z'] == 0
 
     # seen = {}
-
+    
     def calcfor(w, x, y, z, chunk):
         values = {'w': w, 'x': x, 'y': y, 'z': z}
 
@@ -82,12 +82,26 @@ def solve(instructions):
     programettes = list(chunks(instructions, 18))
     n = len(programettes)
     seen = set()
+    count = 0
+    goalcount = 0
+    lastreached = -1
 
+    @lru_cache(maxsize=None)
     def helper(i, x, y, z):
+        nonlocal count, goalcount, lastreached
+
+        lastreached = max(lastreached, i)
+
+        count += 1
+
+        if count % 10**5 == 0:
+            print(count, goalcount, lastreached)
+
         if i == n-1:
             for w in range(9, 0, -1):
                 _, __, dz = calcfor(w, x, y, z, programettes[i][1:])
                 if dz == 0:
+                    goalcount += 1
                     return str(w)
                 return ''
 
