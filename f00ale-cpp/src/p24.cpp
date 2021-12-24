@@ -60,9 +60,13 @@ std::tuple<std::string, std::string> p24(const std::string &pinput) {
         }
     }
 
-    std::vector<std::tuple<int, int, int>> params;
+    std::vector<std::tuple<int, int, int, int64_t>> params;
+    int64_t tmp_max = 1;
     for (auto n: nums) {
-        params.emplace_back(n[2], n[3], n[9]);
+        // tmp_max holds maximum value that z can have to be able to reach 0
+        if(n[2] == 1) tmp_max *= 26;
+        else tmp_max /= 26;
+        params.emplace_back(n[2], n[3], n[9], tmp_max);
     }
 
     auto step = [](int64_t z, int inp, int p1, int p2, int p3) {
@@ -77,12 +81,14 @@ std::tuple<std::string, std::string> p24(const std::string &pinput) {
 
     std::unordered_map<int64_t,std::tuple<int64_t,int64_t>> zs;
     zs[0] = {0,0};
-    for (auto[p1, p2, p3] : params) {
+    for (auto[p1, p2, p3, max] : params) {
         decltype(zs) nsz;
         for(auto [z,n] : zs) {
             auto [minn,maxn] = n;
             for (int d = 1; d < 10; d++) {
                 auto nz = step(z, d, p1, p2, p3);
+                if(nz > max) continue;
+
                 auto nmin = minn*10+d;
                 auto nmax = maxn*10+d;
 
