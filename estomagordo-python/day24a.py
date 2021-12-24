@@ -81,26 +81,26 @@ def solve(instructions):
 
     programettes = list(chunks(instructions, 18))
     n = len(programettes)
-    seen = {(0, 0, 0, 0)}
+    seen = {(0, 0)}
 
-    frontier = deque([(0, 0, 0, 0, '')])
+    frontier = deque([(0, 0, '')])
 
     while True:
-        i, x, y, z, word = frontier.popleft()
+        i, z, word = frontier.popleft()
         if len(seen) % 10**6 == 0:
             print(len(seen), len(frontier))
 
         if i == n-1:
             for w in range(1, 10):
-                _, __, dz = calcfor(w, x, y, z, programettes[i][1:])
+                _, __, dz = calcfor(w, 0, 0, z, programettes[i][1:])
                 if dz == 0:
                     return word + str(w)
         
         for w in range(9, 0, -1):
-            dx, dy, dz = calcfor(w, x, y, z, programettes[i][1:])
-            if (i+1, dx, dy, dz) not in seen:
-                seen.add((i+1, dx, dy, dz))
-                frontier.append((i+1, dx, dy, dz, word+str(w)))
+            dx, dy, dz = calcfor(w, 0, 0, z, programettes[i][1:])
+            if (i+1, dz) not in seen:
+                seen.add((i+1, dz))
+                frontier.append((i+1, dz, word+str(w)))
 
 
 def main():
