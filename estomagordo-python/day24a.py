@@ -85,23 +85,23 @@ def solve(instructions):
     count = 0
     goalcount = 0
     lastreached = -1
+    found = {(0, 0, 0, 0)}
 
     def helper(i, x, y, z, word):
         nonlocal count, goalcount, lastreached
-        
-        t = (i, x, y, z)
 
         lastreached = max(lastreached, i)
 
         count += 1
 
-        if count % 10**5 == 0:
+        if count % 10**6 == 0:
             print(count, goalcount, lastreached, len(seen))
 
         if i == n-1:
-            for w in range(9, 0, -1):
+            for w in range(1, 10):
                 _, __, dz = calcfor(w, x, y, z, programettes[i][1:])
                 if dz == 0:
+                    found.add(word + str(w))
                     print(word + str(w))
                     goalcount += 1
             return
@@ -112,9 +112,9 @@ def solve(instructions):
                 seen.add((i+1, dx, dy, dz))
                 helper(i+1, dx, dy, dz, word+str(w))
 
-    return helper(0, 0, 0, 0, '')
+    helper(0, 0, 0, 0, '')
 
-
+    return sorted(found)
 
     outcomes = {}
 
