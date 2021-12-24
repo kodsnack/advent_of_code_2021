@@ -81,7 +81,7 @@ def solve(instructions):
 
     programettes = list(chunks(instructions, 18))
     n = len(programettes)
-    seen = {}
+    seen = set()
     count = 0
     goalcount = 0
     lastreached = -1
@@ -90,9 +90,6 @@ def solve(instructions):
         nonlocal count, goalcount, lastreached
         
         t = (i, x, y, z)
-
-        if t in seen:
-            return seen[t]
 
         lastreached = max(lastreached, i)
 
@@ -111,7 +108,9 @@ def solve(instructions):
         
         for w in range(1, 10):
             dx, dy, dz = calcfor(w, x, y, z, programettes[i][1:])
-            helper(i+1, dx, dy, dz, word+str(w))
+            if (i+1, dx, dy, dz) not in seen:
+                seen.add((i+1, dx, dy, dz))
+                helper(i+1, dx, dy, dz, word+str(w))
 
     return helper(0, 0, 0, 0, '')
 
@@ -193,3 +192,8 @@ def main():
 
 if __name__ == '__main__':
     print(main())
+
+# 11912814611156 wrong-
+# 41912814611159 wrong
+# 31912814611158 not tried
+# 21912814611157 not tried
