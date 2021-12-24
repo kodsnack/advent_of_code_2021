@@ -79,21 +79,22 @@ def solve(instructions):
         
         return (values['x'], values['y'], values['z'])
 
-    outcomes = []
+    outcomes = {}
 
     for i, chunk in enumerate(chunks(instructions, 18)):
         print(i, len(outcomes))
-        chunkout = set()
+        chunkout = defaultdict(int)
 
         if i == 0:
             for w in range(1, 10):                
                 retx, rety, retz = calcfor(w, 0, 0, 0, chunk)
-                chunkout.add((str(w), retx, rety, retz))
+                chunkout[(retx, rety, retz)] = str(w)
         else:
-            for sw, x, y, z in outcomes:
+            for x, y, z in outcomes.keys():
+                val = outcomes[(x, y, z)]
                 for w in range(1, 10):
                     retx, rety, retz = calcfor(w, x, y, z, chunk)
-                    chunkout.add((sw + str(w), retx, rety, retz))
+                    chunkout[(retx, rety, retz)] = val + str(w)
 
         outcomes = chunkout
     
