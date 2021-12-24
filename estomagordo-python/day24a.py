@@ -81,21 +81,25 @@ def solve(instructions):
 
     programettes = list(chunks(instructions, 18))
     n = len(programettes)
-    seen = set()
+    seen = {}
     count = 0
     goalcount = 0
     lastreached = -1
 
-    @lru_cache(maxsize=None)
     def helper(i, x, y, z):
         nonlocal count, goalcount, lastreached
+        
+        t = (i, x, y, z)
+
+        if t in seen:
+            return seen[t]
 
         lastreached = max(lastreached, i)
 
         count += 1
 
         if count % 10**5 == 0:
-            print(count, goalcount, lastreached)
+            print(count, goalcount, lastreached, len(seen))
 
         if i == n-1:
             for w in range(9, 0, -1):
@@ -117,6 +121,7 @@ def solve(instructions):
                 retlen = l
                 retval = s
 
+        seen[t] = retval
         return retval
 
     return helper(0, 0, 0, 0)
