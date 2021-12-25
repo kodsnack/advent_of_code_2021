@@ -48,7 +48,7 @@ add_library(aoc21_problems OBJECT
         src/p22.cpp
         src/p23.cpp
         src/p24.cpp
-#        src/p25.cpp
+        src/p25.cpp
         )
 
 add_executable(aoc21 src/main.cpp)
