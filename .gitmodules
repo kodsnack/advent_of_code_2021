@@ -80,3 +80,6 @@
 [submodule "plux-erlang"]
 	path = plux-erlang
 	url = https://github.com/plux/advent2021.git
+[submodule "AxlLind-rust"]
+	path = AxlLind-rust
+	url = git@github.com:AxlLind/AdventOfCode2021.git
