@@ -25,26 +25,48 @@ std::tuple<std::string, std::string> p25(const std::string & input) {
     
     while(true) {
         int moves = 0;
-        for (const auto m: {'>', 'v'}) {
-            decltype(v) nv(v.size());
-            for (auto &&ns: nv) ns = std::string(v[0].size(), '.');
-            const auto o = (m == '>' ? 'v' : '>');
-            const auto dr = (m == 'v' ? 1 : 0);
-            const auto dc = (m == '>' ? 1 : 0);
-            for (size_t r = 0; r < v.size(); r++) {
-                for (size_t c = 0; c < v[0].size(); c++) {
-                    if (v[r][c] == m) {
-                        if (v[(r + dr) % rs][(c + dc) % cs] == '.') {
-                            nv[(r + dr) % rs][(c + dc) % cs] = m;
+        {
+            for (size_t r = 0; r < rs; r++) {
+                for (size_t c = 0; c < cs; c++) {
+                    if (v[r][c] == '>') {
+                        if (v[r][(c + 1) % cs] == '.') {
+                            v[r][c] = 'm';
                             moves++;
+                            c++;
                         }
-                        else {
-                            nv[r][c] = m;
-                        }
-                    } else if (v[r][c] == o) nv[r][c] = o;
+                    }
+                }
+                for (size_t c = 0; c < cs; c++) {
+                    if(v[r][c] == 'm') {
+                        v[r][c] = '.';
+                        v[r][(c+1)%cs] = '>';
+                        c++;
+                    }
                 }
             }
-            v.swap(nv);
+        }
+
+        {
+            for (size_t c = 0; c < cs; c++) {
+                for (size_t r = 0; r < rs; r++) {
+                    if (v[r][c] == 'v') {
+                        if (v[(r + 1) % rs][c] == '.') {
+                            v[r][c] = 'm';
+                            moves++;
+                            r++;
+                        }
+                    }
+                }
+                for (size_t r = 0; r < rs; r++) {
+                    if (v[r][c] == 'm') {
+                        v[(r + 1) % rs][c] = 'v';
+                        v[r][c] = '.';
+                        r++;
+
+                    }
+                }
+            }
+
         }
 
         ans1++;
