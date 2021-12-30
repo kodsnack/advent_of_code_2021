@@ -314,6 +314,13 @@ namespace AdventOfCode
             return positions;
         }
 
+        public void Switch(GenericPosition2D<int> p1, GenericPosition2D<int> p2)
+        {
+            var a = this[p1];
+            this[p1] = this[p2];
+            this[p2] = a;
+        }
+
         public void Expand(int n, char fill) { Expand(n, n, n, n, fill); }
         public void Expand(int top, int right, int bottom, int left, char fill)
         {
@@ -630,7 +637,7 @@ namespace AdventOfCode
 
         public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> elements, int k)
         {
-            return k == 0 ? new[] { new T[0] } :
+            return k == 0 ? new[] { Array.Empty<T>() } :
               elements.SelectMany((e, i) =>
                 elements.Skip(i + 1).Combinations(k - 1).Select(c => (new[] { e }).Concat(c)));
         }
@@ -864,7 +871,7 @@ namespace AdventOfCode
         public static int[] Ints(string s, int base_ = 10) => Longs(s, base_).Select(x => (int)x).ToArray();
         public static long[] Longs(string s, int base_ = 10)
         {
-            var validChars = "+-0123456789abcdef".Substring(0, base_ + 2);
+            var validChars = "+-0123456789abcdef"[..(base_ + 2)];
             s = new string(s.ToLower().Select(c => validChars.Contains(c) ? c : ' ').ToArray());
             var v = s.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             return v.Select(x => Convert.ToInt64(x, base_)).ToArray();
