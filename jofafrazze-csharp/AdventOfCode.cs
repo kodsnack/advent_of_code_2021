@@ -314,6 +314,13 @@ namespace AdventOfCode
             return positions;
         }
 
+        public void Switch(GenericPosition2D<int> p1, GenericPosition2D<int> p2)
+        {
+            var a = this[p1];
+            this[p1] = this[p2];
+            this[p2] = a;
+        }
+
         public void Expand(int n, char fill) { Expand(n, n, n, n, fill); }
         public void Expand(int top, int right, int bottom, int left, char fill)
         {

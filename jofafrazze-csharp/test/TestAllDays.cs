@@ -260,4 +260,18 @@ namespace test
         [Fact]
         public void Test() => Assert.Equal((589411, 1130514303649907), aoc.Day22.DoPuzzle(Input.actual));
     }
+
+    public class TestDay24
+    {
+        [Fact]
+        public void Test() => Assert.Equal((95299897999897, 31111121382151), aoc.Day24.DoPuzzle(Input.actual));
+    }
+
+    public class TestDay25
+    {
+        [Fact]
+        public void Example() => Assert.Equal((58, 0), aoc.Day25.DoPuzzle(Input.example));
+        [Fact]
+        public void Test() => Assert.Equal((426, 0), aoc.Day25.DoPuzzle(Input.actual));
+    }
 }
