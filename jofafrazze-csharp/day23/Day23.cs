@@ -15,10 +15,7 @@ namespace aoc
             int maxLen = ls.Select(s => s.Length).Max();
             var input = ls.Select(s => s.PadRight(maxLen)).ToList();
             if (partB)
-            {
-                input.Insert(3, "  #D#C#B#A#  ");
-                input.Insert(4, "  #D#B#A#C#  ");
-            }
+                input.InsertRange(3, new[] { "  #D#C#B#A#  ", "  #D#B#A#C#  " });
             var m0 = Map.Build(input);
             m0.Print();
             var players = "ABCD";
@@ -62,20 +59,14 @@ namespace aoc
                 if (!onlyGoHome)
                     allowed.AddRange(hallwayStops);
                 if (allowGoHome)
-                {
-                    var hPos = home.Where(w => m[w] == '.').Last();
-                    allowed.Add(hPos);
-                    //if (hPos.y == 2 && canReach.Any(w => w.p == hPos))
-                    //    m.Print();
-                }
+                    allowed.Add(home.Where(w => m[w] == '.').Last());
                 return canReach.Where(w => allowed.Contains(w.p)).ToList();
             }
             string Id(Map m)
             {
                 var a = m.Positions().Where(w => players!.Contains(m[w])).Select(w => (m[w], w));
-                StringBuilder sb = new StringBuilder();
-                var b = a.OrderBy(w => w.Item1).ThenBy(w => w.Item2);
-                foreach ((char c, Pos p) in b)
+                var sb = new StringBuilder();
+                foreach ((char c, Pos p) in a.OrderBy(w => w.Item1).ThenBy(w => w.Item2))
                     sb.Append(c).Append(p.x).Append(',').Append(p.y);
                 return sb.ToString();
             }
@@ -83,29 +74,14 @@ namespace aoc
             {
                 if (score >= minEnergy)
                     continue;
-                //Console.WriteLine("Testing {0} games", gameStates.Count);
                 bool done = true;
                 foreach ((char c, var h) in homes)
                     foreach(var p in h)
                         done &= (m1[p] == c);
                 if (done)
-                {
                     minEnergy = Math.Min(minEnergy, score);
-                    Console.WriteLine("New lowest energy: {0}", minEnergy);
-                }
                 else
                 {
-                    //if (m1.data[1, 1] == 'A' && m1.data[2, 1] == 'A' // 10
-                    //    && m1.data[5, 3] == 'B' // 60
-                    //    && m1.data[10, 1] == 'D' // 2060
-                    //    && m1.data[9, 3] == 'D' // 8560
-                    //    && m1.data[7, 3] == 'C' // 8060
-                    //    && m1.data[7, 2] == 'C' // 9460
-                    //    && m1.data[5, 2] == 'B')
-                    //{
-                    //    m1.Print();
-                    //    Console.WriteLine("Score now: {0}", score);
-                    //}
                     var movingOut = allHomes.Where(p => players.Contains(m1[p]) && m1[p + CoordsRC.goUp] == '.');
                     foreach (var amp in movingOut)
                     {
