@@ -63,7 +63,7 @@ namespace aoc
                 if (a < nodes.Count - 1)
                 {
                     var nr = nodes.Skip(a + 1).Where(x => x.t >= 0 && x.parent != n);
-                    if (nr.Count() > 0)
+                    if (nr.Any())
                         nr.First().t += n.right!.t;
                 }
                 nodes.Reverse();
@@ -71,7 +71,7 @@ namespace aoc
                 if (b < nodes.Count - 1)
                 {
                     var nl = nodes.Skip(b + 1).Where(x => x.t >= 0 && x.parent != n);
-                    if (nl.Count() > 0)
+                    if (nl.Any())
                         nl.First().t += n.left!.t;
                 }
                 n.left = null;
@@ -88,8 +88,8 @@ namespace aoc
             bool any = n != null;
             if (n != null)
             {
-                Node s1 = new Node(n.t / 2, n);
-                Node s2 = new Node((n.t + 1) / 2, n);
+                Node s1 = new(n.t / 2, n);
+                Node s2 = new((n.t + 1) / 2, n);
                 n.t = -1;
                 n.left = s1;
                 n.right = s2;

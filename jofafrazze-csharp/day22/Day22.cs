@@ -46,7 +46,7 @@ namespace aoc
                     newCubes.Add(cube);
                 volumeCubes.AddRange(newCubes);
             }
-            return (a, volumeCubes.Aggregate(0L, (a, x) => a + x.Volume()));
+            return (a, volumeCubes.Aggregate(0L, (v, c) => v + c.Volume()));
         }
         static void Main() => Aoc.Execute(Day, DoPuzzle);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
