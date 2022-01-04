@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -480,6 +481,24 @@ namespace AdventOfCode
         };
     }
 
+    public class ByteArrayComparer : IEqualityComparer<byte[]>
+    {
+        private static ByteArrayComparer? _default;
+        public static ByteArrayComparer Default
+        {
+            get
+            {
+                if (_default == null)
+                    _default = new ByteArrayComparer();
+                return _default;
+            }
+        }
+        public bool Equals(byte[]? obj1, byte[]? obj2) =>
+            StructuralComparisons.StructuralEqualityComparer.Equals(obj1, obj2);
+        public int GetHashCode(byte[] obj) =>
+            StructuralComparisons.StructuralEqualityComparer.GetHashCode(obj);
+    }
+
     public static class Utils
     {
         // Modulo i.e. mod (instead of the % operator)
@@ -661,6 +680,10 @@ namespace AdventOfCode
         public static Dictionary<T, long> CounterLong<T>(this IEnumerable<T> elements) where T : notnull
         {
             return elements.GroupBy(x => x).ToDictionary(x => x.Key, x => (long)x.Count());
+        }
+        public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
+        {
+           return self.Select((item, index) => (item, index));
         }
     }
 
