@@ -75,6 +75,17 @@ namespace aoc
                         return true;
                 return false;
             }
+            public int AmpsHome(int x, char c)
+            {
+                //if (Evacuating(x, c))
+                //    return 0;
+                int n = 0;
+                char cx = (char)('E' + x);
+                for (int i = 0; i < Id.Length; i += 3)
+                    if (Id[i + 1] == cx && Id[i] == c)
+                        n++;
+                return n;
+            }
             public Amp GetFirstAmp(int x)
             {
                 char cx = (char)('E' + x);
@@ -99,8 +110,9 @@ namespace aoc
                     m.data[amp.p.x, amp.p.y] = amp.c;
                 return m.PrintToString();
             }
-            public string PrintToCompactString(int maxDepth, int index, int score)
+            public string PrintToCompactString(int index, int score)
             {
+                int maxDepth = Id.Length / 12;
                 var map = AllAmps().ToDictionary(w => w.p, w => w.c);
                 var sb = new StringBuilder();
                 sb.AppendFormat("{0,2}: ", index);
@@ -118,15 +130,21 @@ namespace aoc
                 }
                 return sb.AppendFormat(": {0,5}", score).ToString();
             }
-            public int EstimateRemainingCost(int maxDepth) // Must not overestimate cost
+            public int EstimateRemainingCost() // Must not overestimate cost
             {
+                int maxDepth = Id.Length / 12;
                 int cost = 0;
                 Dictionary<int, bool> evac = new();
+                int[] distHome = new int[10];
                 foreach (char c in "ABCD")
-                    evac[xhome[c]] = Evacuating(xhome[c], c);
+                {
+                    bool e = Evacuating(xhome[c], c);
+                    evac[xhome[c]] = e;
+                    distHome[xhome[c]] = maxDepth - (e ? 0 : AmpsHome(xhome[c], c));
+                }
                 foreach (var a in AllAmps())
                     if (!(IsXHome(a.p.x) && !evac[a.p.x]))
-                        cost += (a.p.y - 1 + Math.Abs(a.p.x - xhome[a.c]) + 1) * mult[a.c];
+                        cost += (a.p.y - 1 + Math.Abs(a.p.x - xhome[a.c]) + distHome[xhome[a.c]]--) * mult[a.c];
                 return cost;
             }
         }
@@ -211,7 +229,7 @@ namespace aoc
                         if (!playedBefore || gamesPlayed[newState].score > newScore)
                         {
                             //Console.WriteLine(newState.PrintToString(m));
-                            int h = newState.EstimateRemainingCost(ymax - 1);
+                            int h = newState.EstimateRemainingCost();
                             gameStates!.Enqueue(newState, newScore + h);
                             gamesPlayed[newState] = (newScore, state);
                             if (!playedBefore)
@@ -248,7 +266,7 @@ namespace aoc
                     var movingOut = state.MovingOut();
                     MovePlayer(movingOut, ref state, score);
                 }
-                if (nGamesTotal % 300000 == 0)
+                if (nGamesTotal % 100000 == 0)
                 {
                     Console.WriteLine("Total: {0}, new: {1}, better: {2}, old: {3}, score: {4}, hscore: {5}",
                         nGamesTotal, nNewGames, nBetterGames, nOldGames, score, hscore);
@@ -267,7 +285,7 @@ namespace aoc
                 moves.Add(curState);
             }
             foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
-                Console.WriteLine(s.PrintToCompactString(ymax - 1, i, gamesPlayed[s].score));
+                Console.WriteLine(s.PrintToCompactString(i, gamesPlayed[s].score));
             return score;
         }
         public static (Object a, Object b) DoPuzzle(string file) =>
