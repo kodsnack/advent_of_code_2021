@@ -180,6 +180,7 @@ namespace aoc
                     }
                     canReach!.Add((p, dist + p.y - 1));
                 }
+                bool gotHome = false;
                 void GoSideways(APos p, int dir, bool stopInHallway, int xhome = -1)
                 {
                     int end = dir < 0 ? 0 : 12;
@@ -189,12 +190,17 @@ namespace aoc
                         if (stopInHallway && (p.x <= 2 || p.x >= 10 || p.x % 2 == 0))
                             canReach!.Add((p, mDist(start.p, p)));
                         if (p.x == xhome)
+                        {
+                            canReach!.Clear();
                             GoDownHome(p, mDist(start.p, p));
+                            gotHome = true;
+                            return;
+                        }
                         p.x += (byte)dir;
                     }
                 }
                 int sxhome = xhome[start.c];
-                bool canGoHome = (start.p.x != sxhome) && !state.Evacuating(start.p.x, start.c);
+                bool canGoHome = (start.p.x != sxhome) && !state.Evacuating(xhome[start.c], start.c);
                 int homeDir = start.p.x > sxhome ? -1 : 1;
                 if (start.p.y == 1 && canGoHome)
                     GoSideways(start.p, homeDir, false, sxhome);
@@ -202,7 +208,8 @@ namespace aoc
                 {
                     APos p = new APos(start.p.x, 1);
                     GoSideways(p, homeDir, true, canGoHome ? sxhome : -1);
-                    GoSideways(p, homeDir > 0 ? -1 : 1, true, -1);
+                    if (!gotHome)
+                        GoSideways(p, homeDir > 0 ? -1 : 1, true, -1);
                 }
                 return canReach;
             }
@@ -277,15 +284,15 @@ namespace aoc
                 }
             }
             Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
-            var moves = new List<State>() { state };
-            var curState = state;
-            while (gamesPlayed[curState].prev != null)
-            {
-                curState = (State)gamesPlayed[curState].prev!;
-                moves.Add(curState);
-            }
-            foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
-                Console.WriteLine(s.PrintToCompactString(i, gamesPlayed[s].score));
+            //var moves = new List<State>() { state };
+            //var curState = state;
+            //while (gamesPlayed[curState].prev != null)
+            //{
+            //    curState = (State)gamesPlayed[curState].prev!;
+            //    moves.Add(curState);
+            //}
+            //foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
+            //    Console.WriteLine(s.PrintToCompactString(i, gamesPlayed[s].score));
             return score;
         }
         public static (Object a, Object b) DoPuzzle(string file) =>
