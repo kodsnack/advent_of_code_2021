@@ -67,30 +67,72 @@ namespace aoc
                     res.Add(new APos(Id[i + 1], Id[i + 2]));
                 return res;
             }
-            public void AddAnyOut(List<Amp> list, int x, char c)
+            public bool Evacuating(int x, char c)
             {
-                int idx1 = -1, idx2 = -1;
                 char cx = (char)('E' + x);
-                for (int i = 0; i < Id.Length && idx2 < 0; i += 3)
-                {
-                    if (Id[i + 1] == cx && idx1 < 0)
-                        idx1 = i;
+                for (int i = 0; i < Id.Length; i += 3)
                     if (Id[i + 1] == cx && Id[i] != c)
-                        idx2 = i;
-                }
-                if (idx2 >= 0)
-                    list.Add(new Amp(Id.Substring(idx1, 3)));
+                        return true;
+                return false;
+            }
+            public Amp GetFirstAmp(int x)
+            {
+                char cx = (char)('E' + x);
+                for (int i = 0; i < Id.Length; i += 3)
+                    if (Id[i + 1] == cx)
+                        return new Amp(Id.Substring(i, 3));
+                throw new ArgumentOutOfRangeException();
             }
             public List<Amp> MovingOut()
             {
                 var l = new List<Amp>();
-                AddAnyOut(l, 3, 'A');
-                AddAnyOut(l, 5, 'B');
-                AddAnyOut(l, 7, 'C');
-                AddAnyOut(l, 9, 'D');
+                if (Evacuating(3, 'A')) l.Add(GetFirstAmp(3));
+                if (Evacuating(5, 'B')) l.Add(GetFirstAmp(5));
+                if (Evacuating(7, 'C')) l.Add(GetFirstAmp(7));
+                if (Evacuating(9, 'D')) l.Add(GetFirstAmp(9));
                 return l;
             }
+            public string PrintToString(Map m0)
+            {
+                Map m = new(m0);
+                foreach (var amp in AllAmps())
+                    m.data[amp.p.x, amp.p.y] = amp.c;
+                return m.PrintToString();
+            }
+            public string PrintToCompactString(int maxDepth, int index, int score)
+            {
+                var map = AllAmps().ToDictionary(w => w.p, w => w.c);
+                var sb = new StringBuilder();
+                sb.AppendFormat("{0,2}: ", index);
+                for (int x = 1; x <= 11; x++)
+                {
+                    if (IsXHome(x))
+                    {
+                        sb.Append('[');
+                        for (int y = 2; y <= maxDepth + 1; y++)
+                            sb.Append(map.GetValueOrDefault(new APos((byte)x, (byte)y), '.'));
+                        sb.Append(']');
+                    }
+                    else
+                        sb.Append(map.GetValueOrDefault(new APos((byte)x, 1), '.'));
+                }
+                return sb.AppendFormat(": {0,5}", score).ToString();
+            }
+            public int EstimateRemainingCost(int maxDepth) // Must not overestimate cost
+            {
+                int cost = 0;
+                Dictionary<int, bool> evac = new();
+                foreach (char c in "ABCD")
+                    evac[xhome[c]] = Evacuating(xhome[c], c);
+                foreach (var a in AllAmps())
+                    if (!(IsXHome(a.p.x) && !evac[a.p.x]))
+                        cost += (a.p.y - 1 + Math.Abs(a.p.x - xhome[a.c]) + 1) * mult[a.c];
+                return cost;
+            }
         }
+        static bool IsXHome(int x) => x == 3 || x == 5 || x == 7 || x == 9;
+        static readonly Dictionary<char, int> xhome = new() { ['A'] = 3, ['B'] = 5, ['C'] = 7, ['D'] = 9 };
+        static readonly Dictionary<char, int> mult = new() { ['A'] = 1, ['B'] = 10, ['C'] = 100, ['D'] = 1000 };
         static Object Play(string file, bool partB)
         {
             var ls = File.ReadAllLines(ReadInput.GetPath(Day, file));
@@ -100,86 +142,78 @@ namespace aoc
             int ymax = partB ? 5 : 3;
             var m = Map.Build(input);
             m.Print();
-            var players = "ABCD";
-            var mult = new Dictionary<char, int> { ['A'] = 1, ['B'] = 10, ['C'] = 100, ['D'] = 1000 };
-            var hallway = m.Positions().Where(p => m[p] == '.');
-            var allHomes = m.Positions().Where(p => players.Contains(m[p])).ToList();
-            var homes = new Dictionary<char, List<APos>>();
-            foreach (var (c, i) in players.ToList().WithIndex())
-                homes[c] = allHomes.Where(p => p.x == i * 2 + 3).Select(p => new APos(p)).ToList();
-            var xHomes = allHomes.Select(p => p.x).ToHashSet();
-            var hallwayStops = hallway.Where(p => !xHomes.Contains(p.x)).Select(p => new APos(p)).ToList();
-            var world = hallway.Union(allHomes).ToList();
             var gameStates = new PriorityQueue<State, int>();
             gameStates.Enqueue(Id3(m), 0);
-            var gamesPlayed = new Dictionary<State, int>() { [Id3(m)] = 0 };
-            allHomes.ForEach(p => m[p] = '.');
-            int minEnergy = int.MaxValue;
-            static APos[] Neighbours4(APos p) => new APos[]
+            var gamesPlayed = new Dictionary<State, (int score, State? prev)>() { [Id3(m)] = (0, null) };
+            m.Positions().Where(p => !" #.".Contains(m[p])).ToList().ForEach(p => m[p] = '.');
+            int mDist(APos p1, APos p2) => Math.Abs(p1.x - p2.x) + Math.Abs(p1.y - p2.y);
+            List<(APos, int)> Reachable(ref State state, Amp start)
             {
-                new APos((byte)(p.x + 1), p.y),
-                new APos((byte)(p.x - 1), p.y),
-                new APos(p.x, (byte)(p.y + 1)),
-                new APos(p.x, (byte)(p.y - 1))
-            };
-            List<(APos, int)> Reachable(ref State state, Amp start, List<APos> home, bool onlyGoHome)
-            {
-                var PlayersPos = state.AllAPos().ToHashSet();
+                var playersPos = state.AllAPos().ToHashSet();
                 var canReach = new List<(APos p, int s)>();
-                var been = new HashSet<APos>();
-                var toTry = new List<(APos, int)>() { (start.p, 0) };
-                while (toTry.Any())
+                void GoDownHome(APos p, int dist)
                 {
-                    foreach ((APos p, int s) in toTry)
+                    APos nextp = p;
+                    nextp.y += 1;
+                    while (nextp.y <= ymax && !playersPos!.Contains(nextp))
                     {
-                        been.Add(p);
-                        foreach (APos n in Neighbours4(p))
-                        {
-                            bool bHomePos = (n.x == 3 || n.x == 5 || n.x == 7 || n.x == 9) && (n.y > 1 && n.y <= ymax);
-                            bool bHallPos = n.y == 1 && (n.x >= 1 && n.x <= 11);
-                            if ((bHomePos || bHallPos) && !been.Contains(n) && !PlayersPos.Contains(n))
-                                canReach.Add((n, s + 1));
-                        }
+                        p = nextp;
+                        nextp.y += 1;
                     }
-                    toTry = canReach.Where(a => !been.Contains(a.p)).ToList();
+                    canReach!.Add((p, dist + p.y - 1));
                 }
-                //bool allowGoHome1 = home.All(w => m0[w] == '.' || m0[w] == m0[start]) &&
-                //    home.Any(w => m0[w] == '.') && !home.Contains(start);
-                //bool allowGoHome2 = state.Items.All(w => w.p.x != home[0].x || w.c == player) && start.x != home[0].x;
-                var amps = state.AllAmps();
-                bool allowGoHome = amps.All(w => w.p.x != home[0].x || w.c == start.c) && start.p.x != home[0].x;
-                var allowed = new List<APos>();
-                if (!onlyGoHome)
-                    allowed.AddRange(hallwayStops!);
-                if (allowGoHome)
-                    allowed.AddRange(home);
-                return canReach.Where(w => allowed.Contains(w.p)).ToList();
+                void GoSideways(APos p, int dir, bool stopInHallway, int xhome = -1)
+                {
+                    int end = dir < 0 ? 0 : 12;
+                    p.x += (byte)dir;
+                    while (p.x != end && !playersPos!.Contains(p))
+                    {
+                        if (stopInHallway && (p.x <= 2 || p.x >= 10 || p.x % 2 == 0))
+                            canReach!.Add((p, mDist(start.p, p)));
+                        if (p.x == xhome)
+                            GoDownHome(p, mDist(start.p, p));
+                        p.x += (byte)dir;
+                    }
+                }
+                int sxhome = xhome[start.c];
+                bool canGoHome = (start.p.x != sxhome) && !state.Evacuating(start.p.x, start.c);
+                int homeDir = start.p.x > sxhome ? -1 : 1;
+                if (start.p.y == 1 && canGoHome)
+                    GoSideways(start.p, homeDir, false, sxhome);
+                else if (start.p.y > 1)
+                {
+                    APos p = new APos(start.p.x, 1);
+                    GoSideways(p, homeDir, true, canGoHome ? sxhome : -1);
+                    GoSideways(p, homeDir > 0 ? -1 : 1, true, -1);
+                }
+                return canReach;
             }
             State Id3(Map m)
             {
-                var pos = world!.Where(w => players.Contains(m[w]));
+                var pos = m.Positions().Where(w => "ABCD".Contains(m[w]));
                 return new State(pos.Select(p => new Amp(m[p], new APos(p))).ToList());
             }
             int nNewGames = 0;
             int nBetterGames = 0;
             int nOldGames = 0;
             int nGamesTotal = 0;
-            bool MovePlayer(IEnumerable<Amp> toMove, ref State state, int score, bool onlyGoHome)
+            bool MovePlayer(IEnumerable<Amp> toMove, ref State state, int score)
             {
                 int nGoodBefore = nNewGames + nBetterGames;
                 foreach (var amp in toMove)
                 {
-                    var r = Reachable(ref state, amp, homes![amp.c], onlyGoHome);
+                    var r = Reachable(ref state, amp);
                     foreach ((APos p, int s) in r)
                     {
                         State newState = new(State.Replace(ref state, amp.p, p));
                         int newScore = score + s * mult![amp.c];
                         bool playedBefore = gamesPlayed!.ContainsKey(newState);
-                        if (!playedBefore || gamesPlayed[newState] > newScore)
+                        if (!playedBefore || gamesPlayed[newState].score > newScore)
                         {
-                            //m2.Print();
-                            gameStates!.Enqueue(newState, newScore);
-                            gamesPlayed[newState] = newScore;
+                            //Console.WriteLine(newState.PrintToString(m));
+                            int h = newState.EstimateRemainingCost(ymax - 1);
+                            gameStates!.Enqueue(newState, newScore + h);
+                            gamesPlayed[newState] = (newScore, state);
                             if (!playedBefore)
                                 nNewGames++;
                             else
@@ -193,41 +227,51 @@ namespace aoc
                 }
                 return nNewGames + nBetterGames > nGoodBefore;
             }
-            while (gameStates.TryDequeue(out State state, out int score))
+            State state;
+            int score = 0;
+            while (gameStates.TryDequeue(out state, out int hscore))
             {
                 nGamesTotal++;
-                if (score >= minEnergy)
-                    continue;
+                score = gamesPlayed[state].score;
                 if (state.Done())
-                    minEnergy = Math.Min(minEnergy, score);
+                    break;
                 else
                 {
-                    //bool keepOn = true;
-                    //while (keepOn)
-                    //{
-                    //    var movingIn = state.AllAmps().Where(w => w.y == 1);
-                    //    keepOn = MovePlayer(movingIn, ref state, score, true);
-                    //}
-                    var movingIn = state.AllAmps().Where(w => w.p.y == 1);
-                    MovePlayer(movingIn, ref state, score, true);
+                    bool keepOn = true;
+                    while (keepOn)
+                    {
+                        var movingIn = state.AllAmps().Where(w => w.p.y == 1);
+                        keepOn = MovePlayer(movingIn, ref state, score);
+                    }
+                    //var movingIn = state.AllAmps().Where(w => w.p.y == 1);
+                    //MovePlayer(movingIn, ref state, score);
                     var movingOut = state.MovingOut();
-                    MovePlayer(movingOut, ref state, score, false);
+                    MovePlayer(movingOut, ref state, score);
                 }
-                if (nGamesTotal % 10000 == 0)
+                if (nGamesTotal % 300000 == 0)
                 {
-                    Console.WriteLine("Total: {0}, new: {1}, better: {2}, old: {3}, current score: {4}",
-                        nGamesTotal, nNewGames, nBetterGames, nOldGames, score);
+                    Console.WriteLine("Total: {0}, new: {1}, better: {2}, old: {3}, score: {4}, hscore: {5}",
+                        nGamesTotal, nNewGames, nBetterGames, nOldGames, score, hscore);
                     nNewGames = 0;
                     nBetterGames = 0;
                     nOldGames = 0;
                     //Console.WriteLine(state.ToString());
                 }
             }
-            Console.WriteLine("Total: {0}", nGamesTotal);
-            return minEnergy;
+            Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
+            var moves = new List<State>() { state };
+            var curState = state;
+            while (gamesPlayed[curState].prev != null)
+            {
+                curState = (State)gamesPlayed[curState].prev!;
+                moves.Add(curState);
+            }
+            foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
+                Console.WriteLine(s.PrintToCompactString(ymax - 1, i, gamesPlayed[s].score));
+            return score;
         }
         public static (Object a, Object b) DoPuzzle(string file) =>
-            (Play(file, false), 0); // Play(file, true));
+            (Play(file, false), Play(file, true));
         static void Main() => Aoc.Execute(Day, DoPuzzle);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
