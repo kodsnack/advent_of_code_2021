@@ -9,64 +9,73 @@ namespace aoc
     {
         // Amphipod: Play game moving all amphipods back home
 
-        static readonly Dictionary<char, uint> playerValue = new() { ['.'] = 0, ['A'] = 1, ['B'] = 2, ['C'] = 3, ['D'] = 4 };
-        record struct StateId(long hall, long rooms);
-        record struct Amp(char c, Pos p) : IComparable<Amp>
+        static readonly int A = 0, B = 1, C = 2, D = 3, Empty = 4;
+        static readonly Dictionary<char, int> playerValue = new() { ['A'] = 0, ['B'] = 1, ['C'] = 2, ['D'] = 3, ['.'] = 4 };
+        static readonly string playerChar = "ABCD.";
+        static readonly int[] mult = new int[] { 1, 10, 100, 1000 };
+        static List<Pos> idx2Pos = new();
+        static int[,] distPos2Pos = new int[,] { { } };
+        record struct StateId(long Hall, long Rooms);
+        record struct State(int N, StateId Id, byte[] Board)
         {
-            public Amp(Amp a) : this(a.c, a.p) { }
-            public int CompareTo(Amp a) => p.CompareTo(a.p);
-        }
-        record struct State(StateId Id, Amp[] Amps)
-        {
-            public State(Amp[] amps) : this(CreateId(amps), amps) { }
-            public static StateId CreateId(Amp[] amps)
+            // Board lenghts: room = N, hall = 11
+            // Board index 0: room A, N: room B, 2N: room C, 3N: room D, 4N: hall
+            public State(byte[] board) : this((board.Length - 11) / 4, CreateId(board), board) { }
+            public static StateId CreateId(byte[] board)
             {
-                var map = amps.ToDictionary(w => w.p, w => w.c);
                 long hall = 0, rooms = 0;
-                for (int x = 1; x <= 11; x++)
+                for (int i = board.Length - 11; i < board.Length; i++)
                 {
                     hall <<= 3;
-                    hall |= playerValue[map.GetValueOrDefault(new Pos(x, 1), '.')];
+                    hall |= board[i];
                 }
-                for (int x = 3; x <= 9; x += 2)
-                    for (int y = 2; y < (2 + amps.Length / 4); y++)
-                    {
-                        rooms <<= 3;
-                        rooms |= playerValue[map.GetValueOrDefault(new Pos(x, y), '.')];
-                    }
+                for (int i = 0; i < board.Length - 11; i++)
+                {
+                    rooms <<= 3;
+                    rooms |= board[i];
+                }
                 return new StateId(hall, rooms);
-            }
-            public static Amp[] Replace(Amp[] amps, Pos from, Pos to)
-            {
-                for (int i = 0; i < amps.Length; i++)
-                    if (amps[i].p == from)
-                    {
-                        amps[i] = new Amp(amps[i]) { p = to };
-                        break;
-                    }
-                Array.Sort(amps);
-                return amps;
             }
             public bool Equals(State other) => Id.Equals(other.Id);
             public override int GetHashCode() => Id.GetHashCode();
-            public bool Done() => Amps.All(a => a.p.x == xhome[a.c]);
-            public bool Evacuating(char c) => Amps.Where(a => a.p.x == xhome[c]).Any(a => a.c != c);
-            public int AmpsInHome(char c) => Amps.Where(a => a.p.x == xhome[c]).Count(a => a.c == c);
-            public Amp GetFirstAmp(char c) => Amps.Where(a => a.p.x == xhome[c]).First();
-            public List<Amp> MovingOut()
+            public bool Done()
             {
-                var l = new List<Amp>();
-                if (Evacuating('A')) l.Add(GetFirstAmp('A'));
-                if (Evacuating('B')) l.Add(GetFirstAmp('B'));
-                if (Evacuating('C')) l.Add(GetFirstAmp('C'));
-                if (Evacuating('D')) l.Add(GetFirstAmp('D'));
+                for (int i = 0; i < Board.Length - 11; i++)
+                    if (Board[i] != i / N)
+                        return false;
+                return true;
+
+            }
+            public bool Evacuating(int r) => Board.Skip(r * N).Take(N).Any(w => w != r && w != Empty);
+            public int NInHome(int r) => Board.Skip(r * N).Take(N).Count(w => w == r);
+            public int GetFirstPlayerIdx(int r)
+            {
+                for (int i = r * N; true; i++)
+                    if (Board[i] != Empty)
+                        return i;
+            }
+            public List<int> MoveInCandidates()
+            {
+                var l = new List<int>();
+                for (int i = 4 * N; i < Board.Length; i++)
+                    if (Board[i] != Empty)
+                        l.Add(i);
+                return l;
+            }
+            public List<int> MoveOutCandidates()
+            {
+                var l = new List<int>();
+                if (Evacuating(A)) l.Add(GetFirstPlayerIdx(A));
+                if (Evacuating(B)) l.Add(GetFirstPlayerIdx(B));
+                if (Evacuating(C)) l.Add(GetFirstPlayerIdx(C));
+                if (Evacuating(D)) l.Add(GetFirstPlayerIdx(D));
                 return l;
             }
             public string PrintToString(Map m0)
             {
                 Map m = new(m0);
-                foreach (var amp in Amps)
-                    m.data[amp.p.x, amp.p.y] = amp.c;
+                for (int i = 0; i < Board.Length; i++)
+                    m[idx2Pos[i]] = playerChar[Board[i]];
                 return m.PrintToString();
             }
             public string PrintToCompactString(int index, int score)
@@ -92,106 +101,129 @@ namespace aoc
             }
             public int EstimateRemainingCost() // Must not overestimate cost
             {
-                int maxDepth = Amps.Length / 4;
                 int cost = 0;
-                Dictionary<int, bool> evac = new();
-                int[] distHome = new int[10];
-                foreach (char c in "ABCD")
+                bool[] evac = new bool[4];
+                int[] roomDepth = new int[4];
+                for (int r = A; r <= D; r++)
                 {
-                    bool e = Evacuating(c);
-                    evac[xhome[c]] = e;
-                    distHome[xhome[c]] = maxDepth - (e ? 0 : AmpsInHome(c));
+                    bool e = Evacuating(r);
+                    evac[r] = e;
+                    roomDepth[r] = N - (e ? 0 : NInHome(r)) - 1;
                 }
-                foreach (var a in Amps)
-                    if (!(IsXHome(a.p.x) && !evac[a.p.x]))
-                        cost += (a.p.y - 1 + Math.Abs(a.p.x - xhome[a.c]) + distHome[xhome[a.c]]--) * mult[a.c];
+                for (int i = 0; i < Board.Length; i++)
+                {
+                    int player = Board[i];
+                    if (player != Empty && !(i < 4 * N && !evac[player]))
+                        cost += distPos2Pos[i, player * N + roomDepth[player]--] * mult[player];
+                }
                 return cost;
             }
+            public int HallIdx0() => 4 * N;
+            public int RoomIdx0(int room) => room * N;
+            public int RoomIdxIntoHallIdx(int idx) => 4 * N + 2 + idx / N * 2;
+            public bool InHall(int idx) => idx >= 4 * N;
+            public bool InRoom(int idx, int room) => idx >= room * N && idx < room * (N + 1);
         }
-        static bool IsXHome(int x) => x == 3 || x == 5 || x == 7 || x == 9;
-        static readonly Dictionary<char, int> xhome = new() { ['A'] = 3, ['B'] = 5, ['C'] = 7, ['D'] = 9 };
-        static readonly Dictionary<char, int> mult = new() { ['A'] = 1, ['B'] = 10, ['C'] = 100, ['D'] = 1000 };
+        static void InitLookups(int N)
+        {
+            idx2Pos = new List<Pos>();
+            for (int i = 0; i < N * 4; i++)
+                idx2Pos.Add(new Pos(3 + i / N * 2, 2 + (i % N)));
+            for (int i = 0; i < 11; i++)
+                idx2Pos.Add(new Pos(i + 1, 1));
+            distPos2Pos = new int[idx2Pos.Count, idx2Pos.Count];
+            for (int i = 0; i < idx2Pos.Count; i++)
+                for (int j = 0; j < idx2Pos.Count; j++)
+                {
+                    var pMid = new Pos(idx2Pos[i].x, 1);
+                    distPos2Pos[i, j] = idx2Pos[i].ManhattanDistance(pMid) + pMid.ManhattanDistance(idx2Pos[j]);
+                }
+        }
         static Object Play(string file, bool partB)
         {
+            int roomDepth = partB ? 4 : 2;
+            InitLookups(roomDepth);
             var ls = File.ReadAllLines(ReadInput.GetPath(Day, file));
             var input = ls.Select(s => s.PadRight(13)).ToList();
             if (partB)
                 input.InsertRange(3, new[] { "  #D#C#B#A#  ", "  #D#B#A#C#  " });
-            int ymax = partB ? 5 : 3;
             var m = Map.Build(input);
-            m.Print();
+            //m.Print();
             var gameStates = new PriorityQueue<State, int>();
-            gameStates.Enqueue(Id3(m), 0);
-            var gamesPlayed = new Dictionary<State, (int score, State? prev)>() { [Id3(m)] = (0, null) };
+            gameStates.Enqueue(CreateBoard(m), 0);
+            var gamesPlayed = new Dictionary<State, (int score, State? prev)>() { [CreateBoard(m)] = (0, null) };
             m.Positions().Where(p => !" #.".Contains(m[p])).ToList().ForEach(p => m[p] = '.');
-            List<(Pos, int)> Reachable(ref State state, Amp start)
+            List<(int idx, int cost)> Reachable(ref State s, int pIdx)
             {
-                var playersPos = state.Amps.Select(w => w.p).ToHashSet();
-                var canReach = new List<(Pos p, int s)>();
-                void GoDownHome(Pos p, int dist)
+                var canReach = new List<(int idx, int cost)>();
+                int player = s.Board[pIdx];
+                void GoDownHome(ref State state, int curIdx)
                 {
-                    Pos nextp = p;
-                    nextp.y += 1;
-                    while (nextp.y <= ymax && !playersPos!.Contains(nextp))
-                    {
-                        p = nextp;
-                        nextp.y += 1;
-                    }
-                    canReach!.Add((p, dist + p.y - 1));
+                    int roomBottomIdx = curIdx + state.N - 1;
+                    while (curIdx < roomBottomIdx && state.Board[curIdx + 1] == Empty)
+                        curIdx++;
+                    canReach!.Add((curIdx, distPos2Pos[pIdx, curIdx]));
                 }
                 bool gotHome = false;
-                void GoSideways(Pos p, int dir, bool stopInHallway, int xhome = -1)
+                int hallIdx0 = s.HallIdx0();
+                int homeIdx0 = s.RoomIdx0(player);
+                void GoSideways(ref State state, int curIdx, int dir, bool stopInHallway, int pHomeHallIdx = -1)
                 {
-                    int end = dir < 0 ? 0 : 12;
-                    p.x += dir;
-                    while (p.x != end && !playersPos!.Contains(p))
+                    int endIdx = dir < 0 ? hallIdx0 - 1 : hallIdx0 + 11;
+                    curIdx += dir;
+                    while (curIdx != endIdx && state.Board[curIdx] == Empty)
                     {
-                        if (stopInHallway && (p.x <= 2 || p.x >= 10 || p.x % 2 == 0))
-                            canReach!.Add((p, p.ManhattanDistance(start.p)));
-                        if (p.x == xhome)
+                        if (stopInHallway && (curIdx <= hallIdx0 + 1 || curIdx >= hallIdx0 + 9 || (curIdx - hallIdx0) % 2 == 1))
+                            canReach!.Add((curIdx, distPos2Pos[pIdx, curIdx]));
+                        if (curIdx == pHomeHallIdx)
                         {
                             canReach!.Clear();
-                            GoDownHome(p, p.ManhattanDistance(start.p));
+                            GoDownHome(ref state, homeIdx0);
                             gotHome = true;
                             return;
                         }
-                        p.x += dir;
+                        curIdx += dir;
                     }
                 }
-                int sxhome = xhome[start.c];
-                bool canGoHome = (start.p.x != sxhome) && !state.Evacuating(start.c);
-                int homeDir = start.p.x > sxhome ? -1 : 1;
-                if (start.p.y == 1 && canGoHome)
-                    GoSideways(start.p, homeDir, false, sxhome);
-                else if (start.p.y > 1)
-                {
-                    Pos p = new Pos(start.p.x, 1);
-                    GoSideways(p, homeDir, true, canGoHome ? sxhome : -1);
-                    if (!gotHome)
-                        GoSideways(p, homeDir > 0 ? -1 : 1, true, -1);
-                }
+                int homeHallIdx = hallIdx0 + 2 + player * 2;
+                bool playerInhome = s.InRoom(pIdx, player);
+                bool canGoHome = !playerInhome && !s.Evacuating(player);
+                int homeDir = s.InHall(pIdx) ? (pIdx > homeHallIdx ? -1 : 1) : (pIdx > homeIdx0 ? -1 : 1);
+                bool pInHall = s.InHall(pIdx);
+                int enterHallIdx = s.RoomIdxIntoHallIdx(pIdx);
+                if (pInHall && canGoHome)
+                    GoSideways(ref s, pIdx, homeDir, false, homeHallIdx);
+                else if (!pInHall)
+                    GoSideways(ref s, enterHallIdx, homeDir, true, canGoHome ? homeHallIdx : -1);
+                if (!pInHall && !gotHome)
+                    GoSideways(ref s, enterHallIdx, homeDir > 0 ? -1 : 1, true, -1);
                 return canReach;
             }
-            State Id3(Map m)
+            State CreateBoard(Map m)
             {
-                var pos = m.Positions().Where(w => "ABCD".Contains(m[w]));
-                return new State(pos.Select(p => new Amp(m[p], p)).OrderBy(w => w).ToArray());
+                byte[] board = new byte[roomDepth * 4 + 11];
+                for (int i = 0; i < board.Length; i++)
+                    board[i] = (byte)(i < roomDepth * 4 ? playerValue[m[idx2Pos[i]]] : Empty);
+                return new State(board);
             }
             int nNewGames = 0;
             int nBetterGames = 0;
             int nOldGames = 0;
             int nGamesTotal = 0;
-            bool MovePlayer(IEnumerable<Amp> toMove, ref State state, int score)
+            bool MovePlayer(IEnumerable<int> toMove, ref State state, int score)
             {
                 int nGoodBefore = nNewGames + nBetterGames;
-                foreach (var amp in toMove)
+                foreach (var startIdx in toMove)
                 {
-                    var r = Reachable(ref state, amp);
-                    foreach ((Pos p, int s) in r)
+                    byte player = state.Board[startIdx];
+                    var r = Reachable(ref state, startIdx);
+                    foreach ((int idx, int s) in r)
                     {
-                        Amp[] newAmps = (Amp[])state.Amps.Clone();
-                        State newState = new(State.Replace(newAmps, amp.p, p));
-                        int newScore = score + s * mult![amp.c];
+                        byte[] newBoard = (byte[])state.Board.Clone();
+                        newBoard[idx] = player;
+                        newBoard[startIdx] = (byte)Empty;
+                        State newState = new(newBoard);
+                        int newScore = score + s * mult[player];
                         bool playedBefore = gamesPlayed!.ContainsKey(newState);
                         if (!playedBefore || gamesPlayed[newState].score > newScore)
                         {
@@ -222,26 +254,18 @@ namespace aoc
                     break;
                 else
                 {
-                    //bool keepOn = true;
-                    //while (keepOn)
-                    //{
-                    //    var movingIn = state.Amps.Where(w => w.p.y == 1);
-                    //    keepOn = MovePlayer(movingIn, ref state, score);
-                    //}
-                    var movingIn = state.Amps.Where(w => w.p.y == 1);
-                    MovePlayer(movingIn, ref state, score);
-                    var movingOut = state.MovingOut();
-                    MovePlayer(movingOut, ref state, score);
+                    MovePlayer(state.MoveInCandidates(), ref state, score);
+                    MovePlayer(state.MoveOutCandidates(), ref state, score);
                 }
-                if (nGamesTotal % 100000 == 0)
-                {
-                    Console.WriteLine("Total: {0}, new: {1}, better: {2}, old: {3}, score: {4}, hscore: {5}",
-                        nGamesTotal, nNewGames, nBetterGames, nOldGames, score, hscore);
-                    nNewGames = 0;
-                    nBetterGames = 0;
-                    nOldGames = 0;
-                    //Console.WriteLine(state.ToString());
-                }
+                //if (nGamesTotal % 10000 == 0)
+                //{
+                //    Console.WriteLine("Total: {0}, new: {1}, better: {2}, old: {3}, score: {4}, hscore: {5}",
+                //        nGamesTotal, nNewGames, nBetterGames, nOldGames, score, hscore);
+                //    nNewGames = 0;
+                //    nBetterGames = 0;
+                //    nOldGames = 0;
+                //    //Console.WriteLine(state.ToString());
+                //}
             }
             Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
             //var moves = new List<State>() { state };
