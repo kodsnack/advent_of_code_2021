@@ -9,23 +9,32 @@ namespace aoc
     {
         // Amphipod: Play game moving all amphipods back home
 
-        //record struct StateId(long hall, long rooms);
+        static readonly Dictionary<char, uint> playerValue = new() { ['.'] = 0, ['A'] = 1, ['B'] = 2, ['C'] = 3, ['D'] = 4 };
+        record struct StateId(long hall, long rooms);
         record struct Amp(char c, Pos p) : IComparable<Amp>
         {
             public Amp(Amp a) : this(a.c, a.p) { }
-            public Amp(string s) : this(s[0], new Pos(s[1] - 'E', s[2] - 'E')) { }
             public int CompareTo(Amp a) => p.CompareTo(a.p);
-            public string Str() => new StringBuilder().Append(c).Append((char)('E' + p.x)).Append((char)('E' + p.y)).ToString();
         }
-        record struct State(string Id, Amp[] Amps)
+        record struct State(StateId Id, Amp[] Amps)
         {
             public State(Amp[] amps) : this(CreateId(amps), amps) { }
-            public static string CreateId(Amp[] amps)
+            public static StateId CreateId(Amp[] amps)
             {
-                var sb = new StringBuilder();
-                for (int i = 0; i < amps.Length; i++)
-                    sb.Append(amps[i].Str());
-                return sb.ToString();
+                var map = amps.ToDictionary(w => w.p, w => w.c);
+                long hall = 0, rooms = 0;
+                for (int x = 1; x <= 11; x++)
+                {
+                    hall <<= 3;
+                    hall |= playerValue[map.GetValueOrDefault(new Pos(x, 1), '.')];
+                }
+                for (int x = 3; x <= 9; x += 2)
+                    for (int y = 2; y < (2 + amps.Length / 4); y++)
+                    {
+                        rooms <<= 3;
+                        rooms |= playerValue[map.GetValueOrDefault(new Pos(x, y), '.')];
+                    }
+                return new StateId(hall, rooms);
             }
             public static Amp[] Replace(Amp[] amps, Pos from, Pos to)
             {
@@ -62,27 +71,28 @@ namespace aoc
             }
             public string PrintToCompactString(int index, int score)
             {
-                int maxDepth = Id.Length / 12;
-                var map = Amps.ToDictionary(w => w.p, w => w.c);
-                var sb = new StringBuilder();
-                sb.AppendFormat("{0,2}: ", index);
-                for (int x = 1; x <= 11; x++)
-                {
-                    if (IsXHome(x))
-                    {
-                        sb.Append('[');
-                        for (int y = 2; y <= maxDepth + 1; y++)
-                            sb.Append(map.GetValueOrDefault(new Pos(x, y), '.'));
-                        sb.Append(']');
-                    }
-                    else
-                        sb.Append(map.GetValueOrDefault(new Pos(x, 1), '.'));
-                }
-                return sb.AppendFormat(": {0,5}", score).ToString();
+                //int maxDepth = Id.Length / 12;
+                //var map = Amps.ToDictionary(w => w.p, w => w.c);
+                //var sb = new StringBuilder();
+                //sb.AppendFormat("{0,2}: ", index);
+                //for (int x = 1; x <= 11; x++)
+                //{
+                //    if (IsXHome(x))
+                //    {
+                //        sb.Append('[');
+                //        for (int y = 2; y <= maxDepth + 1; y++)
+                //            sb.Append(map.GetValueOrDefault(new Pos(x, y), '.'));
+                //        sb.Append(']');
+                //    }
+                //    else
+                //        sb.Append(map.GetValueOrDefault(new Pos(x, 1), '.'));
+                //}
+                //return sb.AppendFormat(": {0,5}", score).ToString();
+                return "";
             }
             public int EstimateRemainingCost() // Must not overestimate cost
             {
-                int maxDepth = Id.Length / 12;
+                int maxDepth = Amps.Length / 4;
                 int cost = 0;
                 Dictionary<int, bool> evac = new();
                 int[] distHome = new int[10];
