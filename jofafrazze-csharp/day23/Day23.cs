@@ -16,24 +16,25 @@ namespace aoc
             public int CompareTo(Amp a) => p.CompareTo(a.p);
             public string Str() => new StringBuilder().Append(c).Append((char)('E' + p.x)).Append((char)('E' + p.y)).ToString();
         }
-        record struct State(string Id, List<Amp> Amps)
+        record struct State(string Id, Amp[] Amps)
         {
-            public State(List<Amp> amps) : this(CreateId(amps), amps) { }
-            public static string CreateId(List<Amp> amps)
+            public State(Amp[] amps) : this(CreateId(amps), amps) { }
+            public static string CreateId(Amp[] amps)
             {
                 var sb = new StringBuilder();
-                amps.ForEach(w => sb.Append(w.Str()));
+                for (int i = 0; i < amps.Length; i++)
+                    sb.Append(amps[i].Str());
                 return sb.ToString();
             }
-            public static List<Amp> Replace(List<Amp> amps, Pos from, Pos to)
+            public static Amp[] Replace(Amp[] amps, Pos from, Pos to)
             {
-                for (int i = 0; i < amps.Count; i++)
+                for (int i = 0; i < amps.Length; i++)
                     if (amps[i].p == from)
                     {
                         amps[i] = new Amp(amps[i]) { p = to };
                         break;
                     }
-                amps.Sort();
+                Array.Sort(amps);
                 return amps;
             }
             public bool Equals(State other) => Id.Equals(other.Id);
@@ -197,7 +198,7 @@ namespace aoc
             State Id3(Map m)
             {
                 var pos = m.Positions().Where(w => "ABCD".Contains(m[w]));
-                return new State(pos.Select(p => new Amp(m[p], p)).OrderBy(w => w).ToList());
+                return new State(pos.Select(p => new Amp(m[p], p)).OrderBy(w => w).ToArray());
             }
             int nNewGames = 0;
             int nBetterGames = 0;
@@ -211,7 +212,7 @@ namespace aoc
                     var r = Reachable(ref state, amp);
                     foreach ((Pos p, int s) in r)
                     {
-                        var newAmps = new List<Amp>(state.Amps);
+                        Amp[] newAmps = (Amp[])state.Amps.Clone();
                         State newState = new(State.Replace(newAmps, amp.p, p));
                         int newScore = score + s * mult![amp.c];
                         bool playedBefore = gamesPlayed!.ContainsKey(newState);
