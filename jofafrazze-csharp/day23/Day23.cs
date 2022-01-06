@@ -9,6 +9,7 @@ namespace aoc
     {
         // Amphipod: Play game moving all amphipods back home
 
+        //record struct StateId(long hall, long rooms);
         record struct Amp(char c, Pos p) : IComparable<Amp>
         {
             public Amp(Amp a) : this(a.c, a.p) { }
@@ -39,51 +40,17 @@ namespace aoc
             }
             public bool Equals(State other) => Id.Equals(other.Id);
             public override int GetHashCode() => Id.GetHashCode();
-            public bool Done()
-            {
-                for (int i = 0; i < Id.Length; i += 3)
-                {
-                    char c = Id[i];
-                    int x = (int)(Id[i + 1] - 'E');
-                    if ((c == 'A' && x != 3) || (c == 'B' && x != 5) || (c == 'C' && x != 7) || (c == 'D' && x != 9))
-                        return false;
-                }
-                return true;
-            }
-            public bool Evacuating(int x, char c)
-            {
-                char cx = (char)('E' + x);
-                for (int i = 0; i < Id.Length; i += 3)
-                    if (Id[i + 1] == cx && Id[i] != c)
-                        return true;
-                return false;
-            }
-            public int AmpsHome(int x, char c)
-            {
-                //if (Evacuating(x, c))
-                //    return 0;
-                int n = 0;
-                char cx = (char)('E' + x);
-                for (int i = 0; i < Id.Length; i += 3)
-                    if (Id[i + 1] == cx && Id[i] == c)
-                        n++;
-                return n;
-            }
-            public Amp GetFirstAmp(int x)
-            {
-                char cx = (char)('E' + x);
-                for (int i = 0; i < Id.Length; i += 3)
-                    if (Id[i + 1] == cx)
-                        return new Amp(Id.Substring(i, 3));
-                throw new ArgumentOutOfRangeException();
-            }
+            public bool Done() => Amps.All(a => a.p.x == xhome[a.c]);
+            public bool Evacuating(char c) => Amps.Where(a => a.p.x == xhome[c]).Any(a => a.c != c);
+            public int AmpsInHome(char c) => Amps.Where(a => a.p.x == xhome[c]).Count(a => a.c == c);
+            public Amp GetFirstAmp(char c) => Amps.Where(a => a.p.x == xhome[c]).First();
             public List<Amp> MovingOut()
             {
                 var l = new List<Amp>();
-                if (Evacuating(3, 'A')) l.Add(GetFirstAmp(3));
-                if (Evacuating(5, 'B')) l.Add(GetFirstAmp(5));
-                if (Evacuating(7, 'C')) l.Add(GetFirstAmp(7));
-                if (Evacuating(9, 'D')) l.Add(GetFirstAmp(9));
+                if (Evacuating('A')) l.Add(GetFirstAmp('A'));
+                if (Evacuating('B')) l.Add(GetFirstAmp('B'));
+                if (Evacuating('C')) l.Add(GetFirstAmp('C'));
+                if (Evacuating('D')) l.Add(GetFirstAmp('D'));
                 return l;
             }
             public string PrintToString(Map m0)
@@ -121,9 +88,9 @@ namespace aoc
                 int[] distHome = new int[10];
                 foreach (char c in "ABCD")
                 {
-                    bool e = Evacuating(xhome[c], c);
+                    bool e = Evacuating(c);
                     evac[xhome[c]] = e;
-                    distHome[xhome[c]] = maxDepth - (e ? 0 : AmpsHome(xhome[c], c));
+                    distHome[xhome[c]] = maxDepth - (e ? 0 : AmpsInHome(c));
                 }
                 foreach (var a in Amps)
                     if (!(IsXHome(a.p.x) && !evac[a.p.x]))
@@ -182,7 +149,7 @@ namespace aoc
                     }
                 }
                 int sxhome = xhome[start.c];
-                bool canGoHome = (start.p.x != sxhome) && !state.Evacuating(xhome[start.c], start.c);
+                bool canGoHome = (start.p.x != sxhome) && !state.Evacuating(start.c);
                 int homeDir = start.p.x > sxhome ? -1 : 1;
                 if (start.p.y == 1 && canGoHome)
                     GoSideways(start.p, homeDir, false, sxhome);
