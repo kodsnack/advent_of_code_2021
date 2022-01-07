@@ -46,8 +46,21 @@ namespace aoc
                 return true;
 
             }
-            public bool Evacuating(int r) => Board.Skip(r * N).Take(N).Any(w => w != r && w != Empty);
-            public int NInHome(int r) => Board.Skip(r * N).Take(N).Count(w => w == r);
+            public bool Evacuating(int r)
+            {
+                for (int i = r * N; i < r * N + N; i++)
+                    if (Board[i] != r && Board[i] != Empty)
+                        return true;
+                return false;
+            }
+            public int NInHome(int r)
+            {
+                int n = 0;
+                for (int i = r * N; i < r * N + N; i++)
+                    if (Board[i] == r)
+                        n++;
+                return n;
+            }
             public int GetFirstPlayerIdx(int r)
             {
                 for (int i = r * N; true; i++)
