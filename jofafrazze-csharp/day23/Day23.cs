@@ -93,24 +93,19 @@ namespace aoc
             }
             public string PrintToCompactString(int index, int score)
             {
-                //int maxDepth = Id.Length / 12;
-                //var map = Amps.ToDictionary(w => w.p, w => w.c);
-                //var sb = new StringBuilder();
-                //sb.AppendFormat("{0,2}: ", index);
-                //for (int x = 1; x <= 11; x++)
-                //{
-                //    if (IsXHome(x))
-                //    {
-                //        sb.Append('[');
-                //        for (int y = 2; y <= maxDepth + 1; y++)
-                //            sb.Append(map.GetValueOrDefault(new Pos(x, y), '.'));
-                //        sb.Append(']');
-                //    }
-                //    else
-                //        sb.Append(map.GetValueOrDefault(new Pos(x, 1), '.'));
-                //}
-                //return sb.AppendFormat(": {0,5}", score).ToString();
-                return "";
+                var sb = new StringBuilder();
+                sb.AppendFormat("{0,2}: ", index);
+                for (int i = 4 * N; i < Board.Length; i++)
+                    sb.Append(playerChar[Board[i]]);
+                sb.Append(' ');
+                for (int r = 0; r < 4; r++)
+                {
+                    sb.Append('[');
+                    for (int i = 0; i < N; i++)
+                        sb.Append(playerChar[Board[r * N + i]]);
+                    sb.Append(']');
+                }
+                return sb.AppendFormat(": {0,5}", score).ToString();
             }
             public int EstimateRemainingCost() // Must not overestimate cost
             {
@@ -281,15 +276,15 @@ namespace aoc
                 //}
             }
             Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
-            //var moves = new List<State>() { state };
-            //var curState = state;
-            //while (gamesPlayed[curState].prev != null)
-            //{
-            //    curState = (State)gamesPlayed[curState].prev!;
-            //    moves.Add(curState);
-            //}
-            //foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
-            //    Console.WriteLine(s.PrintToCompactString(i, gamesPlayed[s].score));
+            var moves = new List<State>() { state! };
+            var curState = state;
+            while (gamesPlayed[curState!].prev != null)
+            {
+                curState = (State)gamesPlayed[curState!].prev!;
+                moves.Add(curState);
+            }
+            foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
+                Console.WriteLine(s.PrintToCompactString(i, gamesPlayed[s].score));
             return score;
         }
         public static (Object a, Object b) DoPuzzle(string file) =>
