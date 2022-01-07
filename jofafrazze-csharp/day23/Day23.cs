@@ -9,14 +9,14 @@ namespace aoc
     {
         // Amphipod: Play game moving all amphipods back home
 
-        static readonly int A = 0, B = 1, C = 2, D = 3, Empty = 4;
+        static readonly int Empty = 4;
         static readonly Dictionary<char, int> playerValue = new() { ['A'] = 0, ['B'] = 1, ['C'] = 2, ['D'] = 3, ['.'] = 4 };
         static readonly string playerChar = "ABCD.";
         static readonly int[] mult = new int[] { 1, 10, 100, 1000 };
         static List<Pos> idx2Pos = new();
         static int[,] distPos2Pos = new int[,] { { } };
         record struct StateId(long Hall, long Rooms);
-        record struct State(int N, StateId Id, byte[] Board)
+        sealed record class State(int N, StateId Id, byte[] Board)
         {
             // Board lenghts: room = N, hall = 11
             // Board index 0: room A, N: room B, 2N: room C, 3N: room D, 4N: hall
@@ -36,7 +36,7 @@ namespace aoc
                 }
                 return new StateId(hall, rooms);
             }
-            public bool Equals(State other) => Id.Equals(other.Id);
+            public bool Equals(State? other) => other is not null && Id.Equals(other.Id);
             public override int GetHashCode() => Id.GetHashCode();
             public bool Done()
             {
@@ -78,10 +78,10 @@ namespace aoc
             public List<int> MoveOutCandidates()
             {
                 var l = new List<int>();
-                if (Evacuating(A)) l.Add(GetFirstPlayerIdx(A));
-                if (Evacuating(B)) l.Add(GetFirstPlayerIdx(B));
-                if (Evacuating(C)) l.Add(GetFirstPlayerIdx(C));
-                if (Evacuating(D)) l.Add(GetFirstPlayerIdx(D));
+                if (Evacuating(0)) l.Add(GetFirstPlayerIdx(0));
+                if (Evacuating(1)) l.Add(GetFirstPlayerIdx(1));
+                if (Evacuating(2)) l.Add(GetFirstPlayerIdx(2));
+                if (Evacuating(3)) l.Add(GetFirstPlayerIdx(3));
                 return l;
             }
             public string PrintToString(Map m0)
@@ -117,7 +117,7 @@ namespace aoc
                 int cost = 0;
                 bool[] evac = new bool[4];
                 int[] roomDepth = new int[4];
-                for (int r = A; r <= D; r++)
+                for (int r = 0; r < 4; r++)
                 {
                     bool e = Evacuating(r);
                     evac[r] = e;
@@ -257,7 +257,7 @@ namespace aoc
                 }
                 return nNewGames + nBetterGames > nGoodBefore;
             }
-            State state;
+            State? state;
             int score = 0;
             while (gameStates.TryDequeue(out state, out int hscore))
             {
