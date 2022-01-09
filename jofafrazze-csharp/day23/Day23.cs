@@ -9,123 +9,257 @@ namespace aoc
     {
         // Amphipod: Play game moving all amphipods back home
 
-        static Object Play(string file, bool partB)
+        static readonly string playerChar = "ABCD.";
+        static readonly int Empty = 4;
+        static readonly int[] mult = new int[] { 1, 10, 100, 1000 };
+        static List<Pos> idx2Pos = new();
+        static int[,] distPos2Pos = new int[,] { { } };
+        record struct StateId(long Hall, long Rooms);
+        sealed record class State(int N, StateId Id, byte[] Board)
         {
-            var ls = File.ReadAllLines(ReadInput.GetPath(Day, file));
-            int maxLen = ls.Select(s => s.Length).Max();
-            var input = ls.Select(s => s.PadRight(maxLen)).ToList();
-            if (partB)
-                input.InsertRange(3, new[] { "  #D#C#B#A#  ", "  #D#B#A#C#  " });
-            var m0 = Map.Build(input);
-            m0.Print();
-            var players = "ABCD";
-            var mult = new Dictionary<char, int> { ['A'] = 1, ['B'] = 10, ['C'] = 100, ['D'] = 1000 };
-            var hallway = m0.Positions().Where(p => m0[p] == '.');
-            var homes = new Dictionary<char, List<Pos>>();
-            homes['A'] = m0.Positions().Where(p => players.Contains(m0[p]) && p.x == 3).ToList();
-            homes['B'] = m0.Positions().Where(p => players.Contains(m0[p]) && p.x == 5).ToList();
-            homes['C'] = m0.Positions().Where(p => players.Contains(m0[p]) && p.x == 7).ToList();
-            homes['D'] = m0.Positions().Where(p => players.Contains(m0[p]) && p.x == 9).ToList();
-            var allHomes = homes.SelectMany(w => w.Value).ToHashSet();
-            var xHomes = allHomes.Select(p => p.x).ToHashSet();
-            var hallwayStops = hallway.Where(p => !xHomes.Contains(p.x)).ToList();
-            var gameStates = new PriorityQueue<Map, int>();
-            gameStates.Enqueue(m0, 0);
-            var gamesPlayed = new Dictionary<string, int>() { [Id(m0)] = 0 };
-            int minEnergy = int.MaxValue;
-            List<(Pos, int)> Reachable(Map m, Pos start, List<Pos> home, bool onlyGoHome)
+            // Board lenghts: Each room = N, hall = 11
+            // Board index: room A = 0, room B = N, room C = 2N, room D = 3N, hall = 4N
+            public State(byte[] board) : this((board.Length - 11) / 4, CreateId(board), board) { }
+            public static StateId CreateId(byte[] board)
             {
-                var canReach = new List<(Pos p, int s)>();
-                var been = new HashSet<Pos>();
-                var toTry = new List<(Pos, int)>() { (start, 0) };
-                while (toTry.Any())
-                {
-                    foreach ((Pos p, int s) in toTry)
-                    {
-                        been.Add(p);
-                        foreach (Pos n in CoordsRC.Neighbours4(p))
-                        {
-                            if (m[n] == '.' && !been.Contains(n))
-                            {
-                                canReach.Add((n, s + 1));
-                            }
-                        }
-                    }
-                    toTry = canReach.Where(a => !been.Contains(a.Item1)).ToList();
-                }
-                bool allowGoHome = home.All(w => m[w] == '.' || m[w] == m[start]) &&
-                    home.Any(w => m[w] == '.') && !home.Contains(start);
-                var allowed = new List<Pos>();
-                if (!onlyGoHome)
-                    allowed.AddRange(hallwayStops);
-                if (allowGoHome)
-                    allowed.Add(home.Where(w => m[w] == '.').Last());
-                return canReach.Where(w => allowed.Contains(w.p)).ToList();
+                long hall = 0, rooms = 0;
+                for (int i = board.Length - 11; i < board.Length; i++)
+                    hall = hall << 3 | board[i];
+                for (int i = 0; i < board.Length - 11; i++)
+                    rooms = rooms << 3 | board[i];
+                return new StateId(hall, rooms);
             }
-            string Id(Map m)
+            public bool Equals(State? other) => other is not null && Id.Equals(other.Id);
+            public override int GetHashCode() => Id.GetHashCode();
+            public bool Done()
             {
-                var a = m.Positions().Where(w => players!.Contains(m[w])).Select(w => (m[w], w));
+                for (int i = 0; i < Board.Length - 11; i++)
+                    if (Board[i] != i / N)
+                        return false;
+                return true;
+
+            }
+            public bool EvacuatingRoom(int r)
+            {
+                for (int i = r * N; i < r * N + N; i++)
+                    if (Board[i] != r && Board[i] != Empty)
+                        return true;
+                return false;
+            }
+            public int NInHome(int r)
+            {
+                int n = 0;
+                for (int i = r * N; i < r * N + N; i++)
+                    if (Board[i] == r)
+                        n++;
+                return n;
+            }
+            public List<int> MoveInCandidates()
+            {
+                var l = new List<int>();
+                for (int i = 4 * N; i < Board.Length; i++)
+                    if (Board[i] != Empty)
+                        l.Add(i);
+                return l;
+            }
+            public void AddPlayerMovingOut(List<int> list, int r)
+            {
+                if (!EvacuatingRoom(r))
+                    return;
+                for (int i = r * N; true; i++)
+                    if (Board[i] != Empty)
+                    {
+                        list.Add(i);
+                        break;
+                    }
+            }
+            public List<int> MoveOutCandidates()
+            {
+                var l = new List<int>();
+                AddPlayerMovingOut(l, 0);
+                AddPlayerMovingOut(l, 1);
+                AddPlayerMovingOut(l, 2);
+                AddPlayerMovingOut(l, 3);
+                return l;
+            }
+            public string PrintToString(Map m0)
+            {
+                Map m = new(m0);
+                for (int i = 0; i < Board.Length; i++)
+                    m[idx2Pos[i]] = playerChar[Board[i]];
+                return m.PrintToString();
+            }
+            public string PrintToCompactString()
+            {
                 var sb = new StringBuilder();
-                foreach ((char c, Pos p) in a.OrderBy(w => w.Item1).ThenBy(w => w.Item2))
-                    sb.Append(c).Append(p.x).Append(',').Append(p.y);
+                for (int i = 4 * N; i < Board.Length; i++)
+                    sb.Append(playerChar[Board[i]]);
+                sb.Append(' ');
+                for (int r = 0; r < 4; r++)
+                {
+                    sb.Append('[');
+                    for (int i = 0; i < N; i++)
+                        sb.Append(playerChar[Board[r * N + i]]);
+                    sb.Append(']');
+                }
                 return sb.ToString();
             }
-            while (gameStates.TryDequeue(out Map? m1, out int score))
+            public int EstimateRemainingCost() // Must not overestimate cost
             {
-                if (score >= minEnergy)
-                    continue;
-                bool done = true;
-                foreach ((char c, var h) in homes)
-                    foreach(var p in h)
-                        done &= (m1[p] == c);
-                if (done)
-                    minEnergy = Math.Min(minEnergy, score);
-                else
+                int cost = 0;
+                bool[] evac = new bool[4];
+                int[] roomDepth = new int[4];
+                for (int r = 0; r < 4; r++)
                 {
-                    var movingOut = allHomes.Where(p => players.Contains(m1[p]) && m1[p + CoordsRC.goUp] == '.');
-                    foreach (var amp in movingOut)
+                    evac[r] = EvacuatingRoom(r);
+                    roomDepth[r] = N - (evac[r] ? 0 : NInHome(r)) - 1;
+                }
+                for (int i = 0; i < Board.Length; i++)
+                {
+                    int player = Board[i];
+                    if (player != Empty && !(i < 4 * N && !evac[player]))
+                        cost += distPos2Pos[i, player * N + roomDepth[player]--] * mult[player];
+                }
+                return cost;
+            }
+        }
+        static void InitLookups(int N)
+        {
+            idx2Pos = new List<Pos>();
+            for (int i = 0; i < N * 4; i++)
+                idx2Pos.Add(new Pos(3 + i / N * 2, 2 + (i % N)));
+            for (int i = 0; i < 11; i++)
+                idx2Pos.Add(new Pos(i + 1, 1));
+            distPos2Pos = new int[idx2Pos.Count, idx2Pos.Count];
+            for (int i = 0; i < idx2Pos.Count; i++)
+                for (int j = 0; j < idx2Pos.Count; j++)
+                {
+                    var pMid = new Pos(idx2Pos[i].x, 1);
+                    distPos2Pos[i, j] = idx2Pos[i].ManhattanDistance(pMid) + pMid.ManhattanDistance(idx2Pos[j]);
+                }
+        }
+        static Object Play(string file, bool partB)
+        {
+            int roomDepth = partB ? 4 : 2;
+            InitLookups(roomDepth);
+            var ls = File.ReadAllLines(ReadInput.GetPath(Day, file));
+            var input = ls.Select(s => s.PadRight(13)).ToList();
+            if (partB)
+                input.InsertRange(3, new[] { "  #D#C#B#A#  ", "  #D#B#A#C#  " });
+            var m = Map.Build(input);
+            //m.Print();
+            byte[] board = new byte[roomDepth * 4 + 11];
+            for (int i = 0; i < board.Length; i++)
+                board[i] = (byte)(i < roomDepth * 4 ? playerChar.IndexOf(m[idx2Pos[i]]) : Empty);
+            var state0 = new State(board);
+            var gameStates = new PriorityQueue<State, int>(new (State, int)[] { (state0, 0) });
+            var gamesPlayed = new Dictionary<State, (int score, State? prev)>() { [state0] = (0, null) };
+            m.Positions().Where(p => !" #.".Contains(m[p])).ToList().ForEach(p => m[p] = '.');
+            List<(int idx, int cost)> Reachable(State s, int pIdx)
+            {
+                var canReach = new List<(int idx, int cost)>();
+                int player = s.Board[pIdx];
+                void GoDownHome(State state, int curIdx)
+                {
+                    int roomBottomIdx = curIdx + state.N - 1;
+                    while (curIdx < roomBottomIdx && state.Board[curIdx + 1] == Empty)
+                        curIdx++;
+                    canReach!.Add((curIdx, distPos2Pos[pIdx, curIdx]));
+                }
+                bool gotHome = false;
+                int hallIdx0 = 4 * s.N;
+                int homeIdx0 = player * s.N;
+                void GoSideways(State state, int curIdx, int dir, bool stopInHallway, int pHomeHallIdx = -1)
+                {
+                    int endIdx = dir < 0 ? hallIdx0 - 1 : hallIdx0 + 11;
+                    curIdx += dir;
+                    while (curIdx != endIdx && state.Board[curIdx] == Empty)
                     {
-                        var r = Reachable(m1, amp, homes[m1[amp]], false);
-                        foreach ((Pos p, int s) in r)
+                        if (stopInHallway && (curIdx <= hallIdx0 + 1 || curIdx >= hallIdx0 + 9 || (curIdx - hallIdx0) % 2 == 1))
+                            canReach!.Add((curIdx, distPos2Pos[pIdx, curIdx]));
+                        if (curIdx == pHomeHallIdx)
                         {
-                            Map m2 = new(m1);
-                            m2[p] = m1[amp];
-                            m2[amp] = '.';
-                            int newScore = score + s * mult[m1[amp]];
-                            var id = Id(m2);
-                            if (!gamesPlayed.ContainsKey(id) || gamesPlayed[id] > newScore)
-                            {
-                                //m2.Print();
-                                gameStates.Enqueue(m2, newScore);
-                                gamesPlayed[id] = newScore;
-                            }
+                            canReach!.Clear();
+                            GoDownHome(state, homeIdx0);
+                            gotHome = true;
+                            return;
                         }
-                    }
-                    //m1.Print();
-                    var movingIn = hallwayStops.Where(p => m1[p] != '.');
-                    foreach (var amp in movingIn)
-                    {
-                        var r = Reachable(m1, amp, homes[m1[amp]], true);
-                        foreach ((Pos p, int s) in r)
-                        {
-                            Map m2 = new(m1);
-                            m2[p] = m1[amp];
-                            m2[amp] = '.';
-                            int newScore = score + s * mult[m1[amp]];
-                            var id = Id(m2);
-                            if (!gamesPlayed.ContainsKey(id) || gamesPlayed[id] > newScore)
-                            {
-                                //m2.Print();
-                                gameStates.Enqueue(m2, newScore);
-                                gamesPlayed[id] = newScore;
-                            }
-                        }
+                        curIdx += dir;
                     }
                 }
+                int homeHallIdx = hallIdx0 + 2 + player * 2;
+                bool playerInhome = pIdx >= player * s.N && pIdx < player * (s.N + 1);
+                bool canGoHome = !playerInhome && !s.EvacuatingRoom(player);
+                bool pInHall = pIdx >= 4 * s.N;
+                int homeDir = pInHall ? (pIdx > homeHallIdx ? -1 : 1) : (pIdx > homeIdx0 ? -1 : 1);
+                int enterHallIdx = 4 * s.N + 2 + pIdx / s.N * 2;
+                if (pInHall && canGoHome)
+                    GoSideways(s, pIdx, homeDir, false, homeHallIdx);
+                else if (!pInHall)
+                    GoSideways(s, enterHallIdx, homeDir, true, canGoHome ? homeHallIdx : -1);
+                if (!pInHall && !gotHome)
+                    GoSideways(s, enterHallIdx, homeDir > 0 ? -1 : 1, true, -1);
+                return canReach;
             }
-            return minEnergy;
+            int nNewGames = 0, nBetterGames = 0, nOldGames = 0, nGamesTotal = 0;
+            bool MovePlayer(IEnumerable<int> toMove, State state, int score)
+            {
+                int nGoodBefore = nNewGames + nBetterGames;
+                foreach (var startIdx in toMove)
+                {
+                    byte player = state.Board[startIdx];
+                    var r = Reachable(state, startIdx);
+                    foreach ((int idx, int s) in r)
+                    {
+                        byte[] newBoard = (byte[])state.Board.Clone();
+                        newBoard[idx] = player;
+                        newBoard[startIdx] = (byte)Empty;
+                        State newState = new(newBoard);
+                        int newScore = score + s * mult[player];
+                        bool playedBefore = gamesPlayed!.ContainsKey(newState);
+                        if (!playedBefore || gamesPlayed[newState].score > newScore)
+                        {
+                            //Console.WriteLine(newState.PrintToString(m));
+                            gameStates!.Enqueue(newState, newScore + newState.EstimateRemainingCost());
+                            gamesPlayed[newState] = (newScore, state);
+                            nNewGames += playedBefore ? 0 : 1;
+                            nBetterGames += playedBefore ? 1 : 0;
+                        }
+                        else
+                            nOldGames++;
+                    }
+                }
+                return nNewGames + nBetterGames > nGoodBefore;
+            }
+            State? state;
+            int score = 0;
+            while (gameStates.TryDequeue(out state, out int hscore))
+            {
+                nGamesTotal++;
+                score = gamesPlayed[state].score;
+                if (state.Done())
+                    break;
+                else
+                {
+                    MovePlayer(state.MoveInCandidates(), state, score);
+                    MovePlayer(state.MoveOutCandidates(), state, score);
+                }
+                //if (nGamesTotal % 10000 == 0)
+                //{
+                //    Console.WriteLine("Total: {0}, new: {1}, better: {2}, old: {3}, score: {4}, hscore: {5}",
+                //        nGamesTotal, nNewGames, nBetterGames, nOldGames, score, hscore);
+                //    nNewGames = nBetterGames = nOldGames = 0;
+                //}
+            }
+            //Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
+            //var moves = new List<State>() { state! };
+            //while (gamesPlayed[state!].prev != null)
+            //    moves.Add(state = (State)gamesPlayed[state!].prev!);
+            //foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
+            //    Console.WriteLine("{0,2}: {1}: {2,5}", i, s.PrintToCompactString(), gamesPlayed[s].score);
+            return score;
         }
-        public static (Object a, Object b) DoPuzzle(string file) => 
+        public static (Object a, Object b) DoPuzzle(string file) =>
             (Play(file, false), Play(file, true));
         static void Main() => Aoc.Execute(Day, DoPuzzle);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
