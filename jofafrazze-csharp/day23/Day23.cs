@@ -9,31 +9,24 @@ namespace aoc
     {
         // Amphipod: Play game moving all amphipods back home
 
-        static readonly int Empty = 4;
-        static readonly Dictionary<char, int> playerValue = new() { ['A'] = 0, ['B'] = 1, ['C'] = 2, ['D'] = 3, ['.'] = 4 };
         static readonly string playerChar = "ABCD.";
+        static readonly int Empty = 4;
         static readonly int[] mult = new int[] { 1, 10, 100, 1000 };
         static List<Pos> idx2Pos = new();
         static int[,] distPos2Pos = new int[,] { { } };
         record struct StateId(long Hall, long Rooms);
         sealed record class State(int N, StateId Id, byte[] Board)
         {
-            // Board lenghts: room = N, hall = 11
-            // Board index 0: room A, N: room B, 2N: room C, 3N: room D, 4N: hall
+            // Board lenghts: Each room = N, hall = 11
+            // Board index: room A = 0, room B = N, room C = 2N, room D = 3N, hall = 4N
             public State(byte[] board) : this((board.Length - 11) / 4, CreateId(board), board) { }
             public static StateId CreateId(byte[] board)
             {
                 long hall = 0, rooms = 0;
                 for (int i = board.Length - 11; i < board.Length; i++)
-                {
-                    hall <<= 3;
-                    hall |= board[i];
-                }
+                    hall = hall << 3 | board[i];
                 for (int i = 0; i < board.Length - 11; i++)
-                {
-                    rooms <<= 3;
-                    rooms |= board[i];
-                }
+                    rooms = rooms << 3 | board[i];
                 return new StateId(hall, rooms);
             }
             public bool Equals(State? other) => other is not null && Id.Equals(other.Id);
@@ -91,10 +84,9 @@ namespace aoc
                     m[idx2Pos[i]] = playerChar[Board[i]];
                 return m.PrintToString();
             }
-            public string PrintToCompactString(int index, int score)
+            public string PrintToCompactString()
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat("{0,2}: ", index);
                 for (int i = 4 * N; i < Board.Length; i++)
                     sb.Append(playerChar[Board[i]]);
                 sb.Append(' ');
@@ -105,7 +97,7 @@ namespace aoc
                         sb.Append(playerChar[Board[r * N + i]]);
                     sb.Append(']');
                 }
-                return sb.AppendFormat(": {0,5}", score).ToString();
+                return sb.ToString();
             }
             public int EstimateRemainingCost() // Must not overestimate cost
             {
@@ -126,11 +118,6 @@ namespace aoc
                 }
                 return cost;
             }
-            public int HallIdx0() => 4 * N;
-            public int RoomIdx0(int room) => room * N;
-            public int RoomIdxIntoHallIdx(int idx) => 4 * N + 2 + idx / N * 2;
-            public bool InHall(int idx) => idx >= 4 * N;
-            public bool InRoom(int idx, int room) => idx >= room * N && idx < room * (N + 1);
         }
         static void InitLookups(int N)
         {
@@ -161,11 +148,11 @@ namespace aoc
             gameStates.Enqueue(CreateBoard(m), 0);
             var gamesPlayed = new Dictionary<State, (int score, State? prev)>() { [CreateBoard(m)] = (0, null) };
             m.Positions().Where(p => !" #.".Contains(m[p])).ToList().ForEach(p => m[p] = '.');
-            List<(int idx, int cost)> Reachable(ref State s, int pIdx)
+            List<(int idx, int cost)> Reachable(State s, int pIdx)
             {
                 var canReach = new List<(int idx, int cost)>();
                 int player = s.Board[pIdx];
-                void GoDownHome(ref State state, int curIdx)
+                void GoDownHome(State state, int curIdx)
                 {
                     int roomBottomIdx = curIdx + state.N - 1;
                     while (curIdx < roomBottomIdx && state.Board[curIdx + 1] == Empty)
@@ -173,9 +160,9 @@ namespace aoc
                     canReach!.Add((curIdx, distPos2Pos[pIdx, curIdx]));
                 }
                 bool gotHome = false;
-                int hallIdx0 = s.HallIdx0();
-                int homeIdx0 = s.RoomIdx0(player);
-                void GoSideways(ref State state, int curIdx, int dir, bool stopInHallway, int pHomeHallIdx = -1)
+                int hallIdx0 = 4 * s.N;
+                int homeIdx0 = player * s.N;
+                void GoSideways(State state, int curIdx, int dir, bool stopInHallway, int pHomeHallIdx = -1)
                 {
                     int endIdx = dir < 0 ? hallIdx0 - 1 : hallIdx0 + 11;
                     curIdx += dir;
@@ -186,7 +173,7 @@ namespace aoc
                         if (curIdx == pHomeHallIdx)
                         {
                             canReach!.Clear();
-                            GoDownHome(ref state, homeIdx0);
+                            GoDownHome(state, homeIdx0);
                             gotHome = true;
                             return;
                         }
@@ -194,37 +181,37 @@ namespace aoc
                     }
                 }
                 int homeHallIdx = hallIdx0 + 2 + player * 2;
-                bool playerInhome = s.InRoom(pIdx, player);
+                bool playerInhome = pIdx >= player * s.N && pIdx < player * (s.N + 1);
                 bool canGoHome = !playerInhome && !s.Evacuating(player);
-                int homeDir = s.InHall(pIdx) ? (pIdx > homeHallIdx ? -1 : 1) : (pIdx > homeIdx0 ? -1 : 1);
-                bool pInHall = s.InHall(pIdx);
-                int enterHallIdx = s.RoomIdxIntoHallIdx(pIdx);
+                bool pInHall = pIdx >= 4 * s.N;
+                int homeDir = pInHall ? (pIdx > homeHallIdx ? -1 : 1) : (pIdx > homeIdx0 ? -1 : 1);
+                int enterHallIdx = 4 * s.N + 2 + pIdx / s.N * 2;
                 if (pInHall && canGoHome)
-                    GoSideways(ref s, pIdx, homeDir, false, homeHallIdx);
+                    GoSideways(s, pIdx, homeDir, false, homeHallIdx);
                 else if (!pInHall)
-                    GoSideways(ref s, enterHallIdx, homeDir, true, canGoHome ? homeHallIdx : -1);
+                    GoSideways(s, enterHallIdx, homeDir, true, canGoHome ? homeHallIdx : -1);
                 if (!pInHall && !gotHome)
-                    GoSideways(ref s, enterHallIdx, homeDir > 0 ? -1 : 1, true, -1);
+                    GoSideways(s, enterHallIdx, homeDir > 0 ? -1 : 1, true, -1);
                 return canReach;
             }
             State CreateBoard(Map m)
             {
                 byte[] board = new byte[roomDepth * 4 + 11];
                 for (int i = 0; i < board.Length; i++)
-                    board[i] = (byte)(i < roomDepth * 4 ? playerValue[m[idx2Pos[i]]] : Empty);
+                    board[i] = (byte)(i < roomDepth * 4 ? playerChar.IndexOf(m[idx2Pos[i]]) : Empty);
                 return new State(board);
             }
             int nNewGames = 0;
             int nBetterGames = 0;
             int nOldGames = 0;
             int nGamesTotal = 0;
-            bool MovePlayer(IEnumerable<int> toMove, ref State state, int score)
+            bool MovePlayer(IEnumerable<int> toMove, State state, int score)
             {
                 int nGoodBefore = nNewGames + nBetterGames;
                 foreach (var startIdx in toMove)
                 {
                     byte player = state.Board[startIdx];
-                    var r = Reachable(ref state, startIdx);
+                    var r = Reachable(state, startIdx);
                     foreach ((int idx, int s) in r)
                     {
                         byte[] newBoard = (byte[])state.Board.Clone();
@@ -262,8 +249,8 @@ namespace aoc
                     break;
                 else
                 {
-                    MovePlayer(state.MoveInCandidates(), ref state, score);
-                    MovePlayer(state.MoveOutCandidates(), ref state, score);
+                    MovePlayer(state.MoveInCandidates(), state, score);
+                    MovePlayer(state.MoveOutCandidates(), state, score);
                 }
                 //if (nGamesTotal % 10000 == 0)
                 //{
@@ -277,14 +264,10 @@ namespace aoc
             }
             Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
             var moves = new List<State>() { state! };
-            var curState = state;
-            while (gamesPlayed[curState!].prev != null)
-            {
-                curState = (State)gamesPlayed[curState!].prev!;
-                moves.Add(curState);
-            }
+            while (gamesPlayed[state!].prev != null)
+                moves.Add(state = (State)gamesPlayed[state!].prev!);
             foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
-                Console.WriteLine(s.PrintToCompactString(i, gamesPlayed[s].score));
+                Console.WriteLine("{0,2}: {1}: {2,5}", i, s.PrintToCompactString(), gamesPlayed[s].score);
             return score;
         }
         public static (Object a, Object b) DoPuzzle(string file) =>
