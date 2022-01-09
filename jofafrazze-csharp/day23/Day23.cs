@@ -39,7 +39,7 @@ namespace aoc
                 return true;
 
             }
-            public bool Evacuating(int r)
+            public bool EvacuatingRoom(int r)
             {
                 for (int i = r * N; i < r * N + N; i++)
                     if (Board[i] != r && Board[i] != Empty)
@@ -54,12 +54,6 @@ namespace aoc
                         n++;
                 return n;
             }
-            public int GetFirstPlayerIdx(int r)
-            {
-                for (int i = r * N; true; i++)
-                    if (Board[i] != Empty)
-                        return i;
-            }
             public List<int> MoveInCandidates()
             {
                 var l = new List<int>();
@@ -68,13 +62,24 @@ namespace aoc
                         l.Add(i);
                 return l;
             }
+            public void AddPlayerMovingOut(List<int> list, int r)
+            {
+                if (!EvacuatingRoom(r))
+                    return;
+                for (int i = r * N; true; i++)
+                    if (Board[i] != Empty)
+                    {
+                        list.Add(i);
+                        break;
+                    }
+            }
             public List<int> MoveOutCandidates()
             {
                 var l = new List<int>();
-                if (Evacuating(0)) l.Add(GetFirstPlayerIdx(0));
-                if (Evacuating(1)) l.Add(GetFirstPlayerIdx(1));
-                if (Evacuating(2)) l.Add(GetFirstPlayerIdx(2));
-                if (Evacuating(3)) l.Add(GetFirstPlayerIdx(3));
+                AddPlayerMovingOut(l, 0);
+                AddPlayerMovingOut(l, 1);
+                AddPlayerMovingOut(l, 2);
+                AddPlayerMovingOut(l, 3);
                 return l;
             }
             public string PrintToString(Map m0)
@@ -106,9 +111,8 @@ namespace aoc
                 int[] roomDepth = new int[4];
                 for (int r = 0; r < 4; r++)
                 {
-                    bool e = Evacuating(r);
-                    evac[r] = e;
-                    roomDepth[r] = N - (e ? 0 : NInHome(r)) - 1;
+                    evac[r] = EvacuatingRoom(r);
+                    roomDepth[r] = N - (evac[r] ? 0 : NInHome(r)) - 1;
                 }
                 for (int i = 0; i < Board.Length; i++)
                 {
@@ -144,9 +148,12 @@ namespace aoc
                 input.InsertRange(3, new[] { "  #D#C#B#A#  ", "  #D#B#A#C#  " });
             var m = Map.Build(input);
             //m.Print();
-            var gameStates = new PriorityQueue<State, int>();
-            gameStates.Enqueue(CreateBoard(m), 0);
-            var gamesPlayed = new Dictionary<State, (int score, State? prev)>() { [CreateBoard(m)] = (0, null) };
+            byte[] board = new byte[roomDepth * 4 + 11];
+            for (int i = 0; i < board.Length; i++)
+                board[i] = (byte)(i < roomDepth * 4 ? playerChar.IndexOf(m[idx2Pos[i]]) : Empty);
+            var state0 = new State(board);
+            var gameStates = new PriorityQueue<State, int>(new (State, int)[] { (state0, 0) });
+            var gamesPlayed = new Dictionary<State, (int score, State? prev)>() { [state0] = (0, null) };
             m.Positions().Where(p => !" #.".Contains(m[p])).ToList().ForEach(p => m[p] = '.');
             List<(int idx, int cost)> Reachable(State s, int pIdx)
             {
@@ -182,7 +189,7 @@ namespace aoc
                 }
                 int homeHallIdx = hallIdx0 + 2 + player * 2;
                 bool playerInhome = pIdx >= player * s.N && pIdx < player * (s.N + 1);
-                bool canGoHome = !playerInhome && !s.Evacuating(player);
+                bool canGoHome = !playerInhome && !s.EvacuatingRoom(player);
                 bool pInHall = pIdx >= 4 * s.N;
                 int homeDir = pInHall ? (pIdx > homeHallIdx ? -1 : 1) : (pIdx > homeIdx0 ? -1 : 1);
                 int enterHallIdx = 4 * s.N + 2 + pIdx / s.N * 2;
@@ -194,17 +201,7 @@ namespace aoc
                     GoSideways(s, enterHallIdx, homeDir > 0 ? -1 : 1, true, -1);
                 return canReach;
             }
-            State CreateBoard(Map m)
-            {
-                byte[] board = new byte[roomDepth * 4 + 11];
-                for (int i = 0; i < board.Length; i++)
-                    board[i] = (byte)(i < roomDepth * 4 ? playerChar.IndexOf(m[idx2Pos[i]]) : Empty);
-                return new State(board);
-            }
-            int nNewGames = 0;
-            int nBetterGames = 0;
-            int nOldGames = 0;
-            int nGamesTotal = 0;
+            int nNewGames = 0, nBetterGames = 0, nOldGames = 0, nGamesTotal = 0;
             bool MovePlayer(IEnumerable<int> toMove, State state, int score)
             {
                 int nGoodBefore = nNewGames + nBetterGames;
@@ -223,18 +220,13 @@ namespace aoc
                         if (!playedBefore || gamesPlayed[newState].score > newScore)
                         {
                             //Console.WriteLine(newState.PrintToString(m));
-                            int h = newState.EstimateRemainingCost();
-                            gameStates!.Enqueue(newState, newScore + h);
+                            gameStates!.Enqueue(newState, newScore + newState.EstimateRemainingCost());
                             gamesPlayed[newState] = (newScore, state);
-                            if (!playedBefore)
-                                nNewGames++;
-                            else
-                                nBetterGames++;
+                            nNewGames += playedBefore ? 0 : 1;
+                            nBetterGames += playedBefore ? 1 : 0;
                         }
                         else
-                        {
                             nOldGames++;
-                        }
                     }
                 }
                 return nNewGames + nBetterGames > nGoodBefore;
@@ -256,18 +248,15 @@ namespace aoc
                 //{
                 //    Console.WriteLine("Total: {0}, new: {1}, better: {2}, old: {3}, score: {4}, hscore: {5}",
                 //        nGamesTotal, nNewGames, nBetterGames, nOldGames, score, hscore);
-                //    nNewGames = 0;
-                //    nBetterGames = 0;
-                //    nOldGames = 0;
-                //    //Console.WriteLine(state.ToString());
+                //    nNewGames = nBetterGames = nOldGames = 0;
                 //}
             }
-            Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
-            var moves = new List<State>() { state! };
-            while (gamesPlayed[state!].prev != null)
-                moves.Add(state = (State)gamesPlayed[state!].prev!);
-            foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
-                Console.WriteLine("{0,2}: {1}: {2,5}", i, s.PrintToCompactString(), gamesPlayed[s].score);
+            //Console.WriteLine("Total: {0}, min energy: {1}", nGamesTotal, score);
+            //var moves = new List<State>() { state! };
+            //while (gamesPlayed[state!].prev != null)
+            //    moves.Add(state = (State)gamesPlayed[state!].prev!);
+            //foreach (var (s, i) in moves.AsEnumerable().Reverse().WithIndex())
+            //    Console.WriteLine("{0,2}: {1}: {2,5}", i, s.PrintToCompactString(), gamesPlayed[s].score);
             return score;
         }
         public static (Object a, Object b) DoPuzzle(string file) =>
