@@ -36,19 +36,19 @@ add_library(aoc21_problems OBJECT
         src/p10.cpp
         src/p11.cpp
         src/p12.cpp
-#        src/p13.cpp
-#        src/p14.cpp
-#        src/p15.cpp
-#        src/p16.cpp
-#        src/p17.cpp
-#        src/p18.cpp
-#        src/p19.cpp
-#        src/p20.cpp
-#        src/p21.cpp
-#        src/p22.cpp
-#        src/p23.cpp
-#        src/p24.cpp
-#        src/p25.cpp
+        src/p13.cpp
+        src/p14.cpp
+        src/p15.cpp
+        src/p16.cpp
+        src/p17.cpp
+        src/p18.cpp
+        src/p19.cpp
+        src/p20.cpp
+        src/p21.cpp
+        src/p22.cpp
+        src/p23.cpp
+        src/p24.cpp
+        src/p25.cpp
         )
 
 add_executable(aoc21 src/main.cpp)
