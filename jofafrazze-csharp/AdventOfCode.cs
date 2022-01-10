@@ -846,12 +846,25 @@ namespace AdventOfCode
             public T t;
             public BinNode<T>? left;
             public BinNode<T>? right;
-            public BinNode(T v, BinNode<T>? p)
+            public BinNode(T v, BinNode<T>? p, BinNode<T>? l = null, BinNode<T>? r = null)
             {
                 t = v;
                 parent = p;
-                left = null;
-                right = null;
+                left = l;
+                right = r;
+                if (l != null)
+                    l.parent = this;
+                if (r != null)
+                    r.parent = this;
+            }
+            public static BinNode<T>? CloneTree(BinNode<T>? root, BinNode<T>? parent = null)
+            {
+                if (root == null) 
+                    return null;
+                BinNode<T> newRoot = new BinNode<T>(root.t, parent);
+                newRoot.left = CloneTree(root.left, newRoot);
+                newRoot.right = CloneTree(root.right, newRoot);
+                return newRoot;
             }
         };
     }

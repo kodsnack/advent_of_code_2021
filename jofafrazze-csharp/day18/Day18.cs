@@ -33,28 +33,29 @@ namespace aoc
         }
         static string Tree2Str(Node n) => (n.t >= 0) ? n.t.ToString() :
             "[" + Tree2Str(n.left!) + "," + Tree2Str(n.right!) + "]";
-        static string AddSfNums(string s1, string s2)
+        static List<Node> ReadData(string file) =>
+            ReadInput.Strings(Day, file).Select(s => Str2Tree(s)).ToList();
+        static Node AddSfNums(Node n1, Node n2)
         {
-            Node root = Str2Tree("[" + s1 + "," + s2 + "]");
-            //Console.WriteLine("  " + TreeToString(root.left!));
-            //Console.WriteLine("+ " + TreeToString(root.right!));
+            Node root = new(-1, null, n1, n2);
+            //Console.WriteLine("  " + Tree2Str(root.left!));
+            //Console.WriteLine("+ " + Tree2Str(root.right!));
             while (ExplodeTree(root) || SplitTreeOnce(root))
                 ;
-            var sum = Tree2Str(root);
-            //Console.WriteLine("= " + sum);
+            //Console.WriteLine("= " + Tree2Str(root));
             //Console.WriteLine();
-            return sum;
+            return root;
         }
         static Node AddAllSfNums(string file)
         {
-            string last = "";
-            foreach (var s in ReadInput.Strings(Day, file))
-                last = (last.Length == 0) ? s : AddSfNums(last, s);
-            return Str2Tree(last);
+            Node? last = null;
+            foreach (var node in ReadData(file))
+                last = (last == null) ? node : AddSfNums(last, node);
+            return last!;
         }
         static bool ExplodeTree(Node tree)
         {
-            Node? n = FindExplodableNode(tree, 0);
+            Node? n = FindExplodable(tree, 0);
             bool any = n != null;
             while (n != null)
             {
@@ -78,13 +79,13 @@ namespace aoc
                 n.right = null;
                 n.t = 0;
                 //Console.WriteLine("X " + TreeToString(tree));
-                n = FindExplodableNode(tree, 0);
+                n = FindExplodable(tree, 0);
             }
             return any;
         }
         static bool SplitTreeOnce(Node tree)
         {
-            Node? n = FindSplitableNode(tree);
+            Node? n = FindSplittable(tree);
             bool any = n != null;
             if (n != null)
             {
@@ -99,28 +100,22 @@ namespace aoc
         }
         static bool CanExplode(Node n) =>
             n.left != null && n.left.t >= 0 && n.right != null && n.right.t >= 0;
-        static bool CanSplit(Node n) => n.t >= 10;
-        static Node? FindExplodableNode(Node n, int d)
+        static Node? FindExplodable(Node? n, int d)
         {
-            if (d == 4 && CanExplode(n))
-                return n;
-            Node? r = null;
-            if (n.left != null)
-                r = FindExplodableNode(n.left, d + 1);
-            if (r == null && n.right != null)
-                r = FindExplodableNode(n.right, d + 1);
-            return r;
+            if (n == null)
+                return null;
+            if (d == 4)
+                return CanExplode(n) ? n : null;
+            return FindExplodable(n.left, d + 1) ?? FindExplodable(n.right, d + 1);
         }
-        static Node? FindSplitableNode(Node n)
+        static bool CanSplit(Node n) => n.t >= 10;
+        static Node? FindSplittable(Node? n)
         {
+            if (n == null)
+                return null;
             if (CanSplit(n))
                 return n;
-            Node? r = null;
-            if (n.left != null)
-                r = FindSplitableNode(n.left);
-            if (r == null && n.right != null)
-                r = FindSplitableNode(n.right);
-            return r;
+            return FindSplittable(n.left) ?? FindSplittable(n.right);
         }
         static List<Node> FlattenTree(Node n)
         {
@@ -136,23 +131,18 @@ namespace aoc
             AddNode(n, list);
             return list;
         }
-        static int Magnitude(Node n)
-        {
-            if (n.t >= 0)
-                return n.t;
-            else
-                return Magnitude(n.left!) * 3 + Magnitude(n.right!) * 2;
-        }
-
+        static int Magnitude(Node n) => n.t >= 0 ? n.t : 
+            Magnitude(n.left!) * 3 + Magnitude(n.right!) * 2;
         public static Object PartA(string file) => Magnitude(AddAllSfNums(file));
         public static Object PartB(string file)
         {
-            var z = ReadInput.Strings(Day, file);
+            var z = ReadData(file);
             int max = int.MinValue;
             for (int i = 0; i < z.Count; i++)
                 for (int j = 0; j < z.Count; j++)
                     if (i != j)
-                        max = Math.Max(max, Magnitude(Str2Tree(AddSfNums(z[i], z[j]))));
+                        max = Math.Max(max, Magnitude(AddSfNums(Node.CloneTree(z[i])!, 
+                            Node.CloneTree(z[j])!)));
             return max;
         }
 
