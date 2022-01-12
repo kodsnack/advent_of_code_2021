@@ -22,8 +22,8 @@ namespace aoc
                         d--;
                     else if (s[i] == ',' && d == 1)
                     {
-                        node.left = Str2Tree(s[1..^1][..(i - 1)], node);
-                        node.right = Str2Tree(s[1..^1][i..], node);
+                        node.left = Str2Tree(s[1..i], node);
+                        node.right = Str2Tree(s[(i + 1)..^1], node);
                     }
                 }
             }
@@ -53,28 +53,38 @@ namespace aoc
                 last = (last == null) ? node : AddSfNums(last, node);
             return last!;
         }
+        static Node? PrevValue(Node n)
+        {
+            while (n.parent != null && n == n.parent.left)
+                n = n.parent;
+            if (n.parent == null)
+                return null;
+            n = n.parent.left!;
+            while (n.right != null)
+                n = n.right;
+            return n;
+        }
+        static Node? NextValue(Node n)
+        {
+            while (n.parent != null && n == n.parent.right)
+                n = n.parent;
+            if (n.parent == null)
+                return null;
+            n = n.parent.right!;
+            while (n.left != null)
+                n = n.left;
+            return n;
+        }
         static bool ExplodeTree(Node tree)
         {
-            Node? n = FindExplodable(tree, 0);
+            Node? prev, next, n = FindExplodable(tree, 0);
             bool any = n != null;
             while (n != null)
             {
-                var nodes = FlattenTree(tree);
-                int a = nodes.FindIndex(x => x == n);
-                if (a < nodes.Count - 1)
-                {
-                    var nr = nodes.Skip(a + 1).Where(x => x.t >= 0 && x.parent != n);
-                    if (nr.Any())
-                        nr.First().t += n.right!.t;
-                }
-                nodes.Reverse();
-                int b = nodes.FindIndex(x => x == n);
-                if (b < nodes.Count - 1)
-                {
-                    var nl = nodes.Skip(b + 1).Where(x => x.t >= 0 && x.parent != n);
-                    if (nl.Any())
-                        nl.First().t += n.left!.t;
-                }
+                if ((prev = PrevValue(n)) != null)
+                    prev.t += n.left!.t;
+                if ((next = NextValue(n)) != null)
+                    next.t += n.right!.t;
                 n.left = null;
                 n.right = null;
                 n.t = 0;
@@ -98,38 +108,21 @@ namespace aoc
             }
             return any;
         }
-        static bool CanExplode(Node n) =>
-            n.left != null && n.left.t >= 0 && n.right != null && n.right.t >= 0;
         static Node? FindExplodable(Node? n, int d)
         {
             if (n == null)
                 return null;
             if (d == 4)
-                return CanExplode(n) ? n : null;
+                return n.left != null && n.left.t >= 0 && n.right != null && n.right.t >= 0 ? n : null;
             return FindExplodable(n.left, d + 1) ?? FindExplodable(n.right, d + 1);
         }
-        static bool CanSplit(Node n) => n.t >= 10;
         static Node? FindSplittable(Node? n)
         {
             if (n == null)
                 return null;
-            if (CanSplit(n))
+            if (n.t >= 10)
                 return n;
             return FindSplittable(n.left) ?? FindSplittable(n.right);
-        }
-        static List<Node> FlattenTree(Node n)
-        {
-            var list = new List<Node>();
-            void AddNode(Node r, List<Node> list)
-            {
-                if (r.left != null)
-                    AddNode(r.left, list);
-                list.Add(r);
-                if (r.right != null)
-                    AddNode(r.right, list);
-            }
-            AddNode(n, list);
-            return list;
         }
         static int Magnitude(Node n) => n.t >= 0 ? n.t : 
             Magnitude(n.left!) * 3 + Magnitude(n.right!) * 2;

@@ -861,7 +861,7 @@ namespace AdventOfCode
             {
                 if (root == null) 
                     return null;
-                BinNode<T> newRoot = new BinNode<T>(root.t, parent);
+                var newRoot = new BinNode<T>(root.t, parent);
                 newRoot.left = CloneTree(root.left, newRoot);
                 newRoot.right = CloneTree(root.right, newRoot);
                 return newRoot;
