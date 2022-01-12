@@ -138,7 +138,7 @@ namespace aoc
                             Node.CloneTree(z[j])!)));
             return (a, max);
         }
-        static void Main() => Aoc.Execute(Day, DoPuzzle, accurateTiming: true);
+        static void Main() => Aoc.Execute(Day, DoPuzzle, nRuns: 1);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
 }

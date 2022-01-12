@@ -935,15 +935,14 @@ namespace AdventOfCode
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }
         public static void Execute(string day, Func<string, (Object, Object)> Puzzle, 
-            bool example = false, bool accurateTiming = false)
+            bool example = false, uint nRuns = 1)
         {
-            int n = accurateTiming ? 20 : 1;
-            string suffix1 = accurateTiming ? string.Format(" (doing {0} runs...)", n) : "";
+            string suffix1 = (nRuns > 1) ? string.Format(" (doing {0} runs...)", nRuns) : "";
             Console.WriteLine("AoC 2021 - {0}{1}:", day, suffix1);
             string file = example ? "example.txt" : "input.txt";
             Object a = 0, b = 0;
             var elapsedMs = new List<long>();
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < nRuns; i++)
             {
                 var w = System.Diagnostics.Stopwatch.StartNew();
                 (a, b) = Puzzle(file);
@@ -954,7 +953,7 @@ namespace AdventOfCode
             b = FixOutput(b);
             Console.WriteLine("Puzzle A: {0}", a);
             Console.WriteLine("Puzzle B: {0}", b);
-            string suffix2 = accurateTiming ? " (best value)" : "";
+            string suffix2 = nRuns > 1 ? " (best value)" : "";
             Console.WriteLine("[Execution took {0} ms{1}]", elapsedMs.Min(), suffix2);
         }
 
