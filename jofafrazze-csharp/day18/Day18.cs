@@ -46,11 +46,11 @@ namespace aoc
             //Console.WriteLine();
             return root;
         }
-        static Node AddAllSfNums(string file)
+        static Node AddAllSfNums(List<Node> nodes)
         {
             Node? last = null;
-            foreach (var node in ReadData(file))
-                last = (last == null) ? node : AddSfNums(last, node);
+            foreach (var node in nodes.Select(w => Node.CloneTree(w)))
+                last = (last == null) ? node : AddSfNums(last, node!);
             return last!;
         }
         static Node? PrevValue(Node n)
@@ -126,20 +126,19 @@ namespace aoc
         }
         static int Magnitude(Node n) => n.t >= 0 ? n.t : 
             Magnitude(n.left!) * 3 + Magnitude(n.right!) * 2;
-        public static Object PartA(string file) => Magnitude(AddAllSfNums(file));
-        public static Object PartB(string file)
+        public static (Object, Object) DoPuzzle(string file)
         {
             var z = ReadData(file);
+            var a = Magnitude(AddAllSfNums(z));
             int max = int.MinValue;
             for (int i = 0; i < z.Count; i++)
                 for (int j = 0; j < z.Count; j++)
                     if (i != j)
                         max = Math.Max(max, Magnitude(AddSfNums(Node.CloneTree(z[i])!, 
                             Node.CloneTree(z[j])!)));
-            return max;
+            return (a, max);
         }
-
-        static void Main() => Aoc.Execute(Day, PartA, PartB);
+        static void Main() => Aoc.Execute(Day, DoPuzzle, accurateTiming: true);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
 }

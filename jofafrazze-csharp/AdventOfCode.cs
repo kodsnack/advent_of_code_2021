@@ -934,18 +934,28 @@ namespace AdventOfCode
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }
-        public static void Execute(string day, Func<string, (Object, Object)> Puzzle, bool example = false)
+        public static void Execute(string day, Func<string, (Object, Object)> Puzzle, 
+            bool example = false, bool accurateTiming = false)
         {
-            Console.WriteLine("AoC 2021 - " + day + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
+            int n = accurateTiming ? 20 : 1;
+            string suffix1 = accurateTiming ? string.Format(" (doing {0} runs...)", n) : "";
+            Console.WriteLine("AoC 2021 - {0}{1}:", day, suffix1);
             string file = example ? "example.txt" : "input.txt";
-            (var a, var b) = Puzzle(file);
+            Object a = 0, b = 0;
+            var elapsedMs = new List<long>();
+            for (int i = 0; i < n; i++)
+            {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+                (a, b) = Puzzle(file);
+                w.Stop();
+                elapsedMs.Add(w.ElapsedMilliseconds);
+            }
             a = FixOutput(a);
             b = FixOutput(b);
             Console.WriteLine("Puzzle A: {0}", a);
             Console.WriteLine("Puzzle B: {0}", b);
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
+            string suffix2 = accurateTiming ? " (best value)" : "";
+            Console.WriteLine("[Execution took {0} ms{1}]", elapsedMs.Min(), suffix2);
         }
 
         public static string Day(System.Reflection.MethodBase mb)
