@@ -261,7 +261,7 @@ namespace aoc
         }
         public static (Object a, Object b) DoPuzzle(string file) =>
             (Play(file, false), Play(file, true));
-        static void Main() => Aoc.Execute(Day, DoPuzzle);
+        static void Main() => Aoc.Execute(Day, DoPuzzle, nRuns: 10);
         static string Day => Aoc.Day(MethodBase.GetCurrentMethod()!);
     }
 }

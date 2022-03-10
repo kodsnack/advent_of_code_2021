@@ -846,12 +846,25 @@ namespace AdventOfCode
             public T t;
             public BinNode<T>? left;
             public BinNode<T>? right;
-            public BinNode(T v, BinNode<T>? p)
+            public BinNode(T v, BinNode<T>? p, BinNode<T>? l = null, BinNode<T>? r = null)
             {
                 t = v;
                 parent = p;
-                left = null;
-                right = null;
+                left = l;
+                right = r;
+                if (l != null)
+                    l.parent = this;
+                if (r != null)
+                    r.parent = this;
+            }
+            public static BinNode<T>? CloneTree(BinNode<T>? root, BinNode<T>? parent = null)
+            {
+                if (root == null) 
+                    return null;
+                var newRoot = new BinNode<T>(root.t, parent);
+                newRoot.left = CloneTree(root.left, newRoot);
+                newRoot.right = CloneTree(root.right, newRoot);
+                return newRoot;
             }
         };
     }
@@ -921,18 +934,27 @@ namespace AdventOfCode
             w.Stop();
             Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
         }
-        public static void Execute(string day, Func<string, (Object, Object)> Puzzle, bool example = false)
+        public static void Execute(string day, Func<string, (Object, Object)> Puzzle, 
+            bool example = false, uint nRuns = 1)
         {
-            Console.WriteLine("AoC 2021 - " + day + ":");
-            var w = System.Diagnostics.Stopwatch.StartNew();
+            string suffix1 = (nRuns > 1) ? string.Format(" (doing {0} runs...)", nRuns) : "";
+            Console.WriteLine("AoC 2021 - {0}{1}:", day, suffix1);
             string file = example ? "example.txt" : "input.txt";
-            (var a, var b) = Puzzle(file);
+            Object a = 0, b = 0;
+            var elapsedMs = new List<long>();
+            for (int i = 0; i < nRuns; i++)
+            {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+                (a, b) = Puzzle(file);
+                w.Stop();
+                elapsedMs.Add(w.ElapsedMilliseconds);
+            }
             a = FixOutput(a);
             b = FixOutput(b);
             Console.WriteLine("Puzzle A: {0}", a);
             Console.WriteLine("Puzzle B: {0}", b);
-            w.Stop();
-            Console.WriteLine("[Execution took {0} ms]", w.ElapsedMilliseconds);
+            string suffix2 = nRuns > 1 ? " (best value)" : "";
+            Console.WriteLine("[Execution took {0} ms{1}]", elapsedMs.Min(), suffix2);
         }
 
         public static string Day(System.Reflection.MethodBase mb)
