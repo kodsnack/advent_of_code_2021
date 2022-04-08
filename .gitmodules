@@ -83,3 +83,6 @@
 [submodule "AxlLind-rust"]
 	path = AxlLind-rust
 	url = git@github.com:AxlLind/AdventOfCode2021.git
+[submodule "npanuhin-python"]
+	path = npanuhin-python
+	url = git@github.com:npanuhin/Advent-of-Code.git
