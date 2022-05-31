@@ -86,3 +86,6 @@
 [submodule "npanuhin-python"]
 	path = npanuhin-python
 	url = git@github.com:npanuhin/Advent-of-Code.git
+[submodule "LinAGKar-sycl"]
+	path = LinAGKar-sycl
+	url = https://github.com/LinAGKar/advent-of-code-2021-sycl.git
